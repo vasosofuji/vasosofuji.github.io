@@ -91,7 +91,7 @@ nav {
 }
 
 .nav-links {
-    position: relative;
+    position: flex;
     gap: 40px;
 }
 
