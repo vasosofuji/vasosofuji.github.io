@@ -103,6 +103,22 @@ nav {
     color: var(--text-muted);
 }
 
+.nav-links a img {
+    vertical-align: middle;
+    width: 28px; 
+    height: 28px; 
+    transition: opacity 0.3s ease;
+}
+
+.nav-links a img:hover {
+    opacity: 0.8; 
+}
+
+.social-link {
+    margin-left: 10px; 
+    padding: 0;
+}
+
 .nav-links a:hover {
     color: var(--accent);
 }
