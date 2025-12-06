@@ -220,19 +220,21 @@ section {
     position: relative;
     display: inline-block;
     z-index: 1;
+    padding-left: 20px; /* Pushes text to the right to make room for the line */
 }
 
-/* Decorative line behind title */
+/* The Vertical Line */
 .section-title::after {
     content: '';
     position: absolute;
-    width: 60px;
-    height: 3px;
+    width: 4px;        /* Make it thin (Horizontal size) */
+    height: 100%;      /* Make it tall (Vertical size) */
     background-color: var(--accent);
-    bottom: 10px;
-    left: -10px;
+    top: 0;
+    left: 0;           /* Stick it to the left edge */
     z-index: -1;
-    opacity: 0.7;
+    box-shadow: 0 0 10px var(--accent-glow); /* Adds that nice mint glow */
+    border-radius: 2px; /* Rounds the edges slightly */
 }
 
 /* --- GALLERY GRID --- */
