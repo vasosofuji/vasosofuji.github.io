@@ -28,16 +28,20 @@ document.querySelectorAll('.photo-card').forEach(card => {
 
     const handleImageLoad = () => {
         if (img.complete) {
-            // Hide the loader element
+            // --- FIX: Ensure independent, fast loader removal ---
             if (loader) {
-                // The loader fades out, revealing the final sharp image below
+                // Start a quick 200ms fade-out (CSS handles the 0.2s transition)
                 loader.style.opacity = '0'; 
+                
+                // Immediately add the 'loaded' class to sharpen the image (CSS handles the 0.8s filter transition)
+                img.classList.add('loaded');
+
+                // Completely remove the loader from the DOM flow after its quick fade-out
                 setTimeout(() => {
-                    loader.style.display = 'none';
-                }, 800); // Match the CSS opacity transition time
+                    loader.style.display = 'none'; 
+                }, 250); // 250ms delay is enough for the 0.2s CSS transition to finish
             }
-            // Add the 'loaded' class to sharpen the image
-            img.classList.add('loaded');
+            // ----------------------------------------------------
         }
     };
 
