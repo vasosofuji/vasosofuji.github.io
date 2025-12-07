@@ -30,9 +30,13 @@ document.querySelectorAll('.photo-card').forEach(card => {
         if (img.complete) {
             // Hide the loader element
             if (loader) {
-                loader.style.display = 'none';
+                // The loader fades out, revealing the final sharp image below
+                loader.style.opacity = '0'; 
+                setTimeout(() => {
+                    loader.style.display = 'none';
+                }, 800); // Match the CSS opacity transition time
             }
-            // Show the image by adding the 'loaded' class (CSS handles the fade-in)
+            // Add the 'loaded' class to sharpen the image
             img.classList.add('loaded');
         }
     };
