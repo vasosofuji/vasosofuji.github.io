@@ -24,24 +24,17 @@ document.querySelectorAll('.photo-card').forEach(card => {
 
     // 2. Image loading logic
     const img = card.querySelector('img');
-    const loader = card.querySelector('.loader');
-
+    // We keep the loader reference, but only manipulate the parent class
+    
     const handleImageLoad = () => {
         if (img.complete) {
-            // --- FIX: Ensure independent, fast loader removal ---
-            if (loader) {
-                // Start a quick 200ms fade-out (CSS handles the 0.2s transition)
-                loader.style.opacity = '0'; 
-                
-                // Immediately add the 'loaded' class to sharpen the image (CSS handles the 0.8s filter transition)
-                img.classList.add('loaded');
+            // FIX: Add a class to the card immediately to trigger loader removal via CSS.
+            card.classList.add('loader-hidden'); 
+            
+            // Add the 'loaded' class to sharpen the image (CSS handles the 0.8s filter transition)
+            img.classList.add('loaded');
 
-                // Completely remove the loader from the DOM flow after its quick fade-out
-                setTimeout(() => {
-                    loader.style.display = 'none'; 
-                }, 250); // 250ms delay is enough for the 0.2s CSS transition to finish
-            }
-            // ----------------------------------------------------
+            // The JS no longer uses setTimeout, eliminating the artificial delay.
         }
     };
 
