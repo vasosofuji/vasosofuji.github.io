@@ -91,32 +91,43 @@ nav {
 }
 
 .nav-links {
-    position: flex;
+    display: flex;
     gap: 40px;
+    align-items: center;
+    transition: transform 0.3s ease-out;
 }
 
 .nav-links a {
-    font-size: 0.85rem;
+    font-size: 0.9rem;
     text-transform: uppercase;
     letter-spacing: 1px;
     position: relative;
     color: var(--text-muted);
 }
 
-.nav-links a img {
-    vertical-align: middle;
-    width: 50px; 
-    height: 50px; 
+/* REVISED Logo Container Styling (Fixes Logo Size Discrepancy) */
+.nav-links .social-link {
+    padding: 0;
+    margin-left: 10px; 
+    /* Force exact size and use flexbox to perfectly center the image */
+    width: 36px; 
+    height: 36px; 
+    display: flex; 
+    justify-content: center; 
+    align-items: center; 
+}
+
+/* REVISED Logo Image Sizing */
+.nav-links .social-link img {
+    width: 100%; 
+    height: 100%; 
+    object-fit: contain; 
+    display: block; 
     transition: opacity 0.3s ease;
 }
 
-.nav-links a img:hover {
+.nav-links .social-link img:hover {
     opacity: 0.8; 
-}
-
-.social-link {
-    margin-left: 10px; 
-    padding: 0;
 }
 
 .nav-links a:hover {
@@ -124,7 +135,7 @@ nav {
 }
 
 /* Animated Underline for Nav */
-.nav-links a::after {
+.nav-links a.nav-item::after { /* Target links that are NOT the social-link */
     content: '';
     position: absolute;
     width: 0;
@@ -135,8 +146,17 @@ nav {
     transition: width 0.3s ease;
 }
 
-.nav-links a:hover::after {
+.nav-links a.nav-item:hover::after { /* Target links that are NOT the social-link */
     width: 100%;
+}
+
+/* Menu Toggle Button (New for Mobile) */
+.menu-toggle {
+    display: none; /* Hide by default on desktop */
+    cursor: pointer;
+    font-size: 2rem;
+    color: var(--accent);
+    line-height: 1;
 }
 
 /* --- HERO SECTION --- */
@@ -148,7 +168,12 @@ header {
     align-items: center;
     text-align: center;
     padding: 0 20px;
-    background: radial-gradient(circle at center, #161616 0%, #0b0b0b 70%);
+    /* FIX: Layered background for smooth scroll transition */
+    background: 
+        /* 1. Linear gradient to fade smoothly into the black body background at the bottom */
+        linear-gradient(to bottom, transparent 90%, var(--bg-color) 100%), 
+        /* 2. Original radial gradient for the center effect */
+        radial-gradient(circle at center, #161616 0%, #0b0b0b 70%); 
 }
 
 .hero-subtitle {
@@ -230,8 +255,203 @@ section {
     padding: 100px 5%;
 }
 
+/* Ensure about section content is readable on mobile */
+.about-content {
+    max-width: 1500px; /* Limit width for readability */
+    margin: 0 auto;
+}
+
+/* --- CALENDAR SECTION --- */
+.calendar-container {
+    max-width: 600px;
+    margin: 0 auto 50px;
+    padding: 25px;
+    background-color: var(--card-bg);
+    border-radius: 8px;
+    box-shadow: 0 5px 20px rgba(0,0,0,0.3);
+}
+
+.calendar-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.month-year {
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: var(--accent);
+}
+
+.nav-arrows .arrow {
+    cursor: pointer;
+    font-size: 1.2rem;
+    color: var(--text-muted);
+    margin: 0 5px;
+    transition: color 0.2s ease;
+}
+
+.nav-arrows .arrow:hover {
+    color: var(--text-main);
+}
+
+.weekdays {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    text-align: center;
+    font-weight: bold;
+    color: var(--text-muted);
+    margin-bottom: 10px;
+    font-size: 0.9rem;
+}
+
+.calendar-grid {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 8px;
+}
+
+.day {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 40px;
+    font-size: 1rem;
+    border-radius: 4px;
+    background-color: #1a1a1a; 
+    transition: background-color 0.2s ease, border-color 0.2s ease, transform 0.1s ease;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+/* Style for available days */
+.day.available {
+    cursor: pointer;
+}
+
+/* Visual feedback on hover for available days */
+.day.available:hover {
+    background-color: rgba(100, 255, 218, 0.1); 
+    border-color: var(--accent);
+    transform: scale(1.05); /* Subtle lift on hover */
+}
+
+.day.booked {
+    background-color: #311d27; 
+    color: var(--accent); 
+    position: relative;
+    border: 1px solid var(--accent);
+    cursor: not-allowed;
+}
+
+.day.blank {
+    background: none;
+    border: none;
+    color: var(--text-muted);
+    opacity: 0.5;
+    cursor: default; /* Ensure blank days don't have a pointer */
+}
+
+.calendar-legend {
+    text-align: right;
+    font-size: 0.8rem;
+    color: var(--text-muted);
+    margin-top: 20px;
+}
+
+.booked-legend-dot {
+    display: inline-block;
+    width: 10px;
+    height: 10px;
+    background-color: #311d27;
+    border: 1px solid var(--accent);
+    border-radius: 50%;
+    margin-right: 5px;
+    vertical-align: middle;
+}
+
+/* NEW: Booking Details Styling */
+.booking-details-container {
+    margin-top: 20px;
+    padding-top: 15px;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.event-list {
+    list-style: none;
+    padding-left: 0;
+    margin-top: 10px;
+}
+
+.event-list li {
+    background-color: #1a1a1a;
+    padding: 10px;
+    margin-bottom: 8px;
+    border-left: 3px solid var(--accent);
+    border-radius: 4px;
+    font-size: 0.95rem;
+    color: var(--text-muted);
+}
+
+.event-list strong {
+    color: var(--text-main);
+    margin-right: 5px;
+}
+/* --- END CALENDAR SECTION --- */
+
+/* --- ABOUT SECTION ENHANCEMENT (PREVIOUS STYLES) --- */
+.about-layout {
+    display: grid;
+    grid-template-columns: 1fr 1fr; /* Two equal columns */
+    gap: 60px;
+    padding-top: 20px;
+}
+
+.about-text {
+    padding-right: 30px; /* Space before the vertical separator */
+    border-right: 1px solid rgba(255, 255, 255, 0.1); /* Vertical Separator */
+}
+
+.about-text p {
+    margin-bottom: 15px;
+}
+
+.about-details h3 {
+    color: var(--accent);
+    margin-bottom: 20px;
+    font-size: 1.2rem;
+}
+
+.about-content b {
+    color: var(--accent); /* Highlight key text in accent color */
+    font-weight: 700;
+}
+
+.collaboration-list {
+    list-style: none;
+    padding: 0;
+}
+
+.collaboration-list li {
+    margin-bottom: 20px;
+    padding-left: 15px;
+    position: relative;
+    color: var(--text-muted);
+}
+
+.collaboration-list li::before {
+    content: "—"; /* Custom list marker */
+    color: var(--accent);
+    position: absolute;
+    left: 0;
+    top: 0;
+    font-weight: bold;
+}
+
 .section-title {
-    font-size: 2.5rem;
+    font-size: clamp(2rem, 5vw, 2.5rem); /* Responsive font size */
     margin-bottom: 60px;
     position: relative;
     display: inline-block;
@@ -253,41 +473,55 @@ section {
     border-radius: 2px; /* Rounds the edges slightly */
 }
 
-/* --- GALLERY GRID --- */
+/* --- GALLERY GRID (REVISED FOR ASPECT RATIO AND LANDSCAPE SPAN) --- */
 .gallery-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+    /* This creates 6 columns of equal size, which gives us the flexibility to span 2, 3, or 4 units */
+    grid-template-columns: repeat(6, 1fr); 
     gap: 30px;
+    justify-items: center; 
 }
 
+/* Base Card Styling - Portraits span 2 units */
 .photo-card {
     background-color: var(--card-bg);
-    width: 400px;
-    height: 600px; 
+    grid-column: span 2; 
+    
+    max-width: 400px; 
+    width: 100%; 
+    height: auto; 
     border-radius: 8px;
     overflow: hidden;
     position: relative;
     cursor: pointer;
-    transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); /* Bouncy effect */
+    transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); 
     box-shadow: 0 10px 30px -10px rgba(0,0,0,0.5);
+    padding: 0; 
+}
+
+/* Landscape Card Style - Spans 3 units (50% wider) */
+.photo-card.landscape {
+    grid-column: span 3;
+    max-width: none; 
 }
 
 .photo-card img {
     width: 100%;
-    height: 100%;
-    object-fit: cover;
+    height: auto; 
+    object-fit: contain; 
+    display: block; 
     transition: transform 0.6s ease, filter 0.3s ease;
-    filter: grayscale(20%); /* Slight vintage look */
+    filter: grayscale(20%);
 }
 
 /* Hover Effects */
 .photo-card:hover {
     transform: translateY(-10px);
-    box-shadow: 0 20px 40px -10px rgba(100, 255, 218, 0.15); /* Mint glow */
+    box-shadow: 0 20px 40px -10px rgba(100, 255, 218, 0.15); 
 }
 
 .photo-card:hover img {
-    transform: scale(1.1);
+    transform: scale(1.05); 
     filter: grayscale(0%);
 }
 
@@ -323,8 +557,11 @@ input:focus, textarea:focus {
     box-shadow: 0 0 15px var(--accent-glow);
 }
 
+/* FIX: Ensure the submit button takes full width within the flex container */
 button[type="submit"] {
     margin-top: 10px;
+    display: block; /* Overrides inline-block from .btn */
+    width: 100%; /* Ensures it fills the container */
 }
 
 /* --- FOOTER --- */
@@ -338,19 +575,100 @@ footer {
 }
 
 /* --- RESPONSIVE FIXES --- */
+@media (max-width: 992px) {
+    /* About section changes to single column on tablet/mobile */
+    .about-layout {
+        grid-template-columns: 1fr; /* Single column on tablets/mobile */
+    }
+    
+    .about-text {
+        padding-right: 0;
+        border-right: none;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1); /* Horizontal separator */
+        padding-bottom: 30px;
+        margin-bottom: 30px;
+    }
+}
+
 @media (max-width: 768px) {
     nav {
-        flex-direction: column;
-        padding: 15px;
+        flex-direction: row; 
+        align-items: center;
+        padding: 15px 5%;
         background: rgba(11, 11, 11, 0.95);
+    }
+    
+    .menu-toggle {
+        display: block; 
     }
 
     .nav-links {
-        margin-top: 15px;
-        gap: 20px;
+        position: fixed;
+        flex-direction: column;
+        top: 67px; 
+        right: 0;
+        width: 70%; 
+        height: 100vh;
+        background: var(--bg-color);
+        border-left: 1px solid rgba(255, 255, 255, 0.05);
+        transform: translateX(100%); 
+        padding: 30px 0;
+        gap: 30px;
+        align-items: flex-start;
     }
     
-    .photo-card {
-        height: 400px;
+    .nav-links.active {
+        transform: translateX(0);
+    }
+    
+    .nav-links a {
+        width: 100%;
+        padding: 10px 5%;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    }
+    
+    /* Social link sizing for mobile menu */
+    .nav-links .social-link {
+        /* On mobile, remove the fixed width/height so it centers properly */
+        width: 36px;
+        height: 36px;
+        display: block;
+        margin-left: 5%; 
+        border-bottom: none;
+        padding: 0;
+    }
+    
+    .nav-links .social-link img {
+        /* On mobile, constrain the image size */
+        width: 100%;
+        height: 100%;
+    }
+
+
+    /* On mobile, all cards must span the full 6 columns to be 100% width */
+    .gallery-grid {
+        grid-template-columns: repeat(6, 1fr); 
+    }
+    
+    .photo-card, .photo-card.landscape {
+        grid-column: span 6; /* Force both portrait and landscape to take full width */
+        max-width: 100%;
+    }
+    
+    /* Adjust section padding */
+    section {
+        padding: 80px 5%;
+    }
+    
+    /* Adjust hero text alignment for better mobile viewing */
+    .hero-subtitle, h1, .hero-desc {
+        text-align: center;
+    }
+}
+
+/* Extra small screens / narrow viewports */
+@media (max-width: 480px) {
+    .nav-links {
+        width: 100%; 
     }
 }
