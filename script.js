@@ -12,30 +12,42 @@ const observer = new IntersectionObserver((entries) => {
     });
 }, observerOptions);
 
+// ... existing observer setup (unchanged) ...
+
 // Apply to cards for scroll reveal AND handle image loading
 document.querySelectorAll('.photo-card').forEach(card => {
-    // 1. Initial scroll-reveal setup (applied to the card)
+    // 1. Initial scroll-reveal setup (unchanged)
     card.style.opacity = "0";
     card.style.transform = "translateY(50px)";
     card.style.transition = "all 0.6s ease-out";
-    
-    // Start observing the card for the scroll-reveal effect immediately
     observer.observe(card);
 
-    // 2. Time-based Image Loading Logic (1.5 seconds delay)
+    // 2. Combined Image Loading Logic (Fixes the tab spinner issue)
     const img = card.querySelector('img');
     
-    // The image is initially blurred and the loader is visible via CSS.
-    // We wait 1.5 seconds (1500ms) and then apply the classes to hide the loader 
-    // and unblur the image (CSS handles the unblur transition).
-    setTimeout(() => {
-        // Hide the dot loader by adding the class
-        card.classList.add('loader-hidden'); 
-        
-        // Unblur the image by adding the 'loaded' class
-        img.classList.add('loaded');
-    }, 1500);
+    // Function to visually complete the load (unblur, hide spinner)
+    const visuallyCompleteLoad = () => {
+        // Wait 1.5 seconds minimum to ensure the user sees the animation
+        setTimeout(() => {
+            card.classList.add('loader-hidden'); 
+            img.classList.add('loaded');
+        }, 1500); 
+    };
+
+    // A. Re-add the event listener: The browser stops spinning once this event fires.
+    img.addEventListener('load', visuallyCompleteLoad);
+    
+    // B. Check for cached images: If image is already complete, run the visual delay.
+    if (img.complete) {
+        visuallyCompleteLoad();
+    }
+    
+    // C. Add a fail-safe: Force the visual completion even if the image request fails
+    //    This prevents the *visual* loading from persisting if the image 404s.
+    img.addEventListener('error', visuallyCompleteLoad); 
 });
+
+// ... rest of the script (mobile menu, calendar, etc.) (unchanged) ...
 
 // --- Mobile Menu Toggle Script ---
 const menuToggle = document.getElementById('menuToggle');
