@@ -12,44 +12,46 @@ const observer = new IntersectionObserver((entries) => {
     });
 }, observerOptions);
 
-// ... existing observer setup (unchanged) ...
-
 // Apply to cards for scroll reveal AND handle image loading
 document.querySelectorAll('.photo-card').forEach(card => {
-    // 1. Initial scroll-reveal setup (unchanged)
+    // 1. Initial scroll-reveal setup (applied to the card)
     card.style.opacity = "0";
     card.style.transform = "translateY(50px)";
     card.style.transition = "all 0.6s ease-out";
+    
+    // Start observing the card for the scroll-reveal effect immediately
     observer.observe(card);
 
-    // 2. Combined Image Loading Logic (Fixes the tab spinner issue)
+    // 2. Robust Image Loading Logic (Fixes the stuck loading issue)
     const img = card.querySelector('img');
     
-    // Function to visually complete the load (unblur, hide spinner)
-    const visuallyCompleteLoad = () => {
-        // Wait 1.5 seconds minimum to ensure the user sees the animation
+    // Flag to prevent the completion logic from running more than once
+    let visualLoadApplied = false; 
+
+    // Function to apply the visual completion (unblur, hide spinner)
+    const applyVisualCompletion = () => {
+        if (visualLoadApplied) return;
+        visualLoadApplied = true;
+
+        // Apply the visual classes after the user-requested 1.5s minimum delay
         setTimeout(() => {
             card.classList.add('loader-hidden'); 
             img.classList.add('loaded');
-        }, 1500); 
+        }, 1500);
     };
 
-    // A. Re-add the event listener: The browser stops spinning once this event fires.
-    img.addEventListener('load', visuallyCompleteLoad);
+    // A. Attach listeners for successful load and error (ensuring network stop)
+    img.addEventListener('load', applyVisualCompletion);
+    img.addEventListener('error', applyVisualCompletion);
     
-    // B. Check for cached images: If image is already complete, run the visual delay.
+    // B. Check for cached images (must be done after listeners are attached)
+    // If the image is already complete (cached), manually run the completion function immediately
     if (img.complete) {
-        visuallyCompleteLoad();
+        applyVisualCompletion();
     }
-    
-    // C. Add a fail-safe: Force the visual completion even if the image request fails
-    //    This prevents the *visual* loading from persisting if the image 404s.
-    img.addEventListener('error', visuallyCompleteLoad); 
 });
 
-// ... rest of the script (mobile menu, calendar, etc.) (unchanged) ...
-
-// --- Mobile Menu Toggle Script ---
+// --- Mobile Menu Toggle Script (unchanged) ---
 const menuToggle = document.getElementById('menuToggle');
 const navLinks = document.querySelector('.nav-links');
 
@@ -68,7 +70,7 @@ document.querySelectorAll('.nav-links a').forEach(link => {
 // --- End Mobile Menu Toggle Script ---
 
 
-// --- CALENDAR FUNCTIONALITY ---
+// --- CALENDAR FUNCTIONALITY (unchanged) ---
 
 const months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
 
