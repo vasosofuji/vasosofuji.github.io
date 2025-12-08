@@ -23,52 +23,36 @@ document.querySelectorAll('.photo-card').forEach(card => {
 
     // 2. Image loading logic
     const img = card.querySelector('img');
-    let isLoaded = false; // Flag to prevent double-firing
+    let hasRevealed = false; // Ensure we only trigger the reveal once
 
     const revealImage = () => {
-        if (isLoaded) return;
-        isLoaded = true;
+        if (hasRevealed) return;
+        hasRevealed = true;
 
-        // Remove loader instantly
+        // Remove loader instantly when fully loaded
         card.classList.add('loader-hidden'); 
         
         // Unblur the image (CSS handles the smooth transition)
         img.classList.add('loaded');
     };
 
-    // A. Standard Load Event: Fires when fully loaded
+    // A. Standard Load Event: Fires ONLY when the image is 100% downloaded
+    // We attach this first to ensure we catch the event if it happens late.
     img.addEventListener('load', revealImage);
 
-    // B. Error Event: Fires if image breaks/404s (Prevents infinite spinner)
+    // B. Error Event: If the image fails (404), remove loader so we don't block the alt text
     img.addEventListener('error', () => {
         console.warn('Image failed to load:', img.src);
-        revealImage(); // Remove loader so we don't block the broken icon/alt text
+        revealImage(); 
     });
 
-    // C. Check if already cached/complete
+    // C. Cached Image Check:
+    // If the image is already in the browser cache, 'load' might not fire, 
+    // or it might have fired before this script ran. 'img.complete' handles this.
+    // We strictly check for complete status, NOT just dimensions.
     if (img.complete) {
         revealImage();
     } 
-    // D. "90% Loaded" Simulation / Progressive Check
-    // If the image has dimensions (naturalWidth > 0), it's visible enough to show.
-    else if (img.naturalWidth > 0) {
-        revealImage();
-    }
-
-    // E. Fail-safe Timer: If nothing happens in 3 seconds, show it anyway.
-    // This fixes cases where the browser gets stuck at 99%.
-    setTimeout(() => {
-        if (!isLoaded) {
-            // Only force it if we have dimensions (it's not a broken link)
-            if(img.naturalWidth > 0) {
-                revealImage();
-            } else {
-                 // If 0 dimensions after 3s, it's likely broken or very slow. 
-                 // We remove the loader anyway so the user isn't stuck.
-                 revealImage();
-            }
-        }
-    }, 3000); 
 });
 
 // --- Mobile Menu Toggle Script ---
