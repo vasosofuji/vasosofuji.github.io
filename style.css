@@ -516,6 +516,8 @@ section {
     height: 100%; /* Must be 100% of container height to fill space */
     object-fit: cover; /* FIX: Fills the container, preserving aspect ratio (may crop) */
     display: block; 
+
+    background-color: var(--card-bg);
     
     /* Initial Blurred State (while loading) */
     filter: blur(10px) grayscale(50%); 
