@@ -21,22 +21,21 @@ document.querySelectorAll('.photo-card').forEach(card => {
     
     // Start observing the card for the scroll-reveal effect immediately
     observer.observe(card);
-    
-    // 2. IMPORTANT: All previous per-image loading logic has been removed.
 });
 
 
-// --- GLOBAL PRELOADER LOGIC (1.5 seconds) ---
-// This runs the timer when the window's resources (images, scripts, etc.) are finished loading.
-window.addEventListener('load', () => {
-    const preloader = document.getElementById('global-preloader');
-    
-    // Set a timer for the required 1.5 seconds (1500ms)
-    setTimeout(() => {
-        // Add the 'hidden' class to fade out and hide the preloader
+// --- GLOBAL PRELOADER LOGIC (FIXED 1.5 seconds) ---
+// Find the preloader element immediately
+const preloader = document.getElementById('global-preloader');
+
+// Set a timer for the required 1.5 seconds (1500ms) that starts NOW, 
+// regardless of images loading status.
+setTimeout(() => {
+    // Add the 'hidden' class to fade out and hide the preloader
+    if (preloader) {
         preloader.classList.add('hidden');
-    }, 1500);
-});
+    }
+}, 1500);
 // --- END GLOBAL PRELOADER LOGIC ---
 
 
