@@ -35,7 +35,7 @@ setTimeout(() => {
     if (preloader) {
         preloader.classList.add('hidden');
     }
-}, 3000);
+}, 3800);
 // --- END GLOBAL PRELOADER LOGIC ---
 
 
