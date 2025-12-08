@@ -24,40 +24,26 @@ document.querySelectorAll('.photo-card').forEach(card => {
 
     // 2. Image loading logic
     const img = card.querySelector('img');
-    let hasRevealed = false; // Flag to prevent double-firing
+    // We keep the loader reference, but only manipulate the parent class
+    
+    const handleImageLoad = () => {
+        if (img.complete) {
+            // FIX: Add a class to the card immediately to trigger loader removal via CSS.
+            card.classList.add('loader-hidden'); 
+            
+            // Add the 'loaded' class to sharpen the image (CSS handles the 0.8s filter transition)
+            img.classList.add('loaded');
 
-    const revealImage = () => {
-        if (hasRevealed) return;
-        hasRevealed = true;
-
-        // Remove loader instantly 
-        card.classList.add('loader-hidden'); 
-        
-        // Unblur the image
-        img.classList.add('loaded');
-        
-        // Clean up listeners for memory efficiency
-        img.removeEventListener('load', revealImage);
-        img.removeEventListener('error', revealImage);
+            // The JS no longer uses setTimeout, eliminating the artificial delay.
+        }
     };
 
-    // A. Standard Load Event: Fires when the image is fully downloaded
-    img.addEventListener('load', revealImage);
+    // Event listener for image load
+    img.addEventListener('load', handleImageLoad);
     
-    // B. Error Event: Never gets stuck if the image link is broken
-    img.addEventListener('error', revealImage);
-
-    // C. Race Condition Fix for Cached/Immediately Ready Images
-    // This queues the check for the next browser paint cycle (requestAnimationFrame),
-    // guaranteeing the browser has had time to set `img.complete = true` 
-    // before our script reads the property.
+    // Handle images that are already cached/loaded when the script runs
     if (img.complete) {
-        window.requestAnimationFrame(() => {
-            // Check again inside the RAF callback just to be safe
-            if (img.complete) {
-                revealImage();
-            }
-        });
+        handleImageLoad();
     }
 });
 
