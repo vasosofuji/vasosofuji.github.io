@@ -511,38 +511,25 @@ section {
     max-width: none; 
 }
 
-/* ... (style.css, around line 240) ... */
-/* ADD or CONFIRM this block in your CSS */
-
-/* The image is blurred until loaded */
-/* ... (around line 240) ... */
 .photo-card img {
     width: 100%;
-    /* Keep other layout properties (height, object-fit) as they were originally! */
-    
+    height: 100%; /* Must be 100% of container height to fill space */
+    object-fit: cover; /* FIX: Fills the container, preserving aspect ratio (may crop) */
     display: block; 
     
-    /* FIX: Set image background to card color to hide the white area during progressive loading */
-    background-color: var(--card-bg); 
-    
-    /* Initial Blurred State */
+    /* Initial Blurred State (while loading) */
     filter: blur(10px) grayscale(50%); 
     opacity: 1; 
-    transition: filter 0.8s ease-out; /* Smoother transition for blur removal */
+    transition: 
+        transform 0.6s ease, 
+        filter 0.8s ease-out; /* Smoother transition for blur removal */
 }
 
-/* State when image is fully loaded */
+/* Image fully loaded state (JS adds this class) */
 .photo-card img.loaded {
-    filter: blur(0) grayscale(0); /* Fully sharp and colored */
+    filter: blur(0) grayscale(0); /* Sharp and full color */
 }
 
-/* Ensure the loader overlay itself is hidden */
-.photo-card.loader-hidden::before {
-    opacity: 0; 
-    visibility: hidden; 
-    pointer-events: none;
-    transition: opacity 0.3s ease; /* Smoothly fades out the loader */
-}
 /* Hover Effects */
 .photo-card:hover {
     transform: translateY(-10px);
