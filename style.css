@@ -515,32 +515,34 @@ section {
 /* ADD or CONFIRM this block in your CSS */
 
 /* The image is blurred until loaded */
+/* ... (around line 240) ... */
 .photo-card img {
-    /* ... existing styles ... */
-    filter: blur(10px) grayscale(50%); /* Initial Blurred State */
-    transition: filter 0.8s ease-out; /* Ensures a smooth un-blur */
+    width: 100%;
+    /* Keep other layout properties (height, object-fit) as they were originally! */
+    
+    display: block; 
+    
+    /* FIX: Set image background to card color to hide the white area during progressive loading */
+    background-color: var(--card-bg); 
+    
+    /* Initial Blurred State */
+    filter: blur(10px) grayscale(50%); 
+    opacity: 1; 
+    transition: filter 0.8s ease-out; /* Smoother transition for blur removal */
 }
 
-/* State when image is loaded */
+/* State when image is fully loaded */
 .photo-card img.loaded {
     filter: blur(0) grayscale(0); /* Fully sharp and colored */
 }
 
-/* Assuming the loading overlay is a ::before pseudo-element on the card,
-   we hide it when the .loader-hidden class is added to the parent. */
-.photo-card::before {
-    /* Existing loader styles (e.g., spin animation) go here */
-    opacity: 1; 
-    transition: opacity 0.3s ease;
-}
-
-/* This is the CRITICAL part that hides the loader overlay */
+/* Ensure the loader overlay itself is hidden */
 .photo-card.loader-hidden::before {
-    opacity: 0 !important; /* Forces the fade-out */
-    visibility: hidden !important; /* Forces the element to be gone from layout */
-    pointer-events: none !important; /* Crucial to allow clicks on the image */
+    opacity: 0; 
+    visibility: hidden; 
+    pointer-events: none;
+    transition: opacity 0.3s ease; /* Smoothly fades out the loader */
 }
-
 /* Hover Effects */
 .photo-card:hover {
     transform: translateY(-10px);
