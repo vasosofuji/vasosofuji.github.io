@@ -22,29 +22,19 @@ document.querySelectorAll('.photo-card').forEach(card => {
     // Start observing the card for the scroll-reveal effect immediately
     observer.observe(card);
 
-    // 2. Image loading logic
+    // 2. Time-based Image Loading Logic (1.5 seconds delay)
     const img = card.querySelector('img');
-    // We keep the loader reference, but only manipulate the parent class
     
-    const handleImageLoad = () => {
-        if (img.complete) {
-            // FIX: Add a class to the card immediately to trigger loader removal via CSS.
-            card.classList.add('loader-hidden'); 
-            
-            // Add the 'loaded' class to sharpen the image (CSS handles the 0.8s filter transition)
-            img.classList.add('loaded');
-
-            // The JS no longer uses setTimeout, eliminating the artificial delay.
-        }
-    };
-
-    // Event listener for image load
-    img.addEventListener('load', handleImageLoad);
-    
-    // Handle images that are already cached/loaded when the script runs
-    if (img.complete) {
-        handleImageLoad();
-    }
+    // The image is initially blurred and the loader is visible via CSS.
+    // We wait 1.5 seconds (1500ms) and then apply the classes to hide the loader 
+    // and unblur the image (CSS handles the unblur transition).
+    setTimeout(() => {
+        // Hide the dot loader by adding the class
+        card.classList.add('loader-hidden'); 
+        
+        // Unblur the image by adding the 'loaded' class
+        img.classList.add('loaded');
+    }, 1500);
 });
 
 // --- Mobile Menu Toggle Script ---
