@@ -12,35 +12,7 @@ const observer = new IntersectionObserver((entries) => {
     });
 }, observerOptions);
 
-// --- New Global State and Timer Setup ---
-
-// 1. Start a single timer the moment the script loads.
-// This sets the absolute floor for the visual delay to 1.5 seconds.
-let minimumTimePassed = false;
-setTimeout(() => {
-    minimumTimePassed = true;
-    // After 1.5s, check all cards to see if any are waiting for this time flag.
-    document.querySelectorAll('.photo-card').forEach(card => {
-        const img = card.querySelector('img');
-        // If the image is already loaded/errored, but was waiting for the time, complete it now.
-        if (img.getAttribute('data-load-finished') === 'true') {
-            applyVisualCompletion(card, img);
-        }
-    });
-}, 1500);
-
-// Function to apply the visual completion (unblur, hide spinner)
-const applyVisualCompletion = (card, img) => {
-    // This flag ensures the code block below only runs once per card.
-    if (img.getAttribute('data-visual-applied') === 'true') return;
-
-    card.classList.add('loader-hidden'); 
-    img.classList.add('loaded');
-    img.setAttribute('data-visual-applied', 'true');
-};
-
-
-// Apply to cards for scroll reveal AND handle image loading
+// Apply scroll-reveal setup to all cards
 document.querySelectorAll('.photo-card').forEach(card => {
     // 1. Initial scroll-reveal setup (applied to the card)
     card.style.opacity = "0";
@@ -49,33 +21,23 @@ document.querySelectorAll('.photo-card').forEach(card => {
     
     // Start observing the card for the scroll-reveal effect immediately
     observer.observe(card);
-
-    // 2. Image Loading Logic
-    const img = card.querySelector('img');
     
-    // Handler function that runs when the image network request finishes (load or error)
-    const handleNetworkCompletion = () => {
-        // Step A: Mark that the network event is complete (stops the tab spinner)
-        img.setAttribute('data-load-finished', 'true');
-        
-        // Step B: Check if the minimum time delay (1.5s) has also passed.
-        if (minimumTimePassed) {
-            // If time is up, apply the visual change immediately.
-            applyVisualCompletion(card, img);
-        }
-        // If minimumTimePassed is still false, the visual change will be applied 
-        // by the global setTimeout function when it eventually runs.
-    };
-
-    // Attach listeners for successful load and error
-    img.addEventListener('load', handleNetworkCompletion);
-    img.addEventListener('error', handleNetworkCompletion);
-    
-    // Check for cached images (must be done after listeners are attached)
-    if (img.complete) {
-        handleNetworkCompletion();
-    }
+    // 2. IMPORTANT: All previous per-image loading logic has been removed.
 });
+
+
+// --- GLOBAL PRELOADER LOGIC (1.5 seconds) ---
+// This runs the timer when the window's resources (images, scripts, etc.) are finished loading.
+window.addEventListener('load', () => {
+    const preloader = document.getElementById('global-preloader');
+    
+    // Set a timer for the required 1.5 seconds (1500ms)
+    setTimeout(() => {
+        // Add the 'hidden' class to fade out and hide the preloader
+        preloader.classList.add('hidden');
+    }, 1500);
+});
+// --- END GLOBAL PRELOADER LOGIC ---
 
 
 // --- Mobile Menu Toggle Script (unchanged) ---
