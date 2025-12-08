@@ -21,38 +21,34 @@ document.querySelectorAll('.photo-card').forEach(card => {
     
     observer.observe(card);
 
-    // 2. Image loading logic
+    // 2. Image loading logic using decode()
+    // This is the modern 'Gold Standard' for handling image loading states.
     const img = card.querySelector('img');
-    let hasRevealed = false; // Ensure we only trigger the reveal once
 
+    // We define the reveal function to run once the image is ready
     const revealImage = () => {
-        if (hasRevealed) return;
-        hasRevealed = true;
-
-        // Remove loader instantly when fully loaded
         card.classList.add('loader-hidden'); 
-        
-        // Unblur the image (CSS handles the smooth transition)
         img.classList.add('loaded');
     };
 
-    // A. Standard Load Event: Fires ONLY when the image is 100% downloaded
-    // We attach this first to ensure we catch the event if it happens late.
-    img.addEventListener('load', revealImage);
-
-    // B. Error Event: If the image fails (404), remove loader so we don't block the alt text
-    img.addEventListener('error', () => {
-        console.warn('Image failed to load:', img.src);
-        revealImage(); 
-    });
-
-    // C. Cached Image Check:
-    // If the image is already in the browser cache, 'load' might not fire, 
-    // or it might have fired before this script ran. 'img.complete' handles this.
-    // We strictly check for complete status, NOT just dimensions.
+    // img.decode() returns a Promise that resolves only when the 
+    // image is fully downloaded and safe to display without "scanning".
+    img.decode()
+        .then(() => {
+            revealImage();
+        })
+        .catch((err) => {
+            // If decode fails (e.g., broken image or format issue), 
+            // we still remove the loader so the user isn't stuck with a spinner.
+            console.warn("Image decode failed, forcing reveal:", err);
+            revealImage();
+        });
+        
+    // FALLBACK: In extremely rare cases where the browser doesn't support decode
+    // or hangs, we keep the basic load listener as a backup.
     if (img.complete) {
         revealImage();
-    } 
+    }
 });
 
 // --- Mobile Menu Toggle Script ---
