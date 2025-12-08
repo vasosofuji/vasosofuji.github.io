@@ -73,17 +73,13 @@ const months = ["January", "February", "March", "April", "May", "June", "July", 
 // 1. Array of booked dates (YYYY-M-D) - Used for styling the calendar grid
 const bookedDates = [
     "2025-12-20", 
-    "2025-12-25",
-    "2026-1-10",
-    "2026-1-24" 
+    "2025-12-25"
 ];
 
 // 2. Object of booked events (Key matches YYYY-M-D in bookedDates) - Used for the legend text
 const bookedEvents = {
     "2025-12-20": "Concert coverage for THE POT, LSD During War and BIK at La Kanja.",
-    "2025-12-25": "Concert coverage for BIK at Dze Pub.",
-    "2026-1-10": "Wedding consultation and pre-shoot planning.",
-    "2026-1-24": "Full-day corporate event photography."
+    "2025-12-25": "Concert coverage for BIK at Dze Pub."
 };
 
 let currentMonth = 11; // December (0-indexed)
