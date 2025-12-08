@@ -501,7 +501,6 @@ section {
     margin-bottom: 20px;
     padding-left: 15px;
     position: relative;
-    color: var(--text-muted);
 }
 
 .collaboration-list li::before {
