@@ -12,6 +12,8 @@ const observer = new IntersectionObserver((entries) => {
     });
 }, observerOptions);
 
+// ... (rest of script.js code) ...
+
 // Apply to cards for scroll reveal AND handle image loading
 document.querySelectorAll('.photo-card').forEach(card => {
     // 1. Initial scroll-reveal setup
@@ -22,34 +24,46 @@ document.querySelectorAll('.photo-card').forEach(card => {
     observer.observe(card);
 
     // 2. Image loading logic using decode()
-    // This is the modern 'Gold Standard' for handling image loading states.
     const img = card.querySelector('img');
 
-    // We define the reveal function to run once the image is ready
+    // Define the reveal function to run once the image is ready
     const revealImage = () => {
+        // Remove loader instantly 
         card.classList.add('loader-hidden'); 
+        
+        // Unblur the image (CSS handles the smooth transition)
         img.classList.add('loaded');
     };
 
-    // img.decode() returns a Promise that resolves only when the 
-    // image is fully downloaded and safe to display without "scanning".
-    img.decode()
-        .then(() => {
+    // The preferred modern way: decode() resolves only when the image 
+    // is fully downloaded AND fully decoded (ready to be painted whole).
+    if (img.decode) {
+        img.decode()
+            .then(revealImage)
+            .catch((err) => {
+                // If decode fails (e.g., broken image), force reveal to remove the spinner
+                console.warn("Image decode failed, forcing reveal:", err);
+                revealImage();
+            });
+    } else {
+        // Fallback for older browsers: use the load event and check complete status
+        img.addEventListener('load', revealImage);
+        if (img.complete) {
             revealImage();
-        })
-        .catch((err) => {
-            // If decode fails (e.g., broken image or format issue), 
-            // we still remove the loader so the user isn't stuck with a spinner.
-            console.warn("Image decode failed, forcing reveal:", err);
-            revealImage();
-        });
-        
-    // FALLBACK: In extremely rare cases where the browser doesn't support decode
-    // or hangs, we keep the basic load listener as a backup.
+        }
+    }
+    
+    // Ensure the loader is removed if an external factor like a network error occurs
+    img.addEventListener('error', revealImage);
+    
+    // Check complete status immediately after setting up listeners/decode,
+    // in case the image was already cached and loaded before this script ran.
     if (img.complete) {
         revealImage();
     }
 });
+
+// ... (rest of script.js code) ...
 
 // --- Mobile Menu Toggle Script ---
 const menuToggle = document.getElementById('menuToggle');
