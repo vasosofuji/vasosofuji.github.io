@@ -24,24 +24,25 @@ document.querySelectorAll('.photo-card').forEach(card => {
 
     // 2. Image loading logic
     const img = card.querySelector('img');
-    // We keep the loader reference, but only manipulate the parent class
     
     const handleImageLoad = () => {
         if (img.complete) {
-            // FIX: Add a class to the card immediately to trigger loader removal via CSS.
+            // FIX: Remove loader instantly
             card.classList.add('loader-hidden'); 
             
-            // Add the 'loaded' class to sharpen the image (CSS handles the 0.8s filter transition)
+            // Add the 'loaded' class to sharpen the image instantly
             img.classList.add('loaded');
-
-            // The JS no longer uses setTimeout, eliminating the artificial delay.
+            
+            // Note: CSS handles the smooth 0.8s transition for the filter (blur to sharp).
+            // This is the fastest possible way to trigger the visual reveal.
         }
     };
 
-    // Event listener for image load
+    // Event listener for image load (fires when image is fully loaded)
     img.addEventListener('load', handleImageLoad);
     
     // Handle images that are already cached/loaded when the script runs
+    // Check 'complete' status after attaching the listener to avoid race conditions.
     if (img.complete) {
         handleImageLoad();
     }
