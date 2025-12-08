@@ -511,13 +511,15 @@ section {
     max-width: none; 
 }
 
+/* ... (style.css, around line 240) ... */
 .photo-card img {
     width: 100%;
     height: 100%; /* Must be 100% of container height to fill space */
     object-fit: cover; /* FIX: Fills the container, preserving aspect ratio (may crop) */
     display: block; 
-
-    background-color: var(--card-bg);
+    
+    /* ADDED: Set background to card color to hide the white area during progressive load */
+    background-color: var(--card-bg); 
     
     /* Initial Blurred State (while loading) */
     filter: blur(10px) grayscale(50%); 
@@ -526,6 +528,7 @@ section {
         transform 0.6s ease, 
         filter 0.8s ease-out; /* Smoother transition for blur removal */
 }
+/* ... (rest of style.css) ... */
 
 /* Image fully loaded state (JS adds this class) */
 .photo-card img.loaded {
