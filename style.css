@@ -504,7 +504,7 @@ section {
 }
 
 .collaboration-list li::before {
-    content: "—"; /* Custom list marker */
+    content: "~"; /* Custom list marker */
     color: var(--accent);
     position: absolute;
     left: 0;
