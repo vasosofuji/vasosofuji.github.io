@@ -23,7 +23,6 @@
             <a href="#concerts" class="nav-item">Concerts</a>
             <a href="#landscapes" class="nav-item">Landscapes</a>
 	    <a href="#videos" class="nav-item">Videos</a>
-            <a href="#calendar" class="nav-item">Availability</a> 
             <a href="#contact" class="nav-item">Contact</a>
             <a href="https://instagram.com/vasosofuji" class="social-link"><img src="misc/instalogo.png"></a> 
 	    <a href="https://www.linkedin.com/in/mateja-vasojevikj-907555290/" class="social-link"><img src="misc/linkedin.png"></a>
@@ -114,7 +113,7 @@
     </section>
 
     <section id="videos">
-    <div class="contact-container">
+    <div class="video-content-wrapper">
 	<h2 class="section-title">Videos</h2>
         <div class="video-wrapper">
             <iframe 
@@ -131,54 +130,60 @@
     </div>
 </section>
     
-    <section id="calendar">
-	<div class="contact-container">
-        <h2 class="section-title">My Availability</h2>
-	</div>
-        <div class="calendar-container">
-            <div class="calendar-header">
-                <span class="month-year" id="monthYearDisplay"></span>
-                <div class="nav-arrows">
-                    <span class="arrow left" id="prevMonth">←</span>
-                    <span class="arrow right" id="nextMonth">→</span>
+<section id="availability-contact-wrap">
+
+    <div class="two-column-layout">
+        <div class="column-left" id="contact">
+            <div class="section-header">
+                <h2 class="section-title">My Availability</h2>
+            </div>
+            <div class="calendar-container">
+                <div class="calendar-header">
+                    <span class="month-year" id="monthYearDisplay"></span>
+                    <div class="nav-arrows">
+                        <span class="arrow left" id="prevMonth">←</span>
+                        <span class="arrow right" id="nextMonth">→</span>
+                    </div>
+                </div>
+                
+                <div class="weekdays">
+                    <div>Sun</div>
+                    <div>Mon</div>
+                    <div>Tue</div>
+                    <div>Wed</div>
+                    <div>Thu</div>
+                    <div>Fri</div>
+                    <div>Sat</div>
+                </div>
+                
+                <div class="calendar-grid" id="calendarGrid">
+                </div>
+
+                <p class="calendar-legend"><span class="booked-legend-dot"></span> = Booked Day</p>
+                
+                <div id="bookingDetails" class="booking-details-container">
                 </div>
             </div>
-            
-            <div class="weekdays">
-                <div>Sun</div>
-                <div>Mon</div>
-                <div>Tue</div>
-                <div>Wed</div>
-                <div>Thu</div>
-                <div>Fri</div>
-                <div>Sat</div>
+        </div>
+
+        <div class="column-right" id="contact">
+            <div class="section-header">
+                <h2 class="section-title">Contact Me</h2>
             </div>
-            
-            <div class="calendar-grid" id="calendarGrid">
-                </div>
-
-            <p class="calendar-legend"><span class="booked-legend-dot"></span> = Booked Day</p>
-            
-            <div id="bookingDetails" class="booking-details-container">
-                </div>
+            <div class="contact-container">
+                <p style="color: var(--text-muted)">Send me an E-Mail.</p>
+                
+                <form action="mailto:mateja2006.mv@gmail.com" method="post" enctype="text/plain">
+                    <input type="text" name="name" placeholder="Your Name" required>
+                    <input type="email" name="email" placeholder="Your Email" required>
+                    <textarea name="message" rows="5" placeholder="Message" id="contactMessage" required></textarea>
+                    <button type="submit" class="btn">Send Message</button>
+                </form>
+            </div>
         </div>
-    </section>
-
-    <section id="contact">
-        <div class="contact-container">
-            <h2 class="section-title">Contact Me</h2>
-            <p style="color: var(--text-muted)">Send me an E-Mail.</p>
-            
-            <form action="mailto:mateja2006.mv@gmail.com" method="post" enctype="text/plain">
-                <input type="text" name="name" placeholder="Your Name" required>
-                <input type="email" name="email" placeholder="Your Email" required>
-                <textarea name="message" rows="5" placeholder="Message" id="contactMessage" required></textarea>
-                <button type="submit" class="btn">Send Message</button>
-            </form>
-        </div>
-    </section>
-
-    <footer>
+    </div>
+</section>
+<footer>
         <p>&copy; 2025 Mateja Vasojevikj (vasosofuji). All rights reserved.</p>
     </footer>
 <script src="script.js"></script>
