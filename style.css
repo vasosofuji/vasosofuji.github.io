@@ -816,11 +816,15 @@ footer {
     }
 
     /* FIX: Remove scroll-margin-top on mobile */
-    #about, #videos {
+    #videos {
         scroll-margin-top: 0; 
     }
     #contact {
         scroll-margin-top: 65px;
+    }
+
+    #about {
+        scroll-margin-top:15px;
     }
 
     /* On mobile, all cards must span the full 6 columns to be 100% width */
