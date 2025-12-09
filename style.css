@@ -154,7 +154,7 @@ nav {
 
 .nav-links {
     display: flex;
-    gap: 40px;
+    gap: 35px;
     align-items: center;
     transition: transform 0.3s ease-out;
 }
@@ -322,6 +322,15 @@ section {
 .about-content {
     max-width: 1500px; /* Limit width for readability */
     margin: 0 auto;
+}
+
+/*VIDEO SECTION */
+
+.video-legend {
+    text-align: middle;
+    font-size: 1rem;
+    color: var(--text-muted);
+    margin-top: 20px;
 }
 
 /* --- CALENDAR SECTION --- */
