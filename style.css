@@ -815,6 +815,10 @@ footer {
         height: 100%;
     }
 
+    /* FIX: Remove scroll-margin-top on mobile */
+    #contact, #about, #videos {
+        scroll-margin-top: 0; 
+    }
 
     /* On mobile, all cards must span the full 6 columns to be 100% width */
     .gallery-grid {
