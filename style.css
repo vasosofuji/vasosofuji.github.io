@@ -85,10 +85,12 @@ h1, h2, h3 {
 /* Loader styling reused from previous per-image loader */
 .loader {
     display: flex;
-    justify-content: space-around;
+    /* FIX: Changed from 'space-around' to 'center' and added gap for centering dots */
+    justify-content: center;
     align-items: center;
     width: 60px;
     height: 40px;
+    gap: 8px; /* New: Spacing between dots */
 }
 
 .dot {
@@ -324,10 +326,28 @@ section {
     margin: 0 auto;
 }
 
-/*VIDEO SECTION */
+/* VIDEO SECTION */
+/* NEW: Responsive Video Wrapper for YouTube Embed */
+.video-wrapper {
+    position: relative;
+    width: 100%;
+    /* 16:9 Aspect Ratio (9 / 16 * 100) = 56.25% */
+    padding-bottom: 56.25%; 
+    height: 0;
+    margin-bottom: 20px;
+}
+
+.video-wrapper iframe {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    border-radius: 4px;
+}
 
 .video-legend {
-    text-align: middle;
+    text-align: center; /* Corrected from 'middle' */
     font-size: 1rem;
     color: var(--text-muted);
     margin-top: 20px;
