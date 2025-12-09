@@ -334,7 +334,7 @@ section {
 
 #videos {
     /* Adjusts the scroll position to leave space for the fixed nav bar */
-    scroll-margin-top: 120px; 
+    scroll-margin-top: 95px; 
 }
 
 
