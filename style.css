@@ -18,6 +18,7 @@
 
 html {
     scroll-behavior: smooth;
+    /* REMOVED: scroll-padding-top: 150px; */ 
 }
 
 body {
@@ -320,6 +321,23 @@ section {
     padding: 100px 5%;
 }
 
+/* FIX: Apply scroll-margin-top ONLY to the #contact section */
+#contact {
+    /* Adjusts the scroll position to leave space for the fixed nav bar */
+    scroll-margin-top: 120px; 
+}
+
+#about {
+    /* Adjusts the scroll position to leave space for the fixed nav bar */
+    scroll-margin-top: 200px; 
+}
+
+#videos {
+    /* Adjusts the scroll position to leave space for the fixed nav bar */
+    scroll-margin-top: 120px; 
+}
+
+
 /* Ensure about section content is readable on mobile */
 .about-content {
     max-width: 1500px; /* Limit width for readability */
@@ -328,6 +346,12 @@ section {
 
 /* VIDEO SECTION */
 /* NEW: Responsive Video Wrapper for YouTube Embed */
+
+.video-content-wrapper {
+    max-width: 800px; /* Limits the width of the video content */
+    margin: 0 auto; /* Centers the content on the page */
+}
+
 .video-wrapper {
     position: relative;
     width: 100%;
@@ -353,14 +377,43 @@ section {
     margin-top: 20px;
 }
 
-/* --- CALENDAR SECTION --- */
+/* --- CALENDAR & CONTACT SECTION (NEW STYLES) --- */
+
+/* Wrapper for Calendar and Contact Sections */
+#availability-contact-wrap {
+    padding-top: 50px; /* Reduced top padding since the title is inside the column */
+}
+
+.two-column-layout {
+    display: flex;
+    max-width: 1200px;
+    margin: 0 auto;
+    gap: 50px;
+}
+
+.column-left, .column-right {
+    flex: 1; /* Both columns take equal width */
+    min-width: 0; /* Allows content to shrink */
+}
+
+/* General Calendar container (no max-width needed here as it's flexed) */
 .calendar-container {
-    max-width: 600px;
-    margin: 0 auto 50px;
     padding: 25px;
     background-color: var(--card-bg);
     border-radius: 8px;
     box-shadow: 0 5px 20px rgba(0,0,0,0.3);
+}
+
+/* Contact container (no max-width needed here as it's flexed) */
+.contact-container {
+    padding: 0; /* Remove padding since the column has padding/margin */
+    /* Remove original max-width: 600px; margin: 0 auto; */
+    margin: 0;
+}
+
+/* Section Header for the columns - need to ensure it uses the custom title style */
+.section-header {
+    margin-bottom: 30px;
 }
 
 .calendar-header {
@@ -564,6 +617,12 @@ section {
     border-radius: 2px; /* Rounds the edges slightly */
 }
 
+/* Adjustment for titles inside the two-column layout */
+#availability-contact-wrap .section-title {
+    margin-bottom: 40px; /* Slightly less margin for the column titles */
+}
+
+
 /* --- GALLERY GRID (REVISED FOR ASPECT RATIO AND LANDSCAPE SPAN) --- */
 .gallery-grid {
     display: grid;
@@ -616,12 +675,7 @@ section {
 }
 
 
-/* --- CONTACT SECTION --- */
-.contact-container {
-    max-width: 600px;
-    margin: 0 auto;
-}
-
+/* --- CONTACT FORM STYLES --- */
 form {
     display: flex;
     flex-direction: column;
@@ -679,6 +733,32 @@ footer {
         padding-bottom: 30px;
         margin-bottom: 30px;
     }
+
+    /* NEW: Calendar/Contact - Stack columns on screens <= 992px */
+    .two-column-layout {
+        flex-direction: column;
+        gap: 80px; /* More vertical space between the sections when stacked */
+    }
+    
+    /* Center titles when stacked */
+    #availability-contact-wrap .section-title {
+        margin: 0 auto 40px auto;
+        display: block;
+        text-align: center;
+        padding-left: 0;
+    }
+    
+    /* Remove the vertical line on mobile/tablet for centered titles */
+    #availability-contact-wrap .section-title::after {
+        content: none;
+    }
+
+    /* Ensure calendar container goes full width */
+    .calendar-container {
+        max-width: 600px;
+        margin: 0 auto;
+    }
+    /* End NEW Calendar/Contact */
 }
 
 @media (max-width: 768px) {
