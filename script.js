@@ -5,6 +5,7 @@ window.onload = function() {
 };
 // -----------------------------------------------------------------
 
+
 // Simple script to reveal elements on scroll
 const observerOptions = {
     threshold: 0.1
@@ -67,6 +68,13 @@ document.querySelectorAll('.nav-links a').forEach(link => {
 
 // --- CALENDAR FUNCTIONALITY (unchanged) ---
 
+
+// --- CALENDAR MINIMUM DATE CONSTANTS ---
+// Set the earliest date the calendar can show (based on initial values: December 2025)
+const MIN_MONTH = 11; // December (0-indexed)
+const MIN_YEAR = 2025; 
+// ---------------------------------------
+
 const months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
 
 // 1. Array of booked dates (YYYY-M-D) - Used for styling the calendar grid
@@ -81,8 +89,8 @@ const bookedEvents = {
     "2025-12-25": "Concert coverage for BIK at Dze Pub."
 };
 
-let currentMonth = 11; // December (0-indexed)
-let currentYear = 2025; 
+let currentMonth = MIN_MONTH; 
+let currentYear = MIN_YEAR; 
 
 // Cache DOM elements
 const monthYearDisplay = document.getElementById('monthYearDisplay');
@@ -155,6 +163,18 @@ function renderCalendar() {
     // Update the event details when the calendar is rendered
     updateBookingDetails(); 
 
+
+    // NEW: Disable prev button if we are at the starting month/year
+    if (currentMonth === MIN_MONTH && currentYear === MIN_YEAR) {
+        prevMonthBtn.style.opacity = '0.3'; // Visual hint it's disabled
+        prevMonthBtn.style.cursor = 'default';
+        prevMonthBtn.style.pointerEvents = 'none'; // Make it unclickable
+    } else {
+        prevMonthBtn.style.opacity = '1';
+        prevMonthBtn.style.cursor = 'pointer';
+        prevMonthBtn.style.pointerEvents = 'auto';
+    }
+
     // Render leading blank days
     for (let i = 0; i < firstDayOfMonth; i++) {
         const blankDay = document.createElement('div');
@@ -189,20 +209,33 @@ function renderCalendar() {
     }
 }
 
+
 // Function to change the month and handle year rollover
 function changeMonth(offset) {
-    currentMonth += offset;
+    let nextMonth = currentMonth + offset;
+    let nextYear = currentYear;
 
-    if (currentMonth > 11) {
-        currentMonth = 0;
-        currentYear++;
-    } else if (currentMonth < 0) {
-        currentMonth = 11;
-        currentYear--;
+    if (nextMonth > 11) {
+        nextMonth = 0;
+        nextYear++;
+    } else if (nextMonth < 0) {
+        nextMonth = 11;
+        nextYear--;
     }
+
+    // NEW CHECK: Prevent going before the minimum date (MIN_YEAR/MIN_MONTH)
+    if (nextYear < MIN_YEAR || (nextYear === MIN_YEAR && nextMonth < MIN_MONTH)) {
+        // Stop the function if the change is invalid (trying to go too far back)
+        return; 
+    }
+    
+    // Only update if the change is valid
+    currentMonth = nextMonth;
+    currentYear = nextYear;
 
     renderCalendar();
 }
+
 
 // Add event listeners for arrows
 prevMonthBtn.addEventListener('click', () => changeMonth(-1));
