@@ -1,3 +1,10 @@
+// --- NEW FIX: Ensure page always starts at the top on refresh ---
+window.onload = function() {
+    // Scrolls the window to the top (0, 0 coordinates) with no smooth animation
+    window.scrollTo(0, 0); 
+};
+// -----------------------------------------------------------------
+
 // Simple script to reveal elements on scroll
 const observerOptions = {
     threshold: 0.1
