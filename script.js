@@ -71,20 +71,20 @@ document.querySelectorAll('.nav-links a').forEach(link => {
 
 // --- CALENDAR MINIMUM DATE CONSTANTS ---
 // Set the earliest date the calendar can show (based on initial values: December 2025)
-const MIN_MONTH = 11; // December (0-indexed)
-const MIN_YEAR = 2025; 
+const MIN_MONTH = 0; // December (0-indexed)
+const MIN_YEAR = 2026; 
 // ---------------------------------------
 
 const months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
 
 // 1. Array of booked dates (YYYY-M-D) - Used for styling the calendar grid
 const bookedDates = [
-    "2025-12-25"
+    //"2025-1-20"
 ];
 
 // 2. Object of booked events (Key matches YYYY-M-D in bookedDates) - Used for the legend text
 const bookedEvents = {
-    "2025-12-25": "Concert coverage for BIK at Dze Pub."
+    //"2025-1-20": "Concert coverage for BIK at Dze Pub."
 };
 
 let currentMonth = MIN_MONTH; 
