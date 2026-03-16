@@ -8,134 +8,138 @@
 </head>
 <body>
 
-    <div id="global-preloader">
-        <div class="loader">
-            <div class="dot"></div>
-            <div class="dot"></div>
-            <div class="dot"></div>
+<div id="global-preloader">
+    <div class="loader">
+        <div class="dot"></div>
+        <div class="dot"></div>
+        <div class="dot"></div>
+    </div>
+</div>
+<nav>
+    <a href="#" class="logo">vasosofuji</a>
+    <div class="nav-links">
+        <a href="#about" class="nav-item" data-translate="aboutMe">About Me</a>
+        <a href="gallery.html" class="nav-item" data-translate="gallery">Gallery</a>
+        <a href="videos.html" class="nav-item" data-translate="videos">Videos</a>
+        <a href="#contact" class="nav-item" data-translate="contact">Contact</a>
+        <div class="nav-icons-row">
+            <a href="https://instagram.com/vasosofuji" class="social-link"><img src="misc/instalogo.png"></a>
+            <a href="https://www.linkedin.com/in/mateja-vasojevikj-907555290/" class="social-link"><img src="misc/linkedin.png"></a>
+            <a href="https://www.flickr.com/photos/201695063@N02/" class="social-link"><img src="misc/flickr.png"></a>
+            <button id="langToggle" class="lang-toggle" aria-label="Toggle Language">
+                <img src="misc/uk-flag.png" alt="Language" class="lang-flag">
+            </button>
         </div>
     </div>
-    <nav>
-        <a href="#" class="logo">vasosofuji</a>
-        <div class="nav-links">
-            <a href="#about" class="nav-item">About Me</a> 
-            <a href="#portraits" class="nav-item">Portraits</a>
-            <a href="#concerts" class="nav-item">Concerts</a>
-            <a href="#landscapes" class="nav-item">Landscapes</a>
-	    <a href="#videos" class="nav-item">Videos</a>
-            <a href="#contact" class="nav-item">Contact</a>
-            <a href="https://instagram.com/vasosofuji" class="social-link"><img src="misc/instalogo.png"></a> 
-	    <a href="https://www.linkedin.com/in/mateja-vasojevikj-907555290/" class="social-link"><img src="misc/linkedin.png"></a>
-	    <a href="https://www.flickr.com/photos/201695063@N02/" class="social-link"><img src="misc/flickr.png"></a>
-        </div>
-        <div class="menu-toggle" id="menuToggle">☰</div> 
-    </nav>
+    <div class="menu-toggle" id="menuToggle">☰</div>
+</nav>
 
-    <header>
-        <span class="hero-subtitle">Photography by</span>
-        <h1>Mateja Vasojevikj</h1>
-        <p class="hero-desc">
-            Capturing life through my Fujifilm XT-2
-        </p>
-        <a href="#contact" class="btn">Get in Touch</a>
-    </header>
+<header>
+    <span class="hero-subtitle" data-translate="photographyBy">Photography by</span>
+    <h1>vasosofuji</h1>
+    <p class="hero-desc">
+        Матеја Васојевиќ
+    </p>
+    <a href="#contact" class="btn" data-translate="getInTouch">Get in Touch</a>
+</header>
 
-    <section id="about">
-        <h2 class="section-title">About Me</h2>
-        <div class="about-content about-layout">
-            <div class="about-details">
-			<h3>Who am I</h3>
-				<div class="about-text">
-                <p>I'm Mateja Vasojevikj, also known as <b>vasosofuji</b>, a 19 year old Cybersecurity Student at Faculty of Computer Science and Engineering at "Sts. Cyril and Methodius" University.</p>
-                <p>On top of being a student, I'm also a freelance photographer and cinematographer based in <b>Skopje, North Macedonia</b>.</p>
-				<p>I shoot Portraits, Landscapes and Events, but my primary focus is Concert Photography (because of my love for music).</p>
-				<p>If you enjoy any of my work, feel free to <a href="#contact"><b>contact me</b></a> or message me on <a href="https://instagram.com/vasosofuji"><b>instagram!</b></a></p>
-				</div>
-				</div>
-            <div class="about-details">
-                <h3>Collaborations & Gear</h3>
-                <ul class="collaboration-list">
-                    <li><b>Artist Collaborations:</b> Vladimir Chetkar, Noviot Pochetok, Marigold Box (Italy), Epidemik (RS), Ana && Stefan Petanovski, Golemata Voda, Fiction and many more</li>
-                    <li><b>Organisations:</b> Zdravo Mladi, Zemjotres, Underfest, Tributefest, Sepak Se Vrti, Stanica26, Marakana, Laboratorium, Enterprise Music School, Kotur, MKC and more</li>
-                    <li><b>Gear:</b> Fujifilm X-T2 and a National PE-145 flash from the 1970's.</li>
-                </ul>
+<section id="about">
+    <h2 class="section-title" data-translate="aboutTitle">About Me</h2>
+    <div class="about-content about-layout">
+        <div class="about-details">
+            <h3 data-translate="whoAmI">Who am I</h3>
+            <div class="about-text">
+                <p data-translate="aboutPara1" data-html>I'm Mateja Vasojevikj, also known as <b>vasosofuji</b>, a 19 year old Cybersecurity Student at Faculty of Computer Science and Engineering at "Sts. Cyril and Methodius" University.</p>
+                <p data-translate="aboutPara2" data-html>On top of being a student, I'm also a freelance photographer and cinematographer based in <b>Skopje, North Macedonia</b>.</p>
+                <p data-translate="aboutPara3" data-html>I shoot Portraits and Landscapes, but my primary focus is on Events and Concerts.</p>
+                <p data-translate="aboutPara4" data-html>If you like any of my work, feel free to <a href="#contact"><b>contact me</b></a> or message me on <a href="https://instagram.com/vasosofuji"><b>instagram!</b></a></p>
             </div>
         </div>
-    </section>
-    
-    <section id="portraits">
-        <h2 class="section-title">Portraits</h2>
-        <div class="gallery-grid">
-            <div class="photo-card">
-                <img src="photos/portraits/IMG_9801.jpg" alt="Nikola and Ana">
-            </div>
-            <div class="photo-card">
-                <img src="photos/portraits/DSCF4830.jpg" alt="Ivan and Nikola">
-            </div>
-            <div class="photo-card">
-                <img src="photos/portraits/IMG_9828.jpg" alt="Ana">
-            </div>
+        <div class="about-details">
+            <h3 data-translate="collaborationsGear">Collaborations & Gear</h3>
+            <ul class="collaboration-list">
+                <li data-translate="aboutPara12" data-html><b>Artist Collaborations:</b> Vladimir Chetkar, Noviot Pochetok, Marigold Box (Italy), Epidemik (RS), Ana && Stefan Petanovski, Golemata Voda, Fiction and many more.</li>
+                <li data-translate="aboutPara13" data-html><b>Festival/Event Collaborations:</b> Zdravo Mladi, Zemjotres, Underfest, Tributefest, Sepak Se Vrti, Stanica26, Marakana, Laboratorium, Enterprise Music School, Kotur, MKC and more.</li>
+                <li data-translate="aboutPara15" data-html><b>BEST Skopje:</b> PR&SM Responsible and head of Promotional Material/Ad Campaign for <a href="https://vjobfair.org.mk/"><b>Job Fair</b></a>, hosted by the non-profit and non-political international Student Organisation BEST.</li>
+                <li data-translate="aboutPara14" data-html><b>Gear:</b> Fujifilm X-T2 with 35mm F/2 and 16-50mm F/3.5-5.6 lenses.</li>
+            </ul>
         </div>
-    </section>
-
-    <section id="concerts">
-        <h2 class="section-title">Concerts</h2>
-        <div class="gallery-grid">
-            <div class="photo-card">
-                <img src="photos/concerts/Untitled-13.jpg" alt="Iva from Sunneater">
-            </div>
-            <div class="photo-card">
-                <img src="photos/concerts/Untitled-15.jpg" alt="Dzoke from The Pot">
-            </div>
-            <div class="photo-card">
-                <img src="photos/concerts/kork.jpg" alt="Anastasija from Korka">
-            </div>
-        </div>
-    </section>
-
-    <section id="landscapes">
-        <h2 class="section-title">Landscapes</h2>
-        <div class="gallery-grid">
-            <div class="photo-card landscape">
-                <img src="photos/landscapes/blurryasfuck.jpg" alt="Landscape 3">
-            </div>
-	    <div class="photo-card landscape">
-                <img src="photos/landscapes/IMG_88967.jpg" alt="Landscape 4">
-            </div>
-	    <div class="photo-card landscape">
-                <img src="photos/landscapes/IMG_8896.jpg" alt="Landscape 5">
-            </div>
-	    <div class="photo-card landscape">
-                <img src="photos/landscapes/IMG_8635.jpg" alt="Landscape 6">
-        
-	</div>
-	</div>
-    </section>
-
-    <section id="videos">
-    <div class="video-content-wrapper">
-	<h2 class="section-title">Videos</h2>
-        <div class="video-wrapper">
-            <iframe 
-                width="630" 
-                height="472.5"
-                src="https://www.youtube.com/embed/WFXFSk2oi4Q" 
-                title="Големата Вода - Има или Нема"
-                frameborder="0"
-                allow="accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-                allowfullscreen>
-            </iframe>
-        </div>
-        <p class="video-legend">Shot on cassette tape with old sony camcorder in Prilep, North Macedonia.</p>
     </div>
 </section>
-    
+
+<section id="portraits">
+    <h2 class="section-title clickable" onclick="window.location.href='portraits.html'" data-translate="portraits">Portraits</h2>
+    <div class="gallery-grid">
+        <div class="photo-card">
+            <img src="photos/portraits/DSCF0950.jpg" alt="Nikola and Ana">
+        </div>
+        <div class="photo-card">
+            <img src="photos/portraits/IMG_5213.jpg" alt="Mihaela">
+        </div>
+        <div class="photo-card">
+            <img src="photos/portraits/IMG_9828.jpg" alt="Ana">
+        </div>
+    </div>
+</section>
+
+<section id="concerts">
+    <h2 class="section-title clickable" onclick="window.location.href='concerts.html'" data-translate="concerts">Concerts</h2>
+    <div class="gallery-grid">
+        <div class="photo-card">
+            <img src="photos/concerts/Untitled-13.jpg" alt="Iva from Sunneater">
+        </div>
+        <div class="photo-card">
+            <img src="photos/concerts/Untitled-15.jpg" alt="Dzoke from The Pot">
+        </div>
+        <div class="photo-card">
+            <img src="photos/concerts/kork.jpg" alt="Anastasija from Korka">
+        </div>
+    </div>
+</section>
+
+<section id="landscapes">
+    <h2 class="section-title clickable" onclick="window.location.href='landscapes.html'" data-translate="landscapes">Landscapes</h2>
+    <div class="gallery-grid">
+        <div class="photo-card landscape">
+            <img src="photos/landscapes/blurryasfuck.jpg" alt="Landscape 3">
+        </div>
+        <div class="photo-card landscape">
+            <img src="photos/landscapes/IMG_88967.jpg" alt="Landscape 4">
+        </div>
+        <div class="photo-card landscape">
+            <img src="photos/landscapes/IMG_8896.jpg" alt="Landscape 5">
+        </div>
+        <div class="photo-card landscape">
+            <img src="photos/landscapes/IMG_8635.jpg" alt="Landscape 6">
+
+        </div>
+    </div>
+</section>
+
+<section id="videos">
+    <div class="video-content-wrapper">
+        <h2 class="section-title clickable" onclick="window.location.href='videos.html'" data-translate="videos">Videos</h2>
+        <div class="video-wrapper">
+            <iframe
+                    width="630"
+                    height="472.5"
+                    src="https://www.youtube.com/embed/WFXFSk2oi4Q"
+                    title="Големата Вода - Има или Нема"
+                    frameborder="0"
+                    allow="accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                    allowfullscreen>
+            </iframe>
+        </div>
+        <p class="video-legend" data-translate="GVInfo">Shot on cassette tape with old sony camcorder in Prilep, North Macedonia.</p>
+    </div>
+</section>
+
 <section id="availability-contact-wrap">
 
     <div class="two-column-layout">
         <div class="column-left" id="contact">
             <div class="section-header">
-                <h2 class="section-title">My Availability</h2>
+                <h2 class="section-title" data-translate="myAvailability">My Availability</h2>
             </div>
             <div class="calendar-container">
                 <div class="calendar-header">
@@ -145,7 +149,7 @@
                         <span class="arrow right" id="nextMonth">→</span>
                     </div>
                 </div>
-                
+
                 <div class="weekdays">
                     <div>Sun</div>
                     <div>Mon</div>
@@ -155,28 +159,32 @@
                     <div>Fri</div>
                     <div>Sat</div>
                 </div>
-                
+
                 <div class="calendar-grid" id="calendarGrid">
                 </div>
 
-                <p class="calendar-legend"><span class="booked-legend-dot"></span> = Booked Day</p>
-                
+                <p class="calendar-legend" data-translate="bookedDay" data-html><span class="booked-legend-dot"></span> = Booked Day</p>
+
                 <div id="bookingDetails" class="booking-details-container">
                 </div>
             </div>
         </div>
 
-        <div class="column-right" id="contact">
+        <div class="column-right" id="contact-form-calendar">
             <div class="section-header">
-                <h2 class="section-title">Contact Me</h2>
+                <h2 class="section-title" data-translate="contactMe">Contact Me</h2>
             </div>
             <div class="contact-container">
-                <p style="color: var(--text-muted)">Send me an E-Mail.</p>
-                
-                <form action="mailto:mateja2006.mv@gmail.com" method="post" enctype="text/plain">
-                    <input type="text" name="name" placeholder="Your Name" required>
-                    <input type="email" name="email" placeholder="Your Email" required>
+
+                <form id="contact-form" action="https://formspree.io/f/mbdaobka" method="post" autocomplete="off">
+                    <input type="email" name="email" placeholder="Email" required>
+
+                    <input type="date" name="date-available" id="dateInput" placeholder="Date" required>
+
                     <textarea name="message" rows="5" placeholder="Message" id="contactMessage" required></textarea>
+
+                    <p id="my-form-status"></p>
+
                     <button type="submit" class="btn">Send Message</button>
                 </form>
             </div>
@@ -184,8 +192,11 @@
     </div>
 </section>
 <footer>
-        <p>&copy; 2025 Mateja Vasojevikj (vasosofuji). All rights reserved.</p>
-    </footer>
+    <p>&copy; 2026 Mateja Vasojevikj (vasosofuji). All rights reserved.</p>
+    <p style="margin-top: 0.5rem;">
+        <a href="mailto:vasosofuji@gmail.com" style="color: var(--accent); text-decoration: none;">vasosofuji@gmail.com</a>
+    </p>
+</footer>
 <script src="script.js"></script>
 </body>
 </html>

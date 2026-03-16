@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Videos | vasosofuji</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        /* Reduce spacing around title */
+        .sub-header {
+            padding: 2rem 0 0.5rem 0;
+            margin-bottom: 0.5rem;
+        }
+
+        /* Custom styling for video grid */
+        .video-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0.5rem 2rem 2rem 2rem;
+        }
+
+        .video-card {
+            background: var(--card-bg);
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            position: relative;
+            max-width: 350px;
+            margin: 0 auto;
+        }
+
+        .video-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.5);
+        }
+
+        .video-thumbnail {
+            position: relative;
+            width: 100%;
+            aspect-ratio: 4/5; /* Shorter than full reel ratio */
+            overflow: hidden;
+            cursor: pointer;
+        }
+
+        .video-thumbnail img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.3s ease;
+        }
+
+        .video-card:hover .video-thumbnail img {
+            transform: scale(1.05);
+        }
+
+        .play-overlay {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 80px;
+            height: 80px;
+            background: rgba(0, 0, 0, 0.7);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background 0.3s ease;
+        }
+
+        .video-card:hover .play-overlay {
+            background: var(--accent);
+        }
+
+        .play-overlay::after {
+            content: '';
+            width: 0;
+            height: 0;
+            border-left: 25px solid white;
+            border-top: 15px solid transparent;
+            border-bottom: 15px solid transparent;
+            margin-left: 5px;
+        }
+
+        .video-info {
+            padding: 1rem;
+        }
+
+        .video-info h4 {
+            color: var(--text-main);
+            margin: 0 0 0.5rem 0;
+            font-size: 1.1rem;
+        }
+
+        .video-info p {
+            color: var(--text-muted);
+            margin: 0;
+            font-size: 0.9rem;
+        }
+
+        .instagram-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--accent);
+            text-decoration: none;
+            margin-top: 0.5rem;
+            font-size: 0.9rem;
+            transition: opacity 0.3s ease;
+        }
+
+        .instagram-link:hover {
+            opacity: 0.8;
+        }
+
+        @media (max-width: 768px) {
+            .video-grid {
+                grid-template-columns: 1fr;
+                padding: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div id="global-preloader">
+    <div class="loader">
+        <div class="dot"></div>
+        <div class="dot"></div>
+        <div class="dot"></div>
+    </div>
+</div>
+
+<nav>
+    <a href="index.html" class="logo">vasosofuji</a>
+    <div class="nav-links">
+        <a href="index.html#about" class="nav-item" data-translate="aboutMe">About Me</a>
+        <a href="gallery.html" class="nav-item" data-translate="gallery">Gallery</a>
+        <a href="#" class="nav-item" data-translate="videos">Videos</a>
+        <a href="index.html#contact" class="nav-item" data-translate="contact">Contact</a>
+        <div class="nav-icons-row">
+            <a href="https://instagram.com/vasosofuji" class="social-link"><img src="misc/instalogo.png"></a>
+            <a href="https://www.linkedin.com/in/mateja-vasojevikj-907555290/" class="social-link"><img src="misc/linkedin.png"></a>
+            <a href="https://www.flickr.com/photos/201695063@N02/" class="social-link"><img src="misc/flickr.png"></a>
+            <button id="langToggle" class="lang-toggle" aria-label="Toggle Language">
+                <img src="misc/uk-flag.png" alt="Language" class="lang-flag">
+            </button>
+        </div>
+    </div>
+    <div class="menu-toggle" id="menuToggle">☰</div>
+</nav>
+
+<header class="sub-header">
+    <h1 data-translate="VideosTitle">Videos</h1>
+</header>
+
+<section>
+    <div class="video-grid">
+
+        <!-- Video Card 1 -->
+        <a href="https://www.instagram.com/p/DUvepL-iBTH/" target="_blank" class="video-card" style="text-decoration: none;">
+            <div class="video-thumbnail">
+                <!-- Replace with a screenshot/thumbnail of your video -->
+                <img src="misc/Detektiv.jpg" alt="Detective Vaso">
+                <div class="play-overlay"></div>
+            </div>
+            <div class="video-info">
+                <h4 data-translate="Detektiv">Detective Vaso</h4>
+                <p data-translate="DetektivInfo">Short Movie-Inspired Ad (Job Fair 2026)</p>
+                <span class="instagram-link">
+                    Watch on Instagram →
+                </span>
+            </div>
+        </a>
+
+        <!-- Video Card 2 -->
+        <a href="https://www.instagram.com/p/DUiqHoaiGVM/" target="_blank" class="video-card" style="text-decoration: none;">
+            <div class="video-thumbnail">
+                <img src="misc/expectationvsreality.jpg" alt="Expectation vs Reality">
+                <div class="play-overlay"></div>
+            </div>
+            <div class="video-info">
+                <h4 data-translate="Expectations">Expectation vs Reality</h4>
+                <p data-translate="ExpectationsInfo">Short Sitcom-Inspired Ad (Job Fair 2026)</p>
+                <span class="instagram-link">
+                    Watch on Instagram →
+                </span>
+            </div>
+        </a>
+
+        <!-- Video Card 3 -->
+        <a href="https://www.instagram.com/p/DUN9gOACDTt/" target="_blank" class="video-card" style="text-decoration: none;">
+            <div class="video-thumbnail">
+                <img src="misc/vodnocinematic.jpg" alt="Apply for a job without stress">
+                <div class="play-overlay"></div>
+            </div>
+            <div class="video-info">
+                <h4 data-translate="Apliciraj">Apply without stress</h4>
+                <p data-translate="AplicirajInfo">Short Cinematic Ad (Job Fair 2026)</p>
+                <span class="instagram-link">
+                    Watch on Instagram →
+                </span>
+            </div>
+        </a>
+
+        <!-- Add more video cards as needed -->
+
+    </div>
+</section>
+
+<footer>
+    <p>&copy; 2026 Mateja Vasojevikj (vasosofuji). All rights reserved.</p>
+    <p style="margin-top: 0.5rem;">
+        <a href="mailto:vasosofuji@gmail.com" style="color: var(--accent); text-decoration: none;">vasosofuji@gmail.com</a>
+    </p>
+</footer>
+
+<script src="script.js"></script>
+</body>
+</html>

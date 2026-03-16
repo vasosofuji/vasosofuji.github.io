@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gallery | vasosofuji</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div id="global-preloader">
+    <div class="loader">
+        <div class="dot"></div>
+        <div class="dot"></div>
+        <div class="dot"></div>
+    </div>
+</div>
+
+<nav>
+    <a href="index.html" class="logo">vasosofuji</a>
+    <div class="nav-links">
+        <a href="index.html#about" class="nav-item" data-translate="aboutMe">About Me</a>
+        <a href="#" class="nav-item" data-translate="gallery">Gallery</a>
+        <a href="videos.html" class="nav-item" data-translate="videos">Videos</a>
+        <a href="index.html#contact" class="nav-item" data-translate="contact">Contact</a>
+        <div class="nav-icons-row">
+            <a href="https://instagram.com/vasosofuji" class="social-link"><img src="misc/instalogo.png"></a>
+            <a href="https://www.linkedin.com/in/mateja-vasojevikj-907555290/" class="social-link"><img src="misc/linkedin.png"></a>
+            <a href="https://www.flickr.com/photos/201695063@N02/" class="social-link"><img src="misc/flickr.png"></a>
+            <button id="langToggle" class="lang-toggle" aria-label="Toggle Language">
+                <img src="misc/uk-flag.png" alt="Language" class="lang-flag">
+            </button>
+        </div>
+    </div>
+    <div class="menu-toggle" id="menuToggle">☰</div>
+</nav>
+
+<section id="gallery-hub">
+    <div class="gallery-grid">
+        <a href="portraits.html" class="photo-card gallery-card" style="grid-column: span 2; text-decoration: none;">
+            <img src="photos/portraits/DSCF0977.jpg" alt="Portraits">
+            <div class="gallery-card-overlay">
+                <h3 data-translate="GalleryPortraits">Portraits</h3>
+            </div>
+        </a>
+
+        <a href="concerts.html" class="photo-card gallery-card" style="grid-column: span 2; text-decoration: none;">
+            <img src="photos/concerts/Untitled-13.jpg" alt="Concerts">
+            <div class="gallery-card-overlay">
+                <h3 data-translate="GalleryConcerts">Concerts</h3>
+            </div>
+        </a>
+
+        <a href="landscapes.html" class="photo-card gallery-card" style="grid-column: span 2; text-decoration: none;">
+            <img src="photos/landscapes/IMG_8896.jpg" alt="Landscapes">
+            <div class="gallery-card-overlay">
+                <h3 data-translate="GalleryLandscapes">Landscapes</h3>
+            </div>
+        </a>
+    </div>
+</section>
+
+<footer>
+    <p>&copy; 2026 Mateja Vasojevikj (vasosofuji). All rights reserved.</p>
+    <p style="margin-top: 0.5rem;">
+        <a href="mailto:vasosofuji@gmail.com" style="color: var(--accent); text-decoration: none;">vasosofuji@gmail.com</a>
+    </p>
+</footer>
+<script src="script.js"></script>
+</body>
+</html>

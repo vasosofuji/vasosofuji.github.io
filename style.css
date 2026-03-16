@@ -18,7 +18,7 @@
 
 html {
     scroll-behavior: smooth;
-    /* REMOVED: scroll-padding-top: 150px; */ 
+    /* REMOVED: scroll-padding-top: 150px; */
 }
 
 body {
@@ -74,7 +74,7 @@ h1, h2, h3 {
     opacity: 1;
     visibility: visible;
     /* Use 0.5s to smoothly fade out after the 1.5s timer expires */
-    transition: opacity 0.5s ease-out, visibility 0s 0.5s; 
+    transition: opacity 0.5s ease-out, visibility 0s 0.5s;
 }
 
 /* Class added by JS to hide the preloader */
@@ -103,20 +103,20 @@ h1, h2, h3 {
 }
 
 .dot:nth-child(2) {
-    animation-delay: 0.15s; 
+    animation-delay: 0.15s;
 }
 
 .dot:nth-child(3) {
-    animation-delay: 0.3s; 
+    animation-delay: 0.3s;
 }
 
 @keyframes bounce {
-    0%, 80%, 100% { 
+    0%, 80%, 100% {
         transform: scale(0);
         opacity: 0.5;
     }
-    40% { 
-        transform: scale(1.0); 
+    40% {
+        transform: scale(1.0);
         opacity: 1;
     }
 }
@@ -133,7 +133,7 @@ nav {
     width: 100%;
     top: 0;
     z-index: 1000;
-    
+
     /* Glass Effect */
     background: rgba(11, 11, 11, 0.8);
     backdrop-filter: blur(10px);
@@ -173,26 +173,62 @@ nav {
 /* REVISED Logo Container Styling (Fixes Logo Size Discrepancy) */
 .nav-links .social-link {
     padding: 0;
-    margin-left: 10px; 
+    margin-left: 10px;
     /* Force exact size and use flexbox to perfectly center the image */
-    width: 36px; 
-    height: 36px; 
-    display: flex; 
-    justify-content: center; 
-    align-items: center; 
+    width: 36px;
+    height: 36px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+/* Language Toggle Button */
+.lang-toggle {
+    background: transparent;
+    border: 2px solid var(--accent);
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    padding: 0;
+    margin-left: 10px;
+    cursor: pointer;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.lang-toggle:hover {
+    background: rgba(100, 255, 218, 0.1);
+    box-shadow: 0 0 15px var(--accent-glow);
+    transform: scale(1.05);
+}
+
+.lang-toggle .lang-flag {
+    width: 32px;
+    height: 32px;
+    object-fit: cover;
+    border-radius: 50%;
+    transition: transform 0.3s ease;
+}
+
+.lang-toggle:hover .lang-flag {
+    transform: scale(1.1);
 }
 
 /* REVISED Logo Image Sizing */
 .nav-links .social-link img {
-    width: 100%; 
-    height: 100%; 
-    object-fit: contain; 
-    display: block; 
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    display: block;
     transition: opacity 0.3s ease;
 }
 
 .nav-links .social-link img:hover {
-    opacity: 0.8; 
+    opacity: 0.8;
 }
 
 .nav-links a:hover {
@@ -224,6 +260,11 @@ nav {
     line-height: 1;
 }
 
+/* Desktop: Keep icons inline in nav-links */
+.nav-icons-row {
+    display: contents; /* Makes the wrapper invisible, children act as if wrapper doesn't exist */
+}
+
 /* --- HERO SECTION --- */
 header {
     height: 100vh;
@@ -234,34 +275,42 @@ header {
     text-align: center;
     padding: 0 20px;
     /* FIX: Layered background for smooth scroll transition */
-    background: 
+    background:
         /* 1. Linear gradient to fade smoothly into the black body background at the bottom */
-        linear-gradient(to bottom, transparent 90%, var(--bg-color) 100%), 
-        /* 2. Original radial gradient for the center effect */
-        radial-gradient(circle at center, #161616 0%, #0b0b0b 70%); 
+            linear-gradient(to bottom, transparent 90%, var(--bg-color) 100%),
+                /* 2. Original radial gradient for the center effect */
+            radial-gradient(circle at center, #161616 0%, #0b0b0b 70%);
 }
 
+/* --- HERO SECTION UPDATES --- */
 .hero-subtitle {
     color: var(--accent);
     font-size: 1rem;
     margin-bottom: 15px;
     text-transform: uppercase;
     letter-spacing: 4px;
+    opacity: 0; /* Hidden by default */
+}
+
+/* Only animate when the class is added by JS */
+header.hero-active .hero-subtitle {
     animation: fadeInUp 0.8s ease forwards;
-    animation-delay: 2.0s; /* DELAYED to run AFTER the global preloader is gone (1.5s + 0.5s fade out) */
-    opacity: 0; /* Start hidden */
+    animation-delay: 0.2s;
 }
 
 h1 {
-    font-size: clamp(3rem, 8vw, 5rem); /* Responsive font sizing */
+    font-size: clamp(3rem, 8vw, 5rem);
     margin-bottom: 20px;
     line-height: 1.1;
     background: linear-gradient(to right, #ffffff, #888888);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
-    animation: fadeInUp 0.8s ease forwards;
-    animation-delay: 2.2s; /* DELAYED */
     opacity: 0;
+}
+
+header.hero-active h1 {
+    animation: fadeInUp 0.8s ease forwards;
+    animation-delay: 0.4s;
 }
 
 .hero-desc {
@@ -269,9 +318,41 @@ h1 {
     color: var(--text-muted);
     margin-bottom: 50px;
     font-size: 1.1rem;
-    animation: fadeInUp 0.8s ease forwards;
-    animation-delay: 2.4s; /* DELAYED */
     opacity: 0;
+}
+
+header.hero-active .hero-desc {
+    animation: fadeInUp 0.8s ease forwards;
+    animation-delay: 0.6s;
+}
+
+.btn {
+    /* Keep your existing .btn styles (padding, border, etc.) here */
+    display: inline-block;
+    padding: 14px 35px;
+    border: 1px solid var(--accent);
+    color: var(--accent);
+    border-radius: 4px;
+    text-transform: uppercase;
+    font-size: 0.8rem;
+    letter-spacing: 2px;
+    transition: all 0.3s ease;
+    background: transparent;
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+    z-index: 1;
+    opacity: 0;
+}
+
+/* Add the .btn::before and .btn:hover styles from your original file here */
+.btn::before { content: ''; position: absolute; top: 0; left: 0; width: 0%; height: 100%; background-color: var(--accent); z-index: -1; transition: width 0.3s ease; }
+.btn:hover { color: var(--bg-color); box-shadow: 0 0 20px var(--accent-glow); }
+.btn:hover::before { width: 100%; }
+
+header.hero-active .btn {
+    animation: fadeInUp 0.8s ease forwards;
+    animation-delay: 0.8s;
 }
 
 /* --- BUTTON STYLING --- */
@@ -316,6 +397,15 @@ h1 {
     width: 100%;
 }
 
+.btn::before { content: ''; position: absolute; top: 0; left: 0; width: 0%; height: 100%; background-color: var(--accent); z-index: -1; transition: width 0.3s ease; }
+.btn:hover { color: var(--bg-color); box-shadow: 0 0 20px var(--accent-glow); }
+.btn:hover::before { width: 100%; }
+
+header.hero-active .btn {
+    animation: fadeInUp 0.8s ease forwards;
+    animation-delay: 0.8s;
+}
+
 /* --- SECTIONS --- */
 section {
     padding: 100px 5%;
@@ -324,17 +414,17 @@ section {
 /* FIX: Apply scroll-margin-top ONLY to the #contact section */
 #contact {
     /* Adjusts the scroll position to leave space for the fixed nav bar */
-    scroll-margin-top: 120px; 
+    scroll-margin-top: 120px;
 }
 
 #about {
     /* Adjusts the scroll position to leave space for the fixed nav bar */
-    scroll-margin-top: 200px; 
+    scroll-margin-top: 200px;
 }
 
 #videos {
     /* Adjusts the scroll position to leave space for the fixed nav bar */
-    scroll-margin-top: 95px; 
+    scroll-margin-top: -1px;
 }
 
 
@@ -356,7 +446,7 @@ section {
     position: relative;
     width: 100%;
     /* 16:9 Aspect Ratio (9 / 16 * 100) = 56.25% */
-    padding-bottom: 56.25%; 
+    padding-bottom: 56.25%;
     height: 0;
     margin-bottom: 20px;
 }
@@ -466,7 +556,7 @@ section {
     height: 40px;
     font-size: 1rem;
     border-radius: 4px;
-    background-color: #1a1a1a; 
+    background-color: #1a1a1a;
     transition: background-color 0.2s ease, border-color 0.2s ease, transform 0.1s ease;
     border: 1px solid rgba(255, 255, 255, 0.1);
 }
@@ -478,14 +568,14 @@ section {
 
 /* Visual feedback on hover for available days */
 .day.available:hover {
-    background-color: rgba(100, 255, 218, 0.1); 
+    background-color: rgba(100, 255, 218, 0.1);
     border-color: var(--accent);
     transform: scale(1.05); /* Subtle lift on hover */
 }
 
 .day.booked {
-    background-color: #311d27; 
-    color: var(--accent); 
+    background-color: #311d27;
+    color: var(--accent);
     position: relative;
     border: 1px solid var(--accent);
     cursor: not-allowed;
@@ -624,54 +714,128 @@ section {
 
 
 /* --- GALLERY GRID (REVISED FOR ASPECT RATIO AND LANDSCAPE SPAN) --- */
+#gallery-hub {
+    min-height: calc(100vh - 150px);
+    padding: 100px 5%;
+}
+
 .gallery-grid {
     display: grid;
     /* This creates 6 columns of equal size, which gives us the flexibility to span 2, 3, or 4 units */
-    grid-template-columns: repeat(6, 1fr); 
+    grid-template-columns: repeat(6, 1fr);
     gap: 30px;
-    justify-items: center; 
+    justify-items: center;
+
+}
+
+/* Gallery Hub Card - Special styling for gallery page cards with text overlays */
+.gallery-card {
+    overflow: hidden !important;
+    display: block;
+}
+
+.gallery-card-overlay {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    background: rgba(0,0,0,0.7);
+    padding: 15px;
+    text-align: center;
+    transition: all 0.4s ease;
+    pointer-events: none; /* Prevents overlay from blocking clicks */
+}
+
+.gallery-card-overlay h3 {
+    color: var(--text-main);
+    margin: 0;
+    font-size: 1.2rem;
+}
+
+/* Make sure gallery cards don't show the info box behavior */
+.gallery-card .photo-info {
+    display: none;
+}
+
+/* Gallery card images should scale within the card, not pop out */
+.gallery-card img {
+    transition: transform 0.6s ease, border-radius 0.3s ease;
+}
+
+/* Gallery cards: only lift, don't scale the card */
+.gallery-card:hover {
+    transform: translateY(-10px) !important; /* Only lift, no scale */
+}
+
+.gallery-card:hover img {
+    transform: scale(1.1); /* Scale image more since card doesn't scale */
+    border-radius: 8px; /* Keep corners rounded, no info box */
 }
 
 /* Base Card Styling - Portraits span 2 units */
 .photo-card {
     background-color: var(--card-bg);
-    grid-column: span 2; 
-    
-    max-width: 400px; 
-    width: 100%; 
-    height: auto; 
-    min-height: 150px; /* Smallest sensible size for card */
+    grid-column: span 2;
+    max-width: 400px;
+    width: 100%;
+    height: auto;
+    min-height: 150px;
     border-radius: 8px;
-    overflow: hidden;
     position: relative;
     cursor: pointer;
-    transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); 
+    z-index: 1;
+
+    /* ALL transitions in one place */
+    transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275),
+    box-shadow 0.4s ease,
+    opacity 0.6s ease-out; /* Added opacity transition for the load animation */
+
     box-shadow: 0 10px 30px -10px rgba(0,0,0,0.5);
-    padding: 0; 
+    padding: 0;
 }
 
 /* Landscape Card Style - Spans 3 units (50% wider) */
 .photo-card.landscape {
     grid-column: span 3;
-    max-width: none; 
+    max-width: none;
 }
 
 .photo-card img {
     width: 100%;
-    height: 100%; 
-    object-fit: cover; 
-    display: block; 
-    transition: transform 0.6s ease;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    border-radius: 8px;
+    transition: transform 0.6s ease, border-radius 0.3s ease;
 }
 
 /* Hover Effects */
 .photo-card:hover {
-    transform: translateY(-10px);
-    box-shadow: 0 20px 40px -10px rgba(100, 255, 218, 0.15); 
+    transform: translateY(-10px) scale(1.03); /* Lift and scale the entire card - reduced to 3% */
+    box-shadow: 0 20px 40px -10px rgba(100, 255, 218, 0.15);
+    z-index: 100;
+    transition: transform 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275),
+    box-shadow 0.5s ease,
+    z-index 0s;
 }
 
 .photo-card:hover img {
-    transform: scale(1.05); 
+    transform: scale(1.05); /* ZOOM THE IMAGE - reduced to 5% */
+    border-radius: 8px 8px 0 0;
+}
+
+/* Mobile active state */
+.photo-card.mobile-active {
+    transform: scale(1.03);
+    z-index: 100;
+    transition: transform 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275),
+    box-shadow 0.5s ease,
+    z-index 0s;
+}
+
+.photo-card.mobile-active img {
+    transform: scale(1.05);
+    border-radius: 8px 8px 0 0;
 }
 
 
@@ -693,6 +857,10 @@ input, textarea {
     font-family: inherit;
     font-size: 1rem;
     transition: border-color 0.3s ease, background-color 0.3s ease;
+}
+
+textarea {
+    resize: none; /* Disable textarea resizing */
 }
 
 input:focus, textarea:focus {
@@ -720,12 +888,41 @@ footer {
 }
 
 /* --- RESPONSIVE FIXES --- */
+@media (max-width: 1024px) and (min-width: 769px) {
+    /* Tablet/iPad adjustments for navbar */
+    .nav-links {
+        gap: 20px; /* Reduce gap from 35px */
+    }
+
+    .nav-links a {
+        font-size: 0.8rem; /* Slightly smaller font */
+        letter-spacing: 0.5px; /* Reduce letter spacing */
+    }
+
+    .nav-links .social-link {
+        width: 30px; /* Smaller social icons */
+        height: 30px;
+        margin-left: 5px;
+    }
+
+    .lang-toggle {
+        width: 34px; /* Smaller language toggle */
+        height: 34px;
+        margin-left: 5px;
+    }
+
+    .lang-toggle .lang-flag {
+        width: 28px;
+        height: 28px;
+    }
+}
+
 @media (max-width: 992px) {
     /* About section changes to single column on tablet/mobile */
     .about-layout {
         grid-template-columns: 1fr; /* Single column on tablets/mobile */
     }
-    
+
     .about-text {
         padding-right: 0;
         border-right: none;
@@ -739,7 +936,7 @@ footer {
         flex-direction: column;
         gap: 80px; /* More vertical space between the sections when stacked */
     }
-    
+
     /* Center titles when stacked */
     #availability-contact-wrap .section-title {
         margin: 0 auto 40px auto;
@@ -747,7 +944,7 @@ footer {
         text-align: center;
         padding-left: 0;
     }
-    
+
     /* Remove the vertical line on mobile/tablet for centered titles */
     #availability-contact-wrap .section-title::after {
         content: none;
@@ -763,61 +960,95 @@ footer {
 
 @media (max-width: 768px) {
     nav {
-        flex-direction: row; 
+        flex-direction: row;
         align-items: center;
         padding: 15px 5%;
         background: rgba(11, 11, 11, 0.95);
     }
-    
+
     .menu-toggle {
-        display: block; 
+        display: block;
+    }
+
+    #gallery-hub .photo-card {
+        grid-column: span 6 !important;
+        height: 250px; /* Gives them a nice consistent height on mobile */
+    }
+
+    .gallery-info h2 {
+        font-size: 1.8rem; /* Smaller text for mobile headers */
     }
 
     .nav-links {
         position: fixed;
         flex-direction: column;
-        top: 67px; 
+        top: 67px;
         right: 0;
-        width: 70%; 
+        width: 70%;
         height: 100vh;
         background: var(--bg-color);
         border-left: 1px solid rgba(255, 255, 255, 0.05);
-        transform: translateX(100%); 
+        transform: translateX(100%);
         padding: 30px 0;
         gap: 30px;
         align-items: flex-start;
     }
-    
+
     .nav-links.active {
         transform: translateX(0);
     }
-    
+
     .nav-links a {
         width: 100%;
         padding: 10px 5%;
         border-bottom: 1px solid rgba(255, 255, 255, 0.05);
     }
-    
+
+    /* Horizontal icon row for mobile */
+    .nav-icons-row {
+        display: flex;
+        flex-direction: row;
+        gap: 20px; /* Increased from 15px for better touch targets */
+        align-items: center;
+        padding-left: 5%;
+        padding-top: 5px; /* Add padding to prevent border cutoff */
+        padding-bottom: 10px; /* Extra bottom padding */
+        width: 100%;
+    }
+
     /* Social link sizing for mobile menu */
     .nav-links .social-link {
-        /* On mobile, remove the fixed width/height so it centers properly */
         width: 36px;
         height: 36px;
-        display: block;
-        margin-left: 5%; 
+        display: flex;
+        justify-content: center;
+        align-items: center;
         border-bottom: none;
+        margin-left: 0;
         padding: 0;
     }
-    
+
     .nav-links .social-link img {
-        /* On mobile, constrain the image size */
         width: 100%;
         height: 100%;
     }
 
-    /* FIX: Remove scroll-margin-top on mobile */
+    /* Language toggle sizing for mobile menu */
+    .lang-toggle {
+        width: 40px;
+        height: 40px;
+        margin-left: 0;
+        border-bottom: none;
+    }
+
+    .lang-toggle .lang-flag {
+        width: 32px;
+        height: 32px;
+    }
+
+    /* FIX: Adjust scroll-margin-top on mobile */
     #videos {
-        scroll-margin-top: 0; 
+        scroll-margin-top: -1px;
     }
     #contact {
         scroll-margin-top: 65px;
@@ -829,19 +1060,19 @@ footer {
 
     /* On mobile, all cards must span the full 6 columns to be 100% width */
     .gallery-grid {
-        grid-template-columns: repeat(6, 1fr); 
+        grid-template-columns: repeat(6, 1fr);
     }
-    
+
     .photo-card, .photo-card.landscape {
         grid-column: span 6; /* Force both portrait and landscape to take full width */
         max-width: 100%;
     }
-    
+
     /* Adjust section padding */
     section {
         padding: 80px 5%;
     }
-    
+
     /* Adjust hero text alignment for better mobile viewing */
     .hero-subtitle, h1, .hero-desc {
         text-align: center;
@@ -851,6 +1082,206 @@ footer {
 /* Extra small screens / narrow viewports */
 @media (max-width: 480px) {
     .nav-links {
-        width: 100%; 
+        width: 100%;
+    }
+}
+
+/* --- PHOTO INFO HOVER BOX (UPDATED: POPS OUT BELOW) --- */
+
+.photo-info {
+    position: absolute;
+    /* CHANGED: Positioned completely below the image */
+    top: 100%;
+    left: 0;
+    right: 0; /* Ensures full width coverage */
+    padding: 15px;
+    background: #1a1a1a; /* Matches card background */
+    border-radius: 0 0 8px 8px; /* Round only the bottom */
+    box-shadow: 0 15px 30px rgba(0,0,0,0.5); /* Drop shadow to separate from content below */
+
+    color: var(--text-muted);
+    font-size: 0.9rem;
+
+    /* Animation Setup: Hidden & slightly shifted up initially */
+    opacity: 0;
+    transform: translateY(-10px);
+    transition: all 0.5s cubic-bezier(0.34, 1.56, 0.64, 1); /* Smoother, slightly bouncy easing */
+    pointer-events: none; /* Prevents accidental clicks when hidden */
+
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+
+    /* Ensure the info box matches the exact card width */
+    box-sizing: border-box;
+}
+
+.photo-info h4 {
+    color: var(--text-main);
+    margin-bottom: 2px;
+    font-size: 1rem;
+}
+
+.photo-info span {
+    color: var(--accent);
+    font-weight: bold;
+}
+
+/* REVEAL LOGIC */
+/* Show box, slide it down into place, make it opaque, and scale it */
+@media (min-width: 769px) {
+    .photo-card:hover .photo-info {
+        opacity: 1;
+        transform: translateY(0) scaleX(1.05); /* Scale horizontally to match image - reduced */
+        pointer-events: auto;
+    }
+}
+
+.photo-card.mobile-active .photo-info {
+    opacity: 1;
+    transform: translateY(0) scaleX(1.05); /* Scale horizontally to match image - reduced */
+    pointer-events: auto;
+}
+
+
+/* --- SUB-PAGE HEADER (UPDATED: SMALLER SPACING) --- */
+.sub-header {
+    /* CHANGED: Reduced height significantly (was 60vh) */
+    height: 50vh;
+    min-height: 250px;
+
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    padding: 0 15px;
+
+    /* Background gradient */
+    background:
+            linear-gradient(to bottom, transparent 80%, var(--bg-color) 100%),
+            radial-gradient(circle at center, #161616 0%, #0b0b0b 70%);
+
+    /* CHANGED: Reduced margin below header */
+    margin-bottom: 5px;
+}
+
+/* Adjust the section padding for the gallery page only */
+/* You can add a specific class to the section in your HTML, or use this specific selector */
+.sub-header + section {
+    padding-top: 20px !important; /* Overrides the default 100px padding */
+}
+
+/* --- CLICKABLE SECTION TITLES --- */
+.section-title.clickable {
+    cursor: pointer;
+    position: relative;
+    display: inline-block;
+    transition: all 0.3s ease;
+    /* Keep the left padding for the mint line */
+    padding-left: 20px;
+}
+
+/* Preserve the mint vertical line for clickable titles */
+.section-title.clickable::after {
+    content: '';
+    position: absolute;
+    width: 4px;
+    height: 100%;
+    background-color: var(--accent);
+    top: 0;
+    left: 0;
+    z-index: -1;
+    box-shadow: 0 0 10px var(--accent-glow);
+    border-radius: 2px;
+    transition: box-shadow 0.3s ease;
+}
+
+/* Add animated underline on hover */
+.section-title.clickable::before {
+    content: '';
+    position: absolute;
+    bottom: -5px;
+    left: 20px; /* Start after the vertical line */
+    width: 0;
+    height: 2px;
+    background: var(--accent);
+    transition: width 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+}
+
+.section-title.clickable:hover {
+    color: var(--accent);
+    transform: translateX(5px); /* Subtle slide right */
+}
+
+.section-title.clickable:hover::after {
+    box-shadow: 0 0 20px var(--accent-glow); /* Enhance the glow */
+}
+
+.section-title.clickable:hover::before {
+    width: calc(100% - 20px); /* Underline grows */
+}
+
+/* --- FLOATING GALLERY NAVIGATION BUBBLE --- */
+.gallery-nav-bubble {
+    position: fixed;
+    bottom: 30px;
+    right: 30px;
+    z-index: 999;
+    background: rgba(26, 26, 26, 0.95);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border: 1px solid rgba(100, 255, 218, 0.3);
+    border-radius: 50px;
+    padding: 15px 25px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+    display: flex;
+    gap: 15px;
+    align-items: center;
+    transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease, bottom 0.3s ease;
+}
+
+.gallery-nav-bubble:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 12px 40px rgba(100, 255, 218, 0.2);
+    border-color: var(--accent);
+}
+
+.gallery-nav-bubble a {
+    color: var(--text-muted);
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    padding: 8px 15px;
+    border-radius: 20px;
+    transition: all 0.3s ease;
+    white-space: nowrap;
+}
+
+.gallery-nav-bubble a:hover {
+    color: var(--accent);
+    background: rgba(100, 255, 218, 0.1);
+}
+
+.gallery-nav-bubble a.active {
+    color: var(--bg-color);
+    background: var(--accent);
+    font-weight: bold;
+}
+
+/* Mobile adjustments for floating bubble */
+@media (max-width: 768px) {
+    .gallery-nav-bubble {
+        bottom: 20px;
+        right: 20px;
+        left: 20px;
+        padding: 12px 20px;
+        justify-content: center;
+        gap: 10px;
+    }
+
+    .gallery-nav-bubble a {
+        font-size: 0.75rem;
+        padding: 6px 12px;
     }
 }
