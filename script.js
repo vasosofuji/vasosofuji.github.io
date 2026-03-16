@@ -76,8 +76,8 @@ document.querySelectorAll('.nav-links a').forEach(link => {
 const MIN_MONTH = 2;
 const MIN_YEAR = 2026;
 const months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
-const bookedDates = ["2026-3-14"];
-const bookedEvents = {"2026-3-14": "Dunja - BIK"};
+const bookedDates = ["2026-3-20", "2026-3-21"];
+const bookedEvents = {"2026-3-20": "LoveRave Festival - MKC", "2026-3-21": "Pope Cafe Opening"};
 
 let currentMonth = MIN_MONTH;
 let currentYear = MIN_YEAR;
