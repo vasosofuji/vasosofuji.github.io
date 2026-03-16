@@ -300,9 +300,9 @@ const translations = {
         aboutPara2: 'On top of being a student, I\'m also a freelance photographer and cinematographer based in <b>Skopje, North Macedonia</b>.',
         aboutPara3: 'I shoot Portraits and Landscapes, but my primary focus is on Events and Concerts.',
         aboutPara4: 'If you like any of my work, feel free to <a href="#contact"><b>contact me</b></a> or message me on <a href="https://instagram.com/vasosofuji"><b>instagram!</b></a>',
-        aboutPara12: '<b>Artist Collaborations:</b> Vladimir Chetkar, Noviot Pochetok, Marigold Box (Italy), Epidemik (RS), Ana & Stefan Petanovski, Golemata Voda, Fiction, Korka and many more.',
+        aboutPara12: '<b>Artist Collaborations:</b> Vladimir Chetkar, Duper, Marigold Box (Italy), Epidemik (RS), Ana & Stefan Petanovski, Golemata Voda, Fiction, Korka and many more.',
         aboutPara13: '<b>Festival/Event Collaborations:</b> Zdravo Mladi, Zemjotres, Underfest, Tributefest, Sepak Se Vrti, Stanica26, Marakana, Laboratorium, Enterprise Music School, Kotur, MKC and more.',
-        aboutPara14: '<b>Gear:</b> Fujifilm X-T2 with 35mm F/2 and 16-50mm F/3.5-5.6 lenses.',
+        aboutPara14: '<b>Gear:</b> Fujifilm X-T2 with 35mm F/2 and 16-50mm F/3.5-5.6 lenses // Canon 2000D with 50mm F/1.8 and 18-55mm F/3.5-5.6 lenses (For sale)',
         aboutPara15: '<b>BEST Skopje:</b> PR&SM Responsible and head of Promotional Material/Ad Campaign for <a href="https://vjobfair.org.mk/"><b>Job Fair</b></a>, hosted by the non-profit and non-political international Student Organisation BEST.',
         GVInfo: 'Shot on cassette tape with old Sony Camcorder in Prilep, North Macedonia.',
 
@@ -353,9 +353,9 @@ const translations = {
         aboutPara2: 'Покрај тоа што сум студент, јас сум и freelance фотограф и кинематограф базиран во <b>Скопје, Македонија</b>.',
         aboutPara3: 'Сликам Портрети и Пејсажи, но мојот главен фокус се Настани и Концерти.',
         aboutPara4: 'Доколку ви се допаѓа мојата работа, слободно <a href="#contact"><b>контактирајте ме</b></a> или испратете ми порака на <a href="https://instagram.com/vasosofuji"><b>instagram!</b></a>',
-        aboutPara12: '<b>Соработки со Артисти:</b> Владимир Четкар, Новиот Почеток, Marigold Box (Италија), Епидемик (Србија), Ана и Стефан Петановски, Големата Вода, Fiction, Корка и многу други.',
+        aboutPara12: '<b>Соработки со Артисти:</b> Владимир Четкар, Дупер, Marigold Box (Италија), Епидемик (Србија), Ана и Стефан Петановски, Големата Вода, Fiction, Корка и многу други.',
         aboutPara13: '<b>Соработки со Фестивали/Настани:</b> Здраво Млади, Земјотрес, Underfest, Tributefest, Сепак се Врти, Станица26, Маракана, Laboratorium, Enterprise Музичко Школо, Котур, МКЦ и повеќе.',
-        aboutPara14: '<b>Опрема:</b> Fujifilm X-T2 со 35mm F/2 и 16-50mm F/3.5-5.6 објективи.',
+        aboutPara14: '<b>Опрема:</b> Fujifilm X-T2 со 35mm F/2 и 16-50mm F/3.5-5.6 објективи // Canon 2000D со 50mm F/1.8 и 18-55mm F/3.5-5.6 објективи (Продавам)',
         aboutPara15: '<b>БЕСТ Скопје:</b> PR&SM Одговорен и главен за Промотивната Кампања за <a href="https://vjobfair.org.mk/"><b>Job Fair</b></a>, организирано од не-профитната и не-политички врзаната Интернационална Студентска Организација БЕСТ.',
         GVInfo: 'Снимено на касета со стар Sony Camcorder во Прилеп, Македонија,',
 
