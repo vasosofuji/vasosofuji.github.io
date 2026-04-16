@@ -632,6 +632,7 @@ body.gallery-page footer {
 .bento-carousel {
     padding: 0;
     background: transparent;
+    min-height: 250px; /* Fixes broken height on mobile */
 }
 
 .carousel-track {
@@ -651,6 +652,26 @@ body.gallery-page footer {
     0%, 25% { transform: translateX(0); }
     33%, 58% { transform: translateX(-33.333%); }
     66%, 91% { transform: translateX(-66.666%); }
+    100% { transform: translateX(0); }
+}
+
+/* Job Fair Specific Carousel (One by one scrolling for 5 images) */
+.jobfair-carousel .carousel-track {
+    width: 500%;
+    animation: slideJobFair 20s infinite ease-in-out;
+}
+
+.jobfair-carousel .carousel-track img {
+    width: 20%;
+    flex-shrink: 0; /* Prevents images from squishing */
+}
+
+@keyframes slideJobFair {
+    0%, 15% { transform: translateX(0); }
+    20%, 35% { transform: translateX(-20%); }
+    40%, 55% { transform: translateX(-40%); }
+    60%, 75% { transform: translateX(-60%); }
+    80%, 95% { transform: translateX(-80%); }
     100% { transform: translateX(0); }
 }
 
