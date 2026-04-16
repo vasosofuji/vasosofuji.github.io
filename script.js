@@ -1,3 +1,9 @@
+// --- GLOBAL LANGUAGE (must be at the very top so all code can reference it) ---
+let currentLang = localStorage.getItem('siteLanguage');
+if (currentLang !== 'en' && currentLang !== 'mk') {
+    currentLang = 'en'; // Forces English if memory is corrupted or empty
+}
+
 // --- Ensure page starts at top ONLY if no hash anchor ---
 window.onload = function() {
     if (!window.location.hash) {
@@ -38,7 +44,7 @@ const preloader = document.getElementById('global-preloader');
 const heroHeader = document.querySelector('header');
 
 const isFirstVisit = !sessionStorage.getItem('hasVisited');
-const preloaderDuration = isFirstVisit ? 3800 : 1500;
+const preloaderDuration = isFirstVisit ? 2500 : 1500;
 
 if (isFirstVisit) {
     sessionStorage.setItem('hasVisited', 'true');
@@ -73,11 +79,11 @@ document.querySelectorAll('.nav-links a').forEach(link => {
 });
 
 // --- CALENDAR LOGIC ---
-const MIN_MONTH = 2;
+const MIN_MONTH = 3;
 const MIN_YEAR = 2026;
 const months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
-const bookedDates = ["2026-3-20", "2026-3-21"];
-const bookedEvents = {"2026-3-20": "LoveRave Festival - MKC", "2026-3-21": "Pope Cafe Opening"};
+const bookedDates = ["2026-4-9", "2026-4-17"];
+const bookedEvents = {"2026-4-9": "PLUND - Birthday Event", "2026-4-17": "Job Fair - Team Regroup"};
 
 let currentMonth = MIN_MONTH;
 let currentYear = MIN_YEAR;
@@ -281,7 +287,6 @@ window.addEventListener('pageshow', function(event) {
 // --- LANGUAGE TOGGLE & TRANSLATIONS ---
 const langToggle = document.getElementById('langToggle');
 const langFlag = document.querySelector('.lang-flag');
-let currentLang = localStorage.getItem('siteLanguage') || 'en';
 
 const translations = {
     en: {
@@ -295,15 +300,14 @@ const translations = {
         getInTouch: 'Get in Touch',
         aboutTitle: 'About Me',
         whoAmI: 'Who am I',
-        collaborationsGear: 'Collaborations & Gear',
-        aboutPara1: 'I\'m Mateja Vasojevikj, also known as <b>vasosofuji</b>, a 19 year old Cybersecurity Student at Faculty of Computer Science and Engineering at "Sts. Cyril and Methodius" University.',
-        aboutPara2: 'On top of being a student, I\'m also a freelance photographer and cinematographer based in <b>Skopje, North Macedonia</b>.',
-        aboutPara3: 'I shoot Portraits and Landscapes, but my primary focus is on Events and Concerts.',
-        aboutPara4: 'If you like any of my work, feel free to <a href="#contact"><b>contact me</b></a> or message me on <a href="https://instagram.com/vasosofuji"><b>instagram!</b></a>',
-        aboutPara12: '<b>Artist Collaborations:</b> Vladimir Chetkar, Duper, Marigold Box (Italy), Epidemik (RS), Ana & Stefan Petanovski, Golemata Voda, Fiction, Korka and many more.',
-        aboutPara13: '<b>Festival/Event Collaborations:</b> Zdravo Mladi, Zemjotres, Underfest, Tributefest, Sepak Se Vrti, Stanica26, Marakana, Laboratorium, Enterprise Music School, Kotur, MKC and more.',
-        aboutPara14: '<b>Gear:</b> Fujifilm X-T2 with 35mm F/2 and 16-50mm F/3.5-5.6 lenses // Canon 2000D with 50mm F/1.8 and 18-55mm F/3.5-5.6 lenses (For sale)',
-        aboutPara15: '<b>BEST Skopje:</b> PR&SM Responsible and head of Promotional Material/Ad Campaign for <a href="https://vjobfair.org.mk/"><b>Job Fair</b></a>, hosted by the non-profit and non-political international Student Organisation BEST.',
+        collaborationsGear: 'Collaborations & Experience',
+        aboutPara1: 'I\'m Mateja Vasojevikj, also known as <b>vasosofuji</b>, a 19 year old Cybersecurity Student at Faculty of Computer Science and Engineering at "St. Cyril and Methodius" University.',
+        aboutPara2: 'On top of being a student, I\'m also a freelance photographer and cinematographer based in <b>Skopje, North Macedonia.</b>',
+        aboutPara4: 'If you like any of my work, feel free to <a href="#contact"><b>contact me</b></a> or message me on <a href="https://instagram.com/vasosofuji" target="_blank"><b>instagram!</b></a>',
+        aboutPara12: '<b>Artist Collaborations:</b>  I\'ve collaborated with many famous artists such as Vladimir Chetkar, Fiction, Marigold Box (Italy), Korka and <a href="collaborations.html"><b style="color: #a4fcdd">many more!</b></a>',
+        aboutPara13: '<b>Festival/Event Collaborations:</b> On top of collaborating with artists, I\'ve worked with a large amount of <a href="collaborations.html"><b style="color: #a4fcdd">venues and organisations.</b></a>',
+        aboutPara15: '<b>BEST Skopje:</b> Public Relations and Social Media Responsible and Head of Promotional Material/Ad Campaign for <a href="https://vjobfair.org.mk/" target="_blank"><b style="color: #a4fcdd">Job Fair.</b></a>',
+        ReadMore: '<a href="about.html"><b style="color: #a4fcdd">Read More...</b></a>',
         GVInfo: 'Shot on cassette tape with old Sony Camcorder in Prilep, North Macedonia.',
 
         // Video Page Translations
@@ -314,6 +318,18 @@ const translations = {
         ExpectationsInfo: 'Short Sitcom-Inspired Ad (Job Fair 2026)',
         Apliciraj: 'Apply without stress',
         AplicirajInfo: 'Short Cinematic Ad (Job Fair 2026)',
+        GolemotoPromoTitle: 'Teaser Promotion',
+        GolemotoPromoDisc: 'Short Promo for Upcoming Concert by Golemata Voda',
+        QRCodeTitle: 'QR Code Teaser',
+        QRCodeDisc: 'Short Reel Teasing Job Fair',
+        OOTitle: 'Official Opening',
+        OODisc: 'Video of the Official Opening for Job Fair',
+        RedbullTitle: 'RedBull 3x3 Dunk Halftime',
+        RedbullDisc: 'The Halftime Show by Dunking Devils',
+        MarigoldTitle: 'Marigold Concert Promotion',
+        MarigoldDisc: 'Italian Band Promotion',
+
+
 
         emailPlaceholder: 'Email',
         datePlaceholder: 'Date',
@@ -331,11 +347,29 @@ const translations = {
         myAvailability: 'My Availability',
         contactMe: 'Contact Me',
         bookedDay: '<span class="booked-legend-dot"></span> = Booked Day',
+        // About page new sections
+        AboutTitle: 'Behind the Lens',
+        AboutBio: "I'm a college student balancing my academic career with my love for creativity.<br>My creative expression is done through my assortment of hobbies, which include music, photography, cinematography, programming and more. <br><br> - Photography: I've been a photographer for 2 years now and have made some incredible memories doing it. I've travelled to different cities, I've met the kindest people and I've had the best beer talks. Photography has given me the ability to express my style and viewpoint of the world, as well as make small moments last forever. <br><br> - Cinematography: As any other person with a camera, I also love recording videos, whether it's short-form advertisements or long-form interviews. I aspire to record a short movie when I have more free time in the future.<br><br> - Programming: At the end of the day I am still a student trying to study and get into the field of cybersecurity. This site is a great example of my IT side, as I've spent I don't even know how many hours and days into it.",
+        MyGear: 'My Gear',
+        CurrentProjects: 'Latest shoot: LoveRave Festival',
+        ProjectDesc: "Festival where I got invited to photograph a bunch of the local bands I love.<br>Great energy, great atmosphere and amazing performances!<br>There were also countless DJ's were doing their thing on another stage absolutely killing it.",
+        JobFairTitle: 'Job Fair 2026 — BEST Skopje',
+        JobFairDesc: "As PR&amp;SM Responsible for Job Fair 2026, I led the full promotional campaign for the event: Video advertisements, LinkedIn Posts, Instagram Posts and I was even on TV! (3 Times)<br><br>The event itself is hosted by BEST Skopje, but the Job Fair Team are the ones that make it their own event. It was a great experience working with my team, as well as a great learning experience in terms of writing scripts, scenes, shooting and putting it all together.<br><br>Best part were the videos promoting the event as well as the advertisements I made for the sponsors who helped fund the whole project.",
+        CollabsCTATitle: '<b>All Collaborations</b>',
+        CollabsCTADesc: "Artists, venues, festivals & organisations I've worked with",
+        ShoutoutLabel: 'Listen to this Band',
+        ShoutoutBand: 'Golemata Voda',
+        ShoutoutText: "A band which has been with me from the very start. Not only are they an incredible band and musicians, but they're also amazing friends. If you don't know them yet, click the album cover →",
+
         flagImg: 'misc/uk-flag.png',
 
         // Validation Messages
         fillReq: 'Please fill out this field.',
-        emailReq: 'Please enter a valid email address.'
+        emailReq: 'Please enter a valid email address.',
+        CollabArtist: 'Artist Collaborations',
+        CollabVenues: 'Venues',
+        CollabFestivals: 'Festivals & Events'
+
     },
     mk: {
         // ... (Existing)
@@ -348,15 +382,14 @@ const translations = {
         getInTouch: 'Контактирај Ме',
         aboutTitle: 'За Мене',
         whoAmI: 'Кој сум јас',
-        collaborationsGear: 'Соработки и Опрема',
-        aboutPara1: 'Јас сум Матеја Васојевиќ, познат како <b>vasosofuji</b>, 19 годишен студент по Сајбер Безбедност на Факултет за информатички науки и компјутерско инженерство на Универзитетот "Св. Кирил и Методиј".',
-        aboutPara2: 'Покрај тоа што сум студент, јас сум и freelance фотограф и кинематограф од <b>Скопје, Македонија</b>.',
-        aboutPara3: 'Сликам Портрети и Пејсажи, но мојот главен фокус се Настани и Концерти.',
-        aboutPara4: 'Доколку ви се допаѓа мојата работа, слободно <a href="#contact"><b>контактирајте ме</b></a> или испратете ми порака на <a href="https://instagram.com/vasosofuji"><b>instagram!</b></a>',
-        aboutPara12: '<b>Соработки со Артисти:</b> Владимир Четкар, Дупер, Marigold Box (Италија), Епидемик (Србија), Ана и Стефан Петановски, Големата Вода, Fiction, Корка и многу други.',
-        aboutPara13: '<b>Соработки со Фестивали/Настани:</b> Здраво Млади, Земјотрес, Underfest, Tributefest, Сепак се Врти, Станица26, Маракана, Laboratorium, Enterprise Музичко Школо, Котур, МКЦ и повеќе.',
-        aboutPara14: '<b>Опрема:</b> Fujifilm X-T2 со 35mm F/2 и 16-50mm F/3.5-5.6 објективи // Canon 2000D со 50mm F/1.8 и 18-55mm F/3.5-5.6 објективи (За Продажба)',
-        aboutPara15: '<b>БЕСТ Скопје:</b> PR&SM Одговорен и главен за Промотивната Кампања за <a href="https://vjobfair.org.mk/"><b>Job Fair</b></a>, организирано од не-профитната и не-политички врзаната Интернационална Студентска Организација БЕСТ.',
+        collaborationsGear: 'Соработки и Искуство',
+        aboutPara1: 'Јас сум Матеја Васојевиќ, познат како <b>vasosofuji</b>, 19 годишен студент по Сајбер Безбедност на Факултетот за информатички науки и компјутерско инженерство - Универзитет "Св. Кирил и Методиј".',
+        aboutPara2: 'Покрај тоа што сум студент, јас сум и freelance фотограф и кинематограф од <b>Скопје, Македонија.</b>',
+        aboutPara4: 'Доколку ви се допаѓа мојата работа, слободно <a href="#contact"><b>контактирајте ме</b></a> или испратете ми порака на <a href="https://instagram.com/vasosofuji" target="_blank"><b>instagram!</b></a>',
+        aboutPara12: '<b>Соработки со Артисти:</b> Имам соработувано со голем број познати артисти како Владимир Четкар, Fiction, Marigold Box (Italy), Корка и <a href="collaborations.html"><b style="color: #a4fcdd">многу други!</b></a>',
+        aboutPara13: '<b>Соработки со Фестивали/Настани:</b> Освен моите соработки со индивидуални артисти, имам соработувано и со голем број <a href="collaborations.html"><b style="color: #a4fcdd">организации.</b></a>',
+        aboutPara15: '<b>БЕСТ Скопје:</b> Одговорен за Односи со Јавноста и Социјални Медиуми како и главен за Промотивната Кампања за <a href="https://vjobfair.org.mk/" target="_blank"><b style="color: #a4fcdd">Job Fair.</b></a>',
+        ReadMore: '<a href="about.html"><b style="color: #a4fcdd">Прочитај Повеќе...</b></a>',
         GVInfo: 'Снимено на касета со стар Sony Camcorder во Прилеп, Македонија,',
 
         // Video Page Translations
@@ -367,6 +400,16 @@ const translations = {
         ExpectationsInfo: 'Кратка Комична Реклама (Job Fair 2026)',
         Apliciraj: 'Аплицирај Без Стрес',
         AplicirajInfo: 'Кратка Кинематична Реклама (Job Fair 2026)',
+        GolemotoPromoTitle: 'Тизер Промоција',
+        GolemotoPromoDisc: 'Кратка видео промоција за Концерт на Големата Вода',
+        QRCodeTitle: 'QR Код Тизер',
+        QRCodeDisc: 'Краток тизер Reel за Job Fair',
+        OOTitle: 'Официјално Отварање',
+        OODisc: 'Видео од Официјалното Отварање на Job Fair',
+        RedbullTitle: 'Редбул 3x3 Dunk Полувреме',
+        RedbullDisc: 'Полувременското шоу на Dunking Devils',
+        MarigoldTitle: 'Marigold Концертна Промоција',
+        MarigoldDisc: 'Промоција на Италијанскиот бенд',
 
         emailPlaceholder: 'Е-мејл',
         datePlaceholder: 'Дата',
@@ -384,11 +427,30 @@ const translations = {
         myAvailability: 'Достапност',
         contactMe: 'Контактирај Ме',
         bookedDay: '<span class="booked-legend-dot"></span> = Зафатен Ден',
+        // About page new sections
+        AboutTitle: 'Зад Објективот',
+        AboutBio: "Јас сум студент кој наоѓа баланс помеѓу мојата академска кариера и љубовта кон креативноста.<br>Мојот креативен израз доаѓа преку избор на различни хобија, кои вклучуваат музика, фотографија, кинематографија, програмирање и многу повеќе.<br><br> - Фотографија: Фотографирам веќе две години и преку неа создадов неверојатни спомени. Патував во различни градови, запознав прекрасни луѓе и имав најинтересни муабети. Фотографијата ми ја даде способноста да го изразам мојот стил и поглед кон светот и да направам малите моменти да траат вечно.<br><br> - Кинематографија: Како и секој друг што поседува камера, обожавам да снимам видеа - без разлика дали тоа се кратки реклами или долги интервјуа. Моја желба е да снимам краток филм во иднина.<br><br> - Програмирање: На крајот на денот, јас сум сепак студент кој се труди да ги совлада студиите. Оваа веб-страница е пример за мојата ИТ страна, бидејќи во неа вложив безброј часови и денови.",
+        MyGear: 'Моја Опрема',
+        CurrentProjects: 'Последно сликање: LoveRave Фестивал',
+        ProjectDesc: "Фестивал каде бев поканет да фотографирам голем број локални бендови.<br>Предобра енергија, уште подобра атмосфера и неверојатни настапи!<br>Исто така имаше и голем репертоар на DJ-ови коишто беа предобри.",
+        JobFairTitle: 'Job Fair 2026 — BEST Скопје',
+        JobFairDesc: "Како PR&SM Одговорен за Job Fair 2026, ја водев целата промотивна кампања: Видео реклами, LinkedIn постови, Инстаграм постови и бев на телевизија! (3 пати)<br><br>Самиот настан е организиран од БЕСТ Скопје, но тимот за Џоб Фер се тие што го прават настанот да е нивен. Искуството беше многу забавно, но исто така ме научи доста работи во однос на пишување скрипти, сцени, снимање и монтирање на сето тоа.<br><br>Најинтересни беа видеата што ги направивме за рекламирање на настанот како и видеата за спонзорите што помогнаа да се реализира сето ова.",
+        CollabsCTATitle: '<b>Сите Соработки</b>',
+        CollabsCTADesc: "Артисти, места, фестивали и организации со кои сум работел",
+        ShoutoutLabel: 'Слушни го Бендов',
+        ShoutoutBand: 'Големата Вода',
+        ShoutoutText: "Бенд кој е со мене од самиот почеток. Не само што се предобар бенд и музичари, туку исто така се предобри пријатели. Ако сеуште не ги знаеш, кликни на албумот →",
+
         flagImg: 'misc/mk-flag.png',
 
         // Validation Messages
         fillReq: 'Ве молиме пополнете го ова поле.',
-        emailReq: 'Ве молиме внесете валидна е-мејл адреса.'
+        emailReq: 'Ве молиме внесете валидна е-мејл адреса.',
+
+        CollabArtist: 'Соработки со Артисти',
+        CollabVenues: 'Места/Локации',
+        CollabFestivals: 'Фестивали и Настани'
+
     }
 };
 
@@ -456,4 +518,8 @@ if (langToggle) {
     });
 }
 
-updateLanguage(currentLang);
+// Apply saved language as soon as the DOM is ready on every page load.
+// DOMContentLoaded ensures this always runs even if earlier code threw.
+document.addEventListener('DOMContentLoaded', () => {
+    updateLanguage(currentLang);
+});

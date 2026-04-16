@@ -5,125 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Videos | vasosofuji</title>
     <link rel="stylesheet" href="style.css">
-    <style>
-        /* Reduce spacing around title */
-        .sub-header {
-            padding: 2rem 0 0.5rem 0;
-            margin-bottom: 0.5rem;
-        }
-
-        /* Custom styling for video grid */
-        .video-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-            gap: 2rem;
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 0.5rem 2rem 2rem 2rem;
-        }
-
-        .video-card {
-            background: var(--card-bg);
-            border-radius: 12px;
-            overflow: hidden;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
-            position: relative;
-            max-width: 350px;
-            margin: 0 auto;
-        }
-
-        .video-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.5);
-        }
-
-        .video-thumbnail {
-            position: relative;
-            width: 100%;
-            aspect-ratio: 4/5; /* Shorter than full reel ratio */
-            overflow: hidden;
-            cursor: pointer;
-        }
-
-        .video-thumbnail img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            transition: transform 0.3s ease;
-        }
-
-        .video-card:hover .video-thumbnail img {
-            transform: scale(1.05);
-        }
-
-        .play-overlay {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            width: 80px;
-            height: 80px;
-            background: rgba(0, 0, 0, 0.7);
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: background 0.3s ease;
-        }
-
-        .video-card:hover .play-overlay {
-            background: var(--accent);
-        }
-
-        .play-overlay::after {
-            content: '';
-            width: 0;
-            height: 0;
-            border-left: 25px solid white;
-            border-top: 15px solid transparent;
-            border-bottom: 15px solid transparent;
-            margin-left: 5px;
-        }
-
-        .video-info {
-            padding: 1rem;
-        }
-
-        .video-info h4 {
-            color: var(--text-main);
-            margin: 0 0 0.5rem 0;
-            font-size: 1.1rem;
-        }
-
-        .video-info p {
-            color: var(--text-muted);
-            margin: 0;
-            font-size: 0.9rem;
-        }
-
-        .instagram-link {
-            display: inline-flex;
-            align-items: center;
-            gap: 0.5rem;
-            color: var(--accent);
-            text-decoration: none;
-            margin-top: 0.5rem;
-            font-size: 0.9rem;
-            transition: opacity 0.3s ease;
-        }
-
-        .instagram-link:hover {
-            opacity: 0.8;
-        }
-
-        @media (max-width: 768px) {
-            .video-grid {
-                grid-template-columns: 1fr;
-                padding: 1rem;
-            }
-        }
-    </style>
 </head>
 <body>
 
@@ -138,9 +19,9 @@
 <nav>
     <a href="index.html" class="logo">vasosofuji</a>
     <div class="nav-links">
-        <a href="index.html#about" class="nav-item" data-translate="aboutMe">About Me</a>
+        <a href="about.html" class="nav-item" data-translate="aboutMe">About Me</a>
         <a href="gallery.html" class="nav-item" data-translate="gallery">Gallery</a>
-        <a href="#" class="nav-item" data-translate="videos">Videos</a>
+        <a href="#" class="nav-item nav-active" data-translate="videos">Videos</a>
         <a href="index.html#contact" class="nav-item" data-translate="contact">Contact</a>
         <div class="nav-icons-row">
             <a href="https://instagram.com/vasosofuji" class="social-link"><img src="misc/instalogo.png"></a>
@@ -201,6 +82,80 @@
             <div class="video-info">
                 <h4 data-translate="Apliciraj">Apply without stress</h4>
                 <p data-translate="AplicirajInfo">Short Cinematic Ad (Job Fair 2026)</p>
+                <span class="instagram-link">
+                    Watch on Instagram →
+                </span>
+            </div>
+        </a>
+
+
+
+        <a href="https://www.instagram.com/p/DVBbkd6iH7g/" target="_blank" class="video-card" style="text-decoration: none;">
+            <div class="video-thumbnail">
+                <img src="misc/qrcode.jpg" alt="Job Fair QR Code">
+                <div class="play-overlay"></div>
+            </div>
+            <div class="video-info">
+                <h4 data-translate="QRCodeTitle">QR Code Teaser</h4>
+                <p data-translate="QRCodeDisc">Short Reel Teasing Job Fair</p>
+                <span class="instagram-link">
+                    Watch on Instagram →
+                </span>
+            </div>
+        </a>
+
+        <a href="https://www.instagram.com/reel/DWRRduViK8i/?igsh=MWk0MjVvazhvendrNg==" target="_blank" class="video-card" style="text-decoration: none;">
+            <div class="video-thumbnail">
+                <img src="misc/oo.jpg" alt="Job Fair QR Code">
+                <div class="play-overlay"></div>
+            </div>
+            <div class="video-info">
+                <h4 data-translate="OOTitle">Official Opening</h4>
+                <p data-translate="OODisc">Video of the Official Opening for Job Fair</p>
+                <span class="instagram-link">
+                    Watch on Instagram →
+                </span>
+            </div>
+        </a>
+
+        <a href="https://www.instagram.com/reel/DK9_y7fKoVE/?igsh=MWp5dGIzMXc0Mnc1Zw==" target="_blank" class="video-card" style="text-decoration: none;">
+            <div class="video-thumbnail">
+                <img src="misc/dunk.png" alt="Job Fair QR Code">
+                <div class="play-overlay"></div>
+            </div>
+            <div class="video-info">
+                <h4 data-translate="RedbullTitle">RedBull 3x3 Dunk Halftime</h4>
+                <p data-translate="RedbullDisc">The Halftime Show by Dunking Devils</p>
+                <span class="instagram-link">
+                    Watch on Instagram →
+                </span>
+            </div>
+        </a>
+
+        <a href="https://www.instagram.com/reel/DGtVwNZoE-F/?igsh=eGVqNjNwY2FmZjEw" target="_blank" class="video-card" style="text-decoration: none;">
+            <div class="video-thumbnail">
+                <img src="misc/marigold.png" alt="Job Fair QR Code">
+                <div class="play-overlay"></div>
+            </div>
+            <div class="video-info">
+                <h4 data-translate="MarigoldTitle">Marigold Concert Promotion</h4>
+                <p data-translate="MarigoldDisc">Italian Band Promotion</p>
+                <span class="instagram-link">
+                    Watch on Instagram →
+                </span>
+            </div>
+        </a>
+
+
+
+        <a href="https://www.instagram.com/p/DWyv_gol_L-/?img_index=2" target="_blank" class="video-card" style="text-decoration: none;">
+            <div class="video-thumbnail">
+                <img src="misc/gvvid.jpg" alt="Golemata Voda Promo">
+                <div class="play-overlay"></div>
+            </div>
+            <div class="video-info">
+                <h4 data-translate="GolemotoPromoTitle">Teaser Promotion</h4>
+                <p data-translate="GolemotoPromoDisc">Short Promo for Upcoming Concert by Golemata Voda</p>
                 <span class="instagram-link">
                     Watch on Instagram →
                 </span>

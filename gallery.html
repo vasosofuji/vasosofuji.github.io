@@ -5,8 +5,31 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Gallery | vasosofuji</title>
     <link rel="stylesheet" href="style.css">
+
+
+    <style>
+        body {
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        #gallery-hub {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            padding-bottom: 2rem;
+        }
+
+        footer {
+            margin-top: auto;
+        }
+    </style>
+
+
 </head>
-<body>
+<body class="gallery-page">
 
 <div id="global-preloader">
     <div class="loader">
@@ -19,8 +42,8 @@
 <nav>
     <a href="index.html" class="logo">vasosofuji</a>
     <div class="nav-links">
-        <a href="index.html#about" class="nav-item" data-translate="aboutMe">About Me</a>
-        <a href="#" class="nav-item" data-translate="gallery">Gallery</a>
+        <a href="about.html" class="nav-item" data-translate="aboutMe">About Me</a>
+        <a href="#" class="nav-item nav-active" data-translate="gallery">Gallery</a>
         <a href="videos.html" class="nav-item" data-translate="videos">Videos</a>
         <a href="index.html#contact" class="nav-item" data-translate="contact">Contact</a>
         <div class="nav-icons-row">
