@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Collaborations | vasosofuji</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="stylesheet"
+        href="https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500&family=Montserrat:wght@900&family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Syne:wght@600;800&display=swap">
+    <link rel="stylesheet" href="style.css">
+    <link rel="icon" type="image/x-icon" href="favicon.ico">
+    <script>
+        if (sessionStorage.getItem('hasVisited')) {
+            document.documentElement.classList.add('not-first-visit');
+        }
+    </script>
+</head>
+<body>
+
+<div id="global-preloader">
+    <div class="preloader-curtain">
+        <canvas class="loader-sequence"></canvas>
+        <div class="loader-text-logo">vasosofuji</div>
+    </div>
+</div>
+
+<div id="react-navbar"></div>
+
+<div class="collabs-page-grid">
+
+    <div class="collabs-category full-width">
+        <h2 data-translate="CollabArtist">Artist Collaborations</h2>
+        <div class="collab-tags">
+            <span class="collab-tag">Golemata Voda</span>
+            <span class="collab-tag">Korka</span>
+            <span class="collab-tag">Sunneater</span>
+            <span class="collab-tag">Perseida</span>
+            <span class="collab-tag">Zhivotni</span>
+            <span class="collab-tag">Kaliko</span>
+            <span class="collab-tag">Chlen16</span>
+            <span class="collab-tag">Vladimir Chetkar</span>
+            <span class="collab-tag">Duper</span>
+            <span class="collab-tag">Marigold Box (Italy)</span>
+            <span class="collab-tag">Epidemik (RS)</span>
+            <span class="collab-tag">Ana Petanovska</span>
+            <span class="collab-tag">Stefan Petanovski</span>
+            <span class="collab-tag">Fiction</span>
+            <span class="collab-tag">KEM</span>
+            <span class="collab-tag">Vagina Corporation</span>
+            <span class="collab-tag">Kokiche</span>
+            <span class="collab-tag">Pepel</span>
+            <span class="collab-tag">Posleden Udar</span>
+            <span class="collab-tag">Trendkill</span>
+            <span class="collab-tag">Kamene Kare (RS)</span>
+            <span class="collab-tag">GWASS</span>
+            <span class="collab-tag">The Pot</span>
+            <span class="collab-tag">Eritra</span>
+            <span class="collab-tag">Mrsha</span>
+            <span class="collab-tag">LSD During War</span>
+            <span class="collab-tag">Noviot Pochetok</span>
+            <span class="collab-tag">Zanadu</span>
+            <span class="collab-tag">Eruption</span>
+            <span class="collab-tag">Red 18</span>
+            <span class="collab-tag">Dimish</span>
+        </div>
+    </div>
+
+    <div class="collabs-category">
+        <h2 data-translate="CollabFestivals">Festivals &amp; Events</h2>
+        <div class="collab-tags">
+            <span class="collab-tag">Zdravo Mladi</span>
+            <span class="collab-tag">Zemjotres</span>
+            <span class="collab-tag">Underfest</span>
+            <span class="collab-tag">Tributefest</span>
+            <span class="collab-tag">Sepak Se Vrti</span>
+            <span class="collab-tag">Restart</span>
+            <span class="collab-tag">Job Fair 2026</span>
+            <span class="collab-tag">Imagine</span>
+            <span class="collab-tag">PIN</span>
+            <span class="collab-tag">Enterprise Music School</span>
+        </div>
+    </div>
+
+    <div class="collabs-category">
+        <h2 data-translate="CollabVenues">Venues</h2>
+        <div class="collab-tags">
+            <span class="collab-tag">Laboratorium</span>
+            <span class="collab-tag">Kotur</span>
+            <span class="collab-tag">MKC</span>
+            <span class="collab-tag">Havana</span>
+            <span class="collab-tag">Stanica26</span>
+            <span class="collab-tag">Marakana</span>
+            <span class="collab-tag">Minus Eden</span>
+            <span class="collab-tag">Dze Pub</span>
+            <span class="collab-tag">Dunja SC</span>
+            <span class="collab-tag">Micasa Cafe</span>
+            <span class="collab-tag">Marko Cepenkov (Prilep)</span>
+        </div>
+    </div>
+
+</div>
+<a href="about.html" class="back-to-about">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+    Back to About Me
+</a>
+<footer>
+    <p data-translate="footerText" data-html>&copy; 2026 Mateja Vasojevikj (vasosofuji). All rights reserved.</p>
+    <p style="margin-top: 0.5rem;">
+        <a href="mailto:vasosofuji@gmail.com" style="color: var(--accent); text-decoration: none;">vasosofuji@gmail.com</a>
+    </p>
+</footer>
+
+<script type="module" src="script.js"></script>
+<script type="module" src="/src/main.tsx"></script>
+</body>
+</html>

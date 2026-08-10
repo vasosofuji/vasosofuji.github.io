@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>vasosofuji</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="stylesheet"
+        href="https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500&family=Montserrat:wght@900&family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Syne:wght@600;800&display=swap">
+    <link rel="stylesheet" href="style.css">
+    <link rel="icon" type="image/x-icon" href="favicon.ico">
+    <link rel="image_src" href="misc/display.png" />
+    <meta name="twitter:image" property="og:image" content="misc/display.png" />
+    <script>
+        if (sessionStorage.getItem('hasVisited')) {
+            document.documentElement.classList.add('not-first-visit');
+        }
+    </script>
+</head>
+
+<body>
+
+    <div id="react-global-bg" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -3;"></div>
+
+    <div id="global-preloader">
+        <div class="preloader-curtain">
+            <canvas class="loader-sequence"></canvas>
+            <div class="loader-text-logo">vasosofuji</div>
+        </div>
+    </div>
+
+    <div id="react-navbar"></div>
+
+    <div id="page-wrapper" style="overflow-x: hidden; width: 100%; position: relative;">
+
+        <header id="parallax-header" style="position: relative;">
+            <div id="react-hero-bg"
+                style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; pointer-events: none; background: var(--bg-color);">
+            </div>
+            <div class="parallax-floating-container" id="parallax-container">
+                <div class="floating-el" data-depth="1.5" style="top: 2%; left: -2%;">
+                    <img src="photos/landscapes/IMG_8896.jpg" decoding="async" alt="Float 1">
+                </div>
+                <div class="floating-el" data-depth="3" style="top: 18%; left: 22%;">
+                    <img src="photos/portraits/IMG_5233.jpg" decoding="async" alt="Float 2">
+                </div>
+                <div class="floating-el" data-depth="0.8" style="top: 4%; left: 42%;">
+                    <img src="photos/landscapes/blurryasfuck.jpg" decoding="async" alt="Float 5">
+                </div>
+                <div class="floating-el" data-depth="4" style="top: 8%; left: 85%;">
+                    <img src="photos/portraits/IMG_5186.jpg" decoding="async" alt="Float 4">
+                </div>
+
+                <div class="floating-el" data-depth="2" style="top: 25%; left: 10%;">
+                    <img src="photos/concerts/Untitled-13.jpg" decoding="async" alt="Float 3">
+                </div>
+                <div class="floating-el" data-depth="0.5" style="top: 48%; left: 2%;">
+                    <img src="photos/portraits/DSCF0950.jpg" decoding="async" alt="Float 6">
+                </div>
+                <div class="floating-el" data-depth="1.2" style="top: 15%; left: 75%;">
+                    <img src="photos/portraits/DSCF7475.jpg" decoding="async" alt="Float 7">
+                </div>
+                <div class="floating-el" data-depth="0.4" style="top: 32%; left: 95%;">
+                    <img src="photos/concerts/kork.jpg" decoding="async" alt="Float 8">
+                </div>
+
+                <div class="floating-el" data-depth="2.5" style="top: 65%; left: -2%;">
+                    <img src="photos/portraits/DSCF0977.jpg" decoding="async" alt="Float 9">
+                </div>
+                <div class="floating-el" data-depth="1" style="top: 88%; left: 28%;">
+                    <img src="photos/concerts/loverave2.jpg" decoding="async" alt="Float 10">
+                </div>
+                <div class="floating-el" data-depth="3.5" style="top: 52%; left: 82%;">
+                    <img src="photos/landscapes/IMG_88967.jpg" decoding="async" alt="Float 11">
+                </div>
+                <div class="floating-el" data-depth="2" style="top: 65%; left: 94%;">
+                    <img src="photos/portraits/IMG_5213.jpg" decoding="async" alt="Float 12">
+                </div>
+
+                <div class="floating-el" data-depth="4" style="top: 82%; left: 5%;">
+                    <img src="photos/concerts/sickabass.jpg" decoding="async" alt="Float 13">
+                </div>
+                <div class="floating-el" data-depth="1.8" style="top: 92%; left: 55%;">
+                    <img src="photos/landscapes/IMG_8635.jpg" decoding="async" alt="Float 14">
+                </div>
+                <div class="floating-el" data-depth="2.2" style="top: 85%; left: 82%;">
+                    <img src="photos/portraits/IMG_9828.jpg" decoding="async" alt="Float 15">
+                </div>
+                <div class="floating-el" data-depth="1.5" style="top: 75%; left: 90%;">
+                    <img src="photos/concerts/Untitled-15.jpg" decoding="async" alt="Float 16">
+                </div>
+            </div>
+
+            <div class="hero-content-wrapper">
+                <span class="hero-subtitle" data-translate="photographyBy">photography by</span>
+                <h1>vasosofuji</h1>
+                <p class="hero-desc" data-translate="heroDesc">
+                    Матеја Васојевиќ
+                </p>
+                <a href="#contact" class="btn" data-translate="getInTouch">Get in Touch</a>
+            </div>
+        </header>
+
+        <!-- Parallax Scroll Animation Section -->
+        <section id="parallax-scroll-section" class="w-full bg-black">
+            <div id="react-parallax-gallery"></div>
+        </section>
+
+        <section id="portraits">
+            <div id="react-heading-portraits"></div>
+            <div id="react-carousel-portraits"></div>
+        </section>
+
+        <section id="concerts">
+            <div id="react-heading-concerts"></div>
+            <div id="react-carousel-concerts"></div>
+        </section>
+
+        <section id="landscapes">
+            <div id="react-heading-landscapes"></div>
+            <div id="react-carousel-landscapes"></div>
+        </section>
+
+        <section id="videos" class="cinematic-video-section">
+            <!-- Source is attached by script.js once the section nears the
+                 viewport. Eagerly autoplaying this pulled ~11 MB on every
+                 home-page load, from a section most visitors never reach. -->
+            <video class="cinematic-bg-video" loop muted playsinline preload="none"
+                data-src="misc/Perseida Spot.mp4" data-type="video/mp4"></video>
+
+            <!-- Gradient Overlay for Seamless Text Legibility -->
+            <div class="cinematic-overlay"></div>
+
+            <div id="react-heading-videos-outline" class="cinematic-content-outline"></div>
+
+            <!-- Background Filled Heading (decoupled for independent z-index layering) -->
+            <div class="cinematic-content-left t-stagger">
+                <div id="react-heading-videos" class="overlay-heading t-stagger-line t-stagger-line--1"></div>
+            </div>
+
+            <!-- Content Container Anchored to the Edges -->
+            <div class="cinematic-content">
+                <!-- Right Aligned Context -->
+                <div class="cinematic-content-right t-stagger">
+                    <p class="cinematic-description t-stagger-line t-stagger-line--2"
+                        data-translate="videoDescPerseida">
+                        A film-like music video shot for the band Perseida
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Availability & Booking Grid -->
+        <section id="contact" class="availability-contact-wrap">
+            <div class="section-header" style="text-align: center; margin-bottom: 0.5rem;">
+                <div id="react-heading-booking"></div>
+            </div>
+
+            <div class="calendar-center-wrapper">
+                <div class="calendar-container">
+                    <div class="calendar-header">
+                        <span class="month-year" id="monthYearDisplay"></span>
+                        <div class="nav-arrows">
+                            <span class="arrow left" id="prevMonth">←</span>
+                            <span class="arrow right" id="nextMonth">→</span>
+                        </div>
+                    </div>
+
+                    <div class="weekdays">
+                        <div data-translate="weekdaySun">Sun</div>
+                        <div data-translate="weekdayMon">Mon</div>
+                        <div data-translate="weekdayTue">Tue</div>
+                        <div data-translate="weekdayWed">Wed</div>
+                        <div data-translate="weekdayThu">Thu</div>
+                        <div data-translate="weekdayFri">Fri</div>
+                        <div data-translate="weekdaySat">Sat</div>
+                    </div>
+
+                    <div class="calendar-grid" id="calendarGrid">
+                    </div>
+
+                    <p class="calendar-legend" data-translate="bookedDay" data-html
+                        style="display: flex; align-items: center; justify-content: center; gap: 8px;"><img
+                            src="misc/loading/Sequence%200150.gif" alt="Booked"
+                            style="width: 24px; height: auto; filter: drop-shadow(0 0 2px rgba(255, 133, 51, 0.6));"> =
+                        Booked Day</p>
+                    <div id="bookingDetails" class="booking-details-container"></div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Pop-up Calendar Modal -->
+        <div id="popupCalendarModal" class="modal-overlay">
+            <div class="modal-content calendar-modal-content">
+                <span class="close-modal" id="closePopupCalendarModal">&times;</span>
+                <h3 class="modal-heading" data-translate="bookSession" style="font-size: 1.3rem; margin-bottom: 0.6rem; padding-bottom: 0;">Book a Session</h3>
+
+                <div class="calendar-container popup-calendar-container">
+                    <div class="calendar-header">
+                        <span class="month-year" id="popupMonthYearDisplay"></span>
+                        <div class="nav-arrows">
+                            <span class="arrow left" id="popupPrevMonth">←</span>
+                            <span class="arrow right" id="popupNextMonth">→</span>
+                        </div>
+                    </div>
+
+                    <div class="weekdays">
+                        <div data-translate="weekdaySun">Sun</div>
+                        <div data-translate="weekdayMon">Mon</div>
+                        <div data-translate="weekdayTue">Tue</div>
+                        <div data-translate="weekdayWed">Wed</div>
+                        <div data-translate="weekdayThu">Thu</div>
+                        <div data-translate="weekdayFri">Fri</div>
+                        <div data-translate="weekdaySat">Sat</div>
+                    </div>
+
+                    <div class="calendar-grid" id="popupCalendarGrid"></div>
+
+                    <p class="calendar-legend" data-translate="bookedDay" data-html
+                        style="display: flex; align-items: center; justify-content: center; gap: 8px;"><img
+                            src="misc/loading/Sequence%200150.gif" alt="Booked"
+                            style="width: 24px; height: auto; filter: drop-shadow(0 0 2px rgba(255, 133, 51, 0.6));"> =
+                        Booked Day</p>
+                    <div id="popupBookingDetails" class="booking-details-container"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Pop-up Booking Modal -->
+        <div id="bookingModal" class="modal-overlay">
+            <div class="modal-content">
+                <span class="close-modal" id="closeModal">&times;</span>
+                <h3 class="modal-heading" data-translate="bookingTitle">Book a Date</h3>
+                <p id="modalDateDisplay" class="modal-subheading"></p>
+
+                <form id="contact-form" action="https://formspree.io/f/mbdaobka" method="post" autocomplete="off">
+                    <!-- Formspree Subject (dynamically populated) -->
+                    <input type="hidden" name="_subject" id="formspreeSubject" value="New Booking Request">
+                    <input type="hidden" name="date" id="dateInput">
+
+                    <input type="email" name="email" placeholder="Email" required>
+
+                    <select name="event_type" id="eventTypeSelect" required>
+                        <option value="" disabled selected data-translate="selectEventType">Select Event Type</option>
+                        <option value="Concert" data-translate="optionConcert">Concert</option>
+                        <option value="Wedding" data-translate="optionWedding">Wedding</option>
+                        <option value="Birthday" data-translate="optionBirthday">Birthday</option>
+                        <option value="Portrait Shoot" data-translate="optionPortrait">Portrait Shoot</option>
+                        <option value="Commercial" data-translate="optionCommercial">Commercial / Brand</option>
+                        <option value="Other" data-translate="optionOther">Other</option>
+                    </select>
+
+                    <input type="text" name="other_event_type" id="otherEventInput"
+                        placeholder="Please specify the event" style="display: none;">
+
+                    <textarea name="message" rows="4" placeholder="Additional Notes" id="contactMessage"></textarea>
+
+                    <p id="my-form-status"></p>
+
+                    <button type="submit" class="btn" data-translate="sendMessage"
+                        style="width: 100%; opacity: 1; transform: none; box-shadow: none;">Send Message</button>
+                </form>
+            </div>
+        </div>
+
+        <footer>
+            <p data-translate="footerText" data-html>&copy; 2026 Mateja Vasojevikj (vasosofuji). All rights reserved.</p>
+            <p style="margin-top: 0.5rem;">
+                <a href="mailto:vasosofuji@gmail.com"
+                    style="color: var(--accent); text-decoration: none;">vasosofuji@gmail.com</a>
+            </p>
+        </footer>
+    </div>
+    <script type="module" src="/script.js"></script>
+    <script type="module" src="/src/main.tsx"></script>
+</body>
+
+</html>

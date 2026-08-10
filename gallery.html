@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gallery | vasosofuji</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="stylesheet"
+        href="https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500&family=Montserrat:wght@900&family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Syne:wght@600;800&display=swap">
+    <link rel="stylesheet" href="style.css">
+
+
+
+
+
+    <script>
+        if (sessionStorage.getItem('hasVisited')) {
+            document.documentElement.classList.add('not-first-visit');
+        }
+    </script>
+</head>
+<body class="gallery-page">
+
+<div id="global-preloader">
+    <div class="preloader-curtain">
+        <canvas class="loader-sequence"></canvas>
+        <div class="loader-text-logo">vasosofuji</div>
+    </div>
+</div>
+
+<div id="react-navbar"></div>
+
+<section id="gallery-hub" class="split-screen-hub">
+    <div class="split-container">
+        <!-- Portraits -->
+        <a href="portraits.html" class="split-panel">
+            <div class="split-bg">
+                <img src="photos/portraits/DSCF0977.jpg" alt="Portraits">
+            </div>
+            <div class="split-overlay"></div>
+            <div class="split-content">
+                <h2 class="gallery-title" data-translate="GalleryPortraits">Portraits</h2>
+            </div>
+        </a>
+
+        <!-- Concerts -->
+        <a href="concerts.html" class="split-panel">
+            <div class="split-bg">
+                <img src="photos/concerts/Untitled-13.jpg" alt="Concerts">
+            </div>
+            <div class="split-overlay"></div>
+            <div class="split-content">
+                <h2 class="gallery-title" data-translate="GalleryConcerts">Concerts</h2>
+            </div>
+        </a>
+
+        <!-- Landscapes -->
+        <a href="landscapes.html" class="split-panel">
+            <div class="split-bg">
+                <img src="photos/landscapes/IMG_8896.jpg" alt="Landscapes">
+            </div>
+            <div class="split-overlay"></div>
+            <div class="split-content">
+                <h2 class="gallery-title" data-translate="GalleryLandscapes">Landscapes</h2>
+            </div>
+        </a>
+    </div>
+</section>
+
+<footer>
+    <p data-translate="footerText" data-html>&copy; 2026 Mateja Vasojevikj (vasosofuji). All rights reserved.</p>
+    <p style="margin-top: 0.5rem;">
+        <a href="mailto:vasosofuji@gmail.com" style="color: var(--accent); text-decoration: none;">vasosofuji@gmail.com</a>
+    </p>
+</footer>
+<script type="module" src="script.js"></script>
+<script type="module" src="/src/main.tsx"></script>
+</body>
+</html>
