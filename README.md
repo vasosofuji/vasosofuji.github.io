@@ -32,13 +32,21 @@ Preview the built output with `npm run preview`.
 
 ## Deployment
 
-Pushing to `main` triggers `.github/workflows/deploy.yml`, which builds the site
-and publishes `dist/` to GitHub Pages.
+Primary hosting is Vercel. `vercel.json` pins the build command and output
+directory and sets cache headers: hashed files under `/assets` are immutable for
+a year, while `photos/` and `misc/` keep stable filenames so they get a day of
+freshness plus a week of stale-while-revalidate. Pushing to `main` deploys;
+pull requests get their own preview URL.
 
-This requires the repository's **Settings → Pages → Source** to be set to
-**GitHub Actions**. With the default branch-based source, Pages serves the
-repository root verbatim, `/src/main.tsx` is sent as `application/octet-stream`,
-and every React island silently fails to mount.
+`.github/workflows/deploy.yml` still publishes the same build to GitHub Pages,
+which keeps vasosofuji.github.io alive. It can be deleted once Vercel is the
+only host. Note that Pages does not serve private repositories on the free
+plan, so making this repository private disables it.
+
+Whichever host is used, the site must be served from `dist/`, never from the
+repository root — the committed `index.html` loads `/src/main.tsx`, which only
+resolves under the dev server. Served raw, it arrives as
+`application/octet-stream` and every React island silently fails to mount.
 
 ## Layout
 
