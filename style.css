@@ -636,7 +636,12 @@ h1 {
     font-weight: 700;
     font-size: clamp(2.5rem, 12vw, 8.5rem); /* Scaled down slightly but still larger than original */
     word-break: break-word;
-    margin-bottom: 0.2em; /* Fluid rhythm */
+    /* background-clip: text paints only inside the border box, and Playfair's
+       "j" descender hangs below a 1.05 line box — which sliced the tail off the
+       J in "vasosofuji". The padding extends the paint area; the margin is
+       reduced by the same amount so vertical rhythm is unchanged. */
+    padding-bottom: 0.16em;
+    margin-bottom: 0.04em;
     line-height: 1.05;
     letter-spacing: -0.02em; /* Premium editorial tracking */
     
@@ -1838,7 +1843,11 @@ section {
 
 /* Wrapper for Calendar Section */
 .availability-contact-wrap {
-    margin-top: clamp(60px, 12vw, 180px); /* Visual spacer between the video and booking sections */
+    /* Clears the video section's mask, which bleeds ~50px past its own box.
+       Was 12vw, which grew to ~173px on a 1440 display against the 64px gap
+       used between every other section — the rhythm visibly broke here. This
+       still clears the bleed at every width. */
+    margin-top: clamp(60px, 6vw, 110px);
     padding-top: 60px; /* Clean padding to position the booking heading under the navbar */
     padding-bottom: 80px;
 }
@@ -1894,9 +1903,12 @@ section {
 }
 
 .booking-details-container h3 {
-    letter-spacing: normal; /* Fix stretched out look */
+    font-family: var(--font-heading);
+    letter-spacing: -0.01em; /* Match the month above it; Syne reads stretched at 0 */
     text-align: left;
-    font-weight: 600;
+    font-weight: 700;
+    text-transform: uppercase;
+    font-size: 0.95rem !important; /* Steps below the month — this is a sub-label */
 }
 
 .event-list {
@@ -1934,11 +1946,17 @@ section {
     border-bottom: 1px solid rgba(255, 255, 255, 0.1);
 }
 
+/* The booking block runs a two-tier type system: Syne for the heading ladder
+   (BOOKING -> Book a Session -> the month -> Scheduled Events) and Geist for
+   the data underneath it (weekday labels, day numbers, event rows). The month
+   was the odd one out — body font with +1px tracking, directly under two Syne
+   headings. */
 .month-year {
+    font-family: var(--font-heading);
     font-size: 1.8rem;
-    font-weight: bold;
+    font-weight: 700;
     color: var(--accent);
-    letter-spacing: 1px;
+    letter-spacing: -0.01em;
 }
 
 .nav-arrows .arrow {
@@ -1954,16 +1972,18 @@ section {
     transform: scale(1.2);
 }
 
+/* Label row, not part of the heading ladder: small tracked-out Geist so it
+   reads as scaffolding around the numbers rather than competing with them. */
 .weekdays {
     display: grid;
     grid-template-columns: repeat(7, 1fr);
     text-align: center;
-    font-weight: bold;
+    font-weight: 600;
     color: var(--text-muted);
     margin-bottom: 15px;
-    font-size: 1rem;
+    font-size: 0.78rem;
     text-transform: uppercase;
-    letter-spacing: 1px;
+    letter-spacing: 0.14em;
 }
 
 .calendar-grid {
@@ -1978,6 +1998,9 @@ section {
     align-items: center;
     height: 60px;
     font-size: 1.1rem;
+    /* Even-width digits so the number grid lines up column to column */
+    font-variant-numeric: tabular-nums;
+    font-feature-settings: "tnum" 1;
     border-radius: 8px;
     background-color: rgba(26, 26, 26, 0.8);
     transition: background-color 0.2s ease, border-color 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease, color 0.2s ease;
@@ -2096,6 +2119,7 @@ section {
         margin-top: 15px;
         padding-top: 15px;
     }
+
 }
 
 /* --- MODAL STYLES --- */
@@ -2150,6 +2174,103 @@ section {
     padding: 10px 0 0 0;
     backdrop-filter: none;
     -webkit-backdrop-filter: none;
+}
+
+/* Popup calendar on phones.
+   This has to sit after the base modal rules rather than up with the other
+   mobile calendar tweaks — media queries add no specificity, so an equally
+   specific rule further down the file would simply win.
+
+   The modal was spending ~60px of a 390px screen on its own padding before the
+   seven-column grid even started, which left the day cells around 31px wide
+   and visibly squashed. Reclaiming that width lets the cells go square. */
+@media (max-width: 768px) {
+    .modal-content.calendar-modal-content {
+        width: 96%;
+        padding: 20px 12px 18px;
+        max-height: 88vh;
+        border-radius: 14px;
+    }
+
+    /* Two-class selectors throughout: a later `@media (max-width: 992px)` block
+       restyles .calendar-container, and media queries carry no specificity of
+       their own, so single-class rules here would simply lose to it. */
+    .calendar-modal-content .popup-calendar-container {
+        max-width: 100%;
+        padding: 4px 0 0 0;
+    }
+
+    /* The h1-h6 safety net forces min(7.5vw, 1.8rem) with !important, which
+       overrode the inline 1.3rem and wrapped "Book a Session" onto two lines. */
+    .calendar-modal-content .modal-heading {
+        display: block;
+        text-align: center;
+        font-size: 1.3rem !important;
+        letter-spacing: -0.02em;
+        margin-bottom: 0.1rem;
+    }
+
+    /* Month and arrows share one row; neither may wrap. Syne is wider than the
+       body face, so the month steps down to keep them side by side. */
+    .calendar-modal-content .calendar-header {
+        gap: 10px;
+        margin-bottom: 12px;
+        padding-bottom: 10px;
+    }
+
+    .calendar-modal-content .month-year {
+        font-size: 1.15rem;
+        white-space: nowrap;
+    }
+
+    .calendar-modal-content .nav-arrows {
+        flex-shrink: 0;
+        white-space: nowrap;
+    }
+
+    .calendar-modal-content .calendar-grid {
+        gap: 5px;
+    }
+
+    /* Square cells read as a calendar; a fixed 40px height against a ~31px
+       column did not. */
+    .calendar-modal-content .day {
+        height: auto !important;
+        aspect-ratio: 1 / 1 !important;
+        font-size: 0.95rem;
+    }
+
+    .calendar-modal-content .weekdays {
+        font-size: 0.68rem;
+        letter-spacing: 0.06em;
+        margin-bottom: 10px;
+    }
+
+    /* The safety net also centres every heading; this one labels a left-aligned
+       list, so it stays left. */
+    .calendar-modal-content .booking-details-container h3,
+    .availability-contact-wrap .booking-details-container h3 {
+        text-align: left !important;
+    }
+
+    .calendar-modal-content .close-modal {
+        top: 8px;
+        right: 12px;
+    }
+}
+
+@media (max-width: 380px) {
+    .modal-content.calendar-modal-content {
+        padding: 18px 9px 16px;
+    }
+
+    .calendar-modal-content .calendar-grid {
+        gap: 4px;
+    }
+
+    .calendar-modal-content .month-year {
+        font-size: 1.05rem;
+    }
 }
 
 .modal-overlay.active .modal-content {
@@ -2905,6 +3026,19 @@ footer {
     height: 100%;
 }
 
+/* The panels behave as buttons, so they should neither select nor flash the
+   platform's blue tap highlight on a long press. */
+.split-screen-hub,
+.split-panel,
+.split-content,
+.split-content h2 {
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    user-select: none;
+    -webkit-tap-highlight-color: transparent;
+    -webkit-touch-callout: none;
+}
+
 .split-panel {
     position: relative;
     flex: 1;
@@ -3023,10 +3157,19 @@ footer {
         min-height: 33.33vh;
     }
     
-    .split-content h2 {
-        font-size: 2rem;
+    /* The mobile typography safety net caps every heading at min(7.5vw, 1.8rem),
+       which was shrinking these panel labels well below the 2rem intended here.
+       They are the page's only real content, so they get an explicit size. */
+    .split-content {
+        width: 100%;
+        padding: 0 18px;
     }
-    
+
+    .split-content h2 {
+        font-size: clamp(2.1rem, 9.4vw, 3.2rem) !important;
+        letter-spacing: -0.035em;
+    }
+
     .split-container .split-panel:hover {
         flex: 2;
     }
@@ -3209,6 +3352,16 @@ body.gallery-page footer {
     background: transparent;
     padding: 16px 5%;
     pointer-events: auto;
+}
+
+/* `is--full` had no CSS behind it, so Tailwind's own `.container` utility was
+   capping the nav at its 1536px 2xl max-width — and left-aligned, which parked
+   the menu button ~900px short of the right edge on a 2560px display. */
+.site-header-wrapper .container.is--full {
+    width: 100%;
+    max-width: 100%;
+    margin: 0;
+    padding: 0;
 }
 
 .nav-row {

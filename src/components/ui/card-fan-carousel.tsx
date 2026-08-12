@@ -186,7 +186,7 @@ export default function SocialCards({ cards }: SocialCardsProps) {
     let initialTimer: ReturnType<typeof setTimeout> | undefined;
 
     if (!isVisible) {
-      cardElements.forEach(card => gsap.set(card, { opacity: 0 }));
+      cardElements.forEach(card => gsap.set(card, { autoAlpha: 0 }));
     } else {
       const visibleMap = getVisibleMap(centerIndex);
       if (!prevVisible.current) prevVisible.current = new Set();
@@ -224,26 +224,26 @@ export default function SocialCards({ cards }: SocialCardsProps) {
               y: y * hMult * 16,
               rotation: rot,
               scale,
-              opacity: 1,
+              autoAlpha: 1,
               zIndex,
               force3D: true,
             };
 
             if (isFirstMount) {
-              gsap.set(card, { x: 0, y: 12 * hMult * 16, rotation: 0, scale: 0.5, opacity: 0 });
+              gsap.set(card, { x: 0, y: 12 * hMult * 16, rotation: 0, scale: 0.5, autoAlpha: 0 });
               gsap.to(card, { ...target, duration: 1.2, ease: "elastic.out(1.05,.78)", delay: 0.1 + slot * 0.05, onComplete: onCardDone });
             } else if (!wasVisible) {
               const enterX = direction === "right" ? 40 : -40;
-              gsap.set(card, { x: enterX * 16, y: y * hMult * 16, rotation: direction === "right" ? 30 : -30, scale: 0.5, opacity: 0 });
+              gsap.set(card, { x: enterX * 16, y: y * hMult * 16, rotation: direction === "right" ? 30 : -30, scale: 0.5, autoAlpha: 0 });
               gsap.to(card, { ...target, duration: 0.8, ease: "power2.out", onComplete: onCardDone });
             } else {
               gsap.to(card, { ...target, duration: 0.7, ease: "power2.out", onComplete: onCardDone });
             }
           } else if (wasVisible) {
             const exitX = direction === "right" ? -40 : 40;
-            gsap.to(card, { x: exitX * 16, opacity: 0, scale: 0.5, rotation: direction === "right" ? -30 : 30, duration: 0.6, ease: "power2.in", zIndex: 0, force3D: true });
+            gsap.to(card, { x: exitX * 16, autoAlpha: 0, scale: 0.5, rotation: direction === "right" ? -30 : 30, duration: 0.6, ease: "power2.in", zIndex: 0, force3D: true });
           } else if (isFirstMount) {
-            gsap.set(card, { opacity: 0, scale: 0.3, x: 0, y: 0, zIndex: 0 });
+            gsap.set(card, { autoAlpha: 0, scale: 0.3, x: 0, y: 0, zIndex: 0 });
           }
         });
 
@@ -251,7 +251,14 @@ export default function SocialCards({ cards }: SocialCardsProps) {
       }
     }
 
-    const onResize = () => {
+    // Only the width affects the fan's geometry. Mobile browsers fire `resize`
+    // every time the URL bar slides away, and re-running a 1.2s elastic tween
+    // on every visible card mid-scroll is what made the fan judder. Debounced,
+    // and height-only changes are ignored entirely.
+    let resizeTimer: ReturnType<typeof setTimeout> | undefined;
+    let lastWidth = window.innerWidth;
+
+    const relayout = () => {
       if (isAnimating.current) return;
       const visibleMap = getVisibleMap(centerIndex);
       const visibleEntries: { el: HTMLElement; slot: number }[] = [];
@@ -263,14 +270,56 @@ export default function SocialCards({ cards }: SocialCardsProps) {
       updateHoverLayoutRef.current(visibleEntries, activeSlotRef.current);
     };
 
+    const onResize = () => {
+      if (window.innerWidth === lastWidth) return;
+      lastWidth = window.innerWidth;
+      clearTimeout(resizeTimer);
+      resizeTimer = setTimeout(relayout, 180);
+    };
+
     window.addEventListener("resize", onResize);
 
     return () => {
       window.removeEventListener("resize", onResize);
+      clearTimeout(resizeTimer);
       if (initialTimer) clearTimeout(initialTimer);
       gsap.killTweensOf(cardElements);
     };
   }, [centerIndex, totalCards, getVisibleMap, needsPagination, isVisible]);
+
+  // --- Swipe to cycle (touch / pen) ---
+  // touch-action: pan-y on the container lets the browser keep vertical
+  // scrolling while we claim the horizontal axis, so the page never feels
+  // stuck. Only a decisively horizontal gesture counts.
+  const swipe = useRef<{ x: number; y: number; id: number; locked: boolean | null } | null>(null);
+
+  const onPointerDown = useCallback((e: React.PointerEvent) => {
+    if (!needsPagination) return;
+    if (e.pointerType === "mouse") return; // desktop keeps the hover fan + arrows
+    swipe.current = { x: e.clientX, y: e.clientY, id: e.pointerId, locked: null };
+  }, [needsPagination]);
+
+  const onPointerMove = useCallback((e: React.PointerEvent) => {
+    const s = swipe.current;
+    if (!s || e.pointerId !== s.id) return;
+    if (s.locked === null) {
+      const dx = Math.abs(e.clientX - s.x);
+      const dy = Math.abs(e.clientY - s.y);
+      if (dx < 8 && dy < 8) return;      // not yet a gesture
+      s.locked = dx > dy;                 // true = horizontal, ours
+    }
+  }, []);
+
+  const endSwipe = useCallback((e: React.PointerEvent) => {
+    const s = swipe.current;
+    if (!s || e.pointerId !== s.id) return;
+    swipe.current = null;
+    if (!s.locked) return;
+    const dx = e.clientX - s.x;
+    if (Math.abs(dx) < 45) return;        // too small to be intentional
+    // Drag left => reveal the next card, matching the right arrow.
+    cycle(dx < 0 ? "right" : "left");
+  }, [cycle]);
 
   const handleMouseEnter = (cardIndex: number) => {
     if (isAnimating.current) return;
@@ -325,7 +374,15 @@ export default function SocialCards({ cards }: SocialCardsProps) {
   return (
     <section className="flex flex-col items-center w-full py-4 lg:py-6 px-4 md:px-8 relative pointer-events-none">
       <div className="flex items-center justify-center w-full max-w-[90rem]">
-        <div ref={containerRef} className="fan-layout flex relative justify-center items-center w-full max-w-[80rem] h-[clamp(520px,160vw,600px)] md:h-[650px] lg:h-[700px]">
+        <div
+          ref={containerRef}
+          onPointerDown={onPointerDown}
+          onPointerMove={onPointerMove}
+          onPointerUp={endSwipe}
+          onPointerCancel={endSwipe}
+          style={{ touchAction: "pan-y" }}
+          className="fan-layout flex relative justify-center items-center w-full max-w-[80rem] h-[clamp(520px,160vw,600px)] md:h-[650px] lg:h-[700px]"
+        >
           {cards.map((card, index) => {
             const image = (
               <div className="relative w-full h-full overflow-hidden rounded-xl shadow-[0_10px_30px_rgba(0,0,0,0.5)]">
@@ -340,7 +397,7 @@ export default function SocialCards({ cards }: SocialCardsProps) {
                 rel="noopener noreferrer"
                 onMouseEnter={() => handleMouseEnter(index)}
                 onMouseLeave={handleMouseLeave}
-                className="fan-card block cursor-pointer absolute pointer-events-auto w-[clamp(200px,75vw,300px)] h-[clamp(280px,105vw,420px)] md:w-[380px] md:h-[530px] will-change-transform"
+                className="fan-card block cursor-pointer absolute pointer-events-auto w-[clamp(200px,75vw,300px)] h-[clamp(280px,105vw,420px)] md:w-[380px] md:h-[530px]"
               >
                 {image}
               </a>
@@ -349,7 +406,7 @@ export default function SocialCards({ cards }: SocialCardsProps) {
                 key={card.imgUrl || index}
                 onMouseEnter={() => handleMouseEnter(index)}
                 onMouseLeave={handleMouseLeave}
-                className="fan-card absolute pointer-events-auto w-[clamp(200px,75vw,300px)] h-[clamp(280px,105vw,420px)] md:w-[380px] md:h-[530px] will-change-transform"
+                className="fan-card absolute pointer-events-auto w-[clamp(200px,75vw,300px)] h-[clamp(280px,105vw,420px)] md:w-[380px] md:h-[530px]"
               >
                 {image}
               </div>
