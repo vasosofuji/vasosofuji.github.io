@@ -29,6 +29,38 @@
     box-sizing: border-box;
 }
 
+/* --- NO TEXT SELECTION / NO TAP FLASH ---
+   This is a photography portfolio, not a document: dragging across it should
+   never leave a blue selection, and holding a card or link on a phone should
+   not flash the platform highlight or pop the iOS callout menu. */
+html {
+    -webkit-tap-highlight-color: transparent;
+}
+
+body,
+body * {
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    -webkit-tap-highlight-color: transparent;
+    -webkit-touch-callout: none;
+}
+
+/* Form fields are the exception — typing, caret placement and editing all
+   depend on selection, so the booking form would be unusable without this. */
+input,
+textarea,
+select,
+[contenteditable],
+[contenteditable] * {
+    -webkit-user-select: auto;
+    -moz-user-select: text;
+    -ms-user-select: text;
+    user-select: auto;
+    -webkit-touch-callout: default;
+}
+
 html {
     background-color: var(--bg-color);
     scroll-behavior: smooth;
@@ -465,7 +497,9 @@ header::after {
     will-change: transform;
     pointer-events: auto; /* Re-enable pointer for the images themselves */
     opacity: 0;
-    max-width: 12vw; /* Prevent massive overlap */
+    /* No max-width here: it capped every card at 12vw and so overrode the
+       per-card clamps below, which is what kept the collage from growing on
+       large displays. Each nth-child rule carries its own ceiling. */
 }
 
 header.hero-active .floating-el {
@@ -731,10 +765,15 @@ header.hero-active .hero-desc {
 /* Instead of targeting every single image, we use a fluid pattern.
   This makes the layout feel organic, cluttered, and responsive.
 */
-.floating-el:nth-child(4n+1) { width: 14vw; min-width: 90px; max-width: 200px; }
-.floating-el:nth-child(4n+2) { width: 10vw; min-width: 70px; max-width: 150px; }
-.floating-el:nth-child(4n+3) { width: 18vw; min-width: 110px; max-width: 250px; }
-.floating-el:nth-child(4n+4) { width: 8vw;  min-width: 50px; max-width: 120px; }
+/* The px caps here stopped the hero collage growing past roughly a 1400px
+   viewport: at 2560 the widest card was still pinned to 250px against a screen
+   nearly twice as wide, so the whole composition read as a handful of stamps
+   floating in empty space. Expressed as clamps, the cards keep their relative
+   sizes and now scale with the page while still holding a sane ceiling. */
+.floating-el:nth-child(4n+1) { width: clamp(90px, 14vw, 330px); }
+.floating-el:nth-child(4n+2) { width: clamp(70px, 10vw, 240px); }
+.floating-el:nth-child(4n+3) { width: clamp(110px, 18vw, 420px); }
+.floating-el:nth-child(4n+4) { width: clamp(50px, 8vw, 190px); }
 
 /* Add dynamic animation delays for the 16 images */
 header.hero-active .floating-el:nth-child(odd) { animation-delay: 1.0s; }
@@ -1752,9 +1791,14 @@ section {
         text-shadow: 0 2px 4px rgba(0, 0, 0, 0.9), 0 4px 10px rgba(0, 0, 0, 0.75) !important; 
     }
 
-    /* --- MOBILE TYPOGRAPHY SAFETY NET --- */
-    h1, h2, h3, h4, h5, h6,
-    .section-title,
+    /* --- MOBILE TYPOGRAPHY SAFETY NET ---
+       Scoped to the cinematic display headings this was written for. It used to
+       list h1-h6 as well, which meant it also captured sub-page titles, gallery
+       labels, modal headings and photo captions — forcing them all to one
+       non-wrapping line at min(7.5vw, 1.8rem). That produced text wider than the
+       screen (which widened the document and dragged the fixed header off with
+       it) and needed a growing pile of !important escape hatches to undo. Any
+       heading that needs a mobile size now sets it directly. */
     .hero-subtitle,
     .cinematic-heading,
     .cinematic-subheading {
@@ -1767,41 +1811,24 @@ section {
         padding-right: 1rem !important;
         white-space: nowrap !important; /* Force one liners per user request */
         font-size: min(7.5vw, 1.8rem) !important; /* Tighter scale down to prevent touching 360px borders */
-        
+
         /* Flexbox inherently centers text nodes symmetrically even if they overflow bounds */
         display: flex !important;
         justify-content: center !important;
         align-items: center !important;
     }
 
-    /* Photo-card captions are body copy that happens to use <h4>, not display
-       headings, so the nowrap above does not apply to them. Titles like
-       "Georgi (PERSEIDA)" measured 360px inside a 308px card: that overflow
-       widened the document, and a wider document stretches every fixed
-       element — which is what pushed the menu button off the right edge on the
-       gallery sub-pages. Centring is preserved; only wrapping changes. */
-    .photo-info h4,
-    .photo-info p,
-    .gallery-card .photo-info h4,
-    .gallery-card .photo-info p {
-        white-space: normal !important;
-        overflow-wrap: break-word;
+    /* Section titles keep the centring and mobile clamp, but must be free to
+       wrap — "Artist Collaborations" is 445px on one line. */
+    .section-title {
+        text-align: center !important;
+        margin-left: auto !important;
+        margin-right: auto !important;
         max-width: 100%;
-    }
-
-    /* The forced one-liner is meant for the cinematic display headings. Applied
-       to every h1-h6 it also caught ordinary section headings — "Artist
-       Collaborations" rendered 445px wide inside a 230px column — with the same
-       document-widening effect. Those keep the rule's mobile font scaling and
-       centring; they are just allowed to wrap. */
-    :is(h1, h2, h3, h4, h5, h6):not(.cinematic-heading):not(.cinematic-subheading):not(.hero-subtitle):not(.section-title) {
-        white-space: normal !important;
+        box-sizing: border-box;
+        padding-left: 1rem;
+        padding-right: 1rem;
         overflow-wrap: break-word;
-        /* The rule above also forces display:flex to centre an overflowing
-           single line. A flex container will not wrap that text, so a heading
-           allowed to wrap has to go back to a block box; text-align:center
-           from the same rule still centres it. */
-        display: block !important;
     }
 }
 
@@ -1902,13 +1929,15 @@ section {
     border-top: 1px solid rgba(255, 133, 51, 0.2);
 }
 
+/* A label introducing a list, not a display heading — small tracked-out Geist
+   so it sits with the data it labels instead of competing with the month. */
 .booking-details-container h3 {
-    font-family: var(--font-heading);
-    letter-spacing: -0.01em; /* Match the month above it; Syne reads stretched at 0 */
+    font-family: var(--font-main);
+    letter-spacing: 0.16em;
     text-align: left;
-    font-weight: 700;
+    font-weight: 500;
     text-transform: uppercase;
-    font-size: 0.95rem !important; /* Steps below the month — this is a sub-label */
+    font-size: 0.72rem !important;
 }
 
 .event-list {
@@ -1946,17 +1975,22 @@ section {
     border-bottom: 1px solid rgba(255, 255, 255, 0.1);
 }
 
-/* The booking block runs a two-tier type system: Syne for the heading ladder
-   (BOOKING -> Book a Session -> the month -> Scheduled Events) and Geist for
-   the data underneath it (weekday labels, day numbers, event rows). The month
-   was the odd one out — body font with +1px tracking, directly under two Syne
-   headings. */
+/* The booking block's type system:
+     Playfair Display  the calendar's own display line (the month) and the
+                       modal title — the same editorial serif as the hero,
+                       so the calendar reads as part of the site's voice
+     Geist             everything factual: weekday strip, day numbers, the
+                       Scheduled Events label and the event rows
+
+   Syne was tried here and was far too heavy at display size — set in caps at
+   700 the month turned into a solid orange slab. */
 .month-year {
-    font-family: var(--font-heading);
-    font-size: 1.8rem;
+    font-family: 'Playfair Display', Georgia, serif;
+    font-size: 1.9rem;
     font-weight: 700;
     color: var(--accent);
-    letter-spacing: -0.01em;
+    letter-spacing: 0;
+    text-transform: none;
 }
 
 .nav-arrows .arrow {
@@ -2205,8 +2239,8 @@ section {
     .calendar-modal-content .modal-heading {
         display: block;
         text-align: center;
-        font-size: 1.3rem !important;
-        letter-spacing: -0.02em;
+        font-size: 1.35rem !important;
+        letter-spacing: 0;
         margin-bottom: 0.1rem;
     }
 
@@ -2280,11 +2314,12 @@ section {
 .modal-heading {
     font-size: 1.8rem;
     color: var(--accent);
-    font-family: var(--font-heading);
+    /* Pairs with the month line directly beneath it */
+    font-family: 'Playfair Display', Georgia, serif;
     font-weight: 700;
     margin-bottom: 0.2rem;
     padding-bottom: 0.3em; /* Aggressive padding to fully protect deep descenders */
-    letter-spacing: -1px; /* Less stretched, tighter */
+    letter-spacing: 0; /* -1px was tuned for Syne; the serif needs its own metrics */
     line-height: normal; /* CRITICAL FIX: Forces browser to respect font's internal metrics instead of CSS line box */
     display: inline-block; /* Changes line box boundary enforcement */
     overflow: visible !important; /* Force renderer to never clip bounds */
