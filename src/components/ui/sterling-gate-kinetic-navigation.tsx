@@ -149,9 +149,10 @@ export function SterlingGateKineticNavigation() {
     if (menuButtonTexts && menuButtonTexts.length > 0) {
       tl.to(menuButtonTexts, { yPercent: -100, duration: 0.3, ease: "power2.out" }, 0);
     }
-    // Hamburger icon rotate to X
+    // Hamburger bars rotate a quarter turn: horizontal to vertical.
+    // (225deg left them sitting at a diagonal.)
     if (menuButtonIcon) {
-      tl.to(menuButtonIcon, { rotate: 225, duration: 0.3, ease: "power2.out" }, 0);
+      tl.to(menuButtonIcon, { rotate: 90, duration: 0.3, ease: "power2.out" }, 0);
     }
 
     // Menu links stagger in

@@ -465,17 +465,28 @@ setTimeout(() => {
 }, preloaderDuration);
 
 // --- SMOOTH PAGE TRANSITIONS ---
-document.querySelectorAll('a[href]').forEach(link => {
-    // Only intercept internal links that navigate to a different page
+// Delegated from the document rather than bound per-link at load time. The
+// navigation is rendered by React after this script runs, so the menu's links
+// did not exist yet and never got a listener — clicking Home/About/Gallery
+// navigated bare, which is why the cover wipe only played from in-page links.
+document.addEventListener('click', (e) => {
+    // Let modified clicks (new tab, download, save) behave natively
+    if (e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
+    // Something else already handled it (e.g. the menu's Contact link)
+    if (e.defaultPrevented) return;
+
+    const link = e.target instanceof Element ? e.target.closest('a[href]') : null;
+    if (!link) return;
+
     if (link.hostname === window.location.hostname && link.target !== '_blank' && !link.hasAttribute('download')) {
-        link.addEventListener('click', (e) => {
+        {
             const isSamePage = (link.pathname === window.location.pathname && link.search === window.location.search);
             // Don't intercept anchor links on the same page
             if (isSamePage) return;
-            
+
             e.preventDefault();
             const targetUrl = link.href;
-            
+
             if (preloader) {
                 // Show preloader again
                 preloader.classList.remove('done');
@@ -505,7 +516,7 @@ document.querySelectorAll('a[href]').forEach(link => {
             } else {
                 window.location.href = targetUrl;
             }
-        });
+        }
     }
 });
 

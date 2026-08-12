@@ -999,6 +999,28 @@ body.gallery-page footer p {
     margin: 0;
 }
 
+/* On a phone the copyright wraps to three lines, which overflowed the fixed
+   60px bar and collided with the last panel. Stack and centre it instead, and
+   let the bar size to its content. */
+@media (max-width: 768px) {
+    body.gallery-page footer {
+        height: auto;
+        min-height: 60px;
+        flex-direction: column;
+        justify-content: center;
+        gap: 2px;
+        padding: 10px 16px;
+        padding-bottom: calc(10px + env(safe-area-inset-bottom, 0px));
+        text-align: center;
+        font-size: 0.72rem;
+        line-height: 1.35;
+    }
+
+    body.gallery-page footer p {
+        margin: 0 !important;
+    }
+}
+
 /* =========================================
    ABOUT ME (BENTO GRID) & CAROUSEL
    ========================================= */
@@ -1745,6 +1767,36 @@ section {
         display: flex !important;
         justify-content: center !important;
         align-items: center !important;
+    }
+
+    /* Photo-card captions are body copy that happens to use <h4>, not display
+       headings, so the nowrap above does not apply to them. Titles like
+       "Georgi (PERSEIDA)" measured 360px inside a 308px card: that overflow
+       widened the document, and a wider document stretches every fixed
+       element — which is what pushed the menu button off the right edge on the
+       gallery sub-pages. Centring is preserved; only wrapping changes. */
+    .photo-info h4,
+    .photo-info p,
+    .gallery-card .photo-info h4,
+    .gallery-card .photo-info p {
+        white-space: normal !important;
+        overflow-wrap: break-word;
+        max-width: 100%;
+    }
+
+    /* The forced one-liner is meant for the cinematic display headings. Applied
+       to every h1-h6 it also caught ordinary section headings — "Artist
+       Collaborations" rendered 445px wide inside a 230px column — with the same
+       document-widening effect. Those keep the rule's mobile font scaling and
+       centring; they are just allowed to wrap. */
+    :is(h1, h2, h3, h4, h5, h6):not(.cinematic-heading):not(.cinematic-subheading):not(.hero-subtitle):not(.section-title) {
+        white-space: normal !important;
+        overflow-wrap: break-word;
+        /* The rule above also forces display:flex to centre an overflowing
+           single line. A flex container will not wrap that text, so a heading
+           allowed to wrap has to go back to a block box; text-align:center
+           from the same rule still centres it. */
+        display: block !important;
     }
 }
 
@@ -2802,20 +2854,36 @@ footer {
     font-weight: bold;
 }
 
-/* Mobile adjustments for floating bubble */
+/* Mobile adjustments for floating bubble.
+   The three nowrap links did not fit inside the bubble on a phone. Because the
+   bubble is fixed, that overflow widened the document, and a wider document
+   stretches every other fixed element — including the header, which pushed the
+   menu button clean off the right edge. Wrapping is the safety valve: the
+   labels are longer in Macedonian, so tightening alone is not enough. */
 @media (max-width: 768px) {
     .gallery-nav-bubble {
         bottom: 20px;
         right: 20px;
         left: 20px;
-        padding: 12px 20px;
+        padding: 10px 12px;
         justify-content: center;
-        gap: 10px;
+        flex-wrap: wrap;
+        gap: 6px;
+        max-width: calc(100vw - 40px);
     }
 
     .gallery-nav-bubble a {
-        font-size: 0.75rem;
-        padding: 6px 12px;
+        font-size: 0.72rem;
+        letter-spacing: 0.5px;
+        padding: 6px 10px;
+    }
+}
+
+@media (max-width: 400px) {
+    .gallery-nav-bubble a {
+        font-size: 0.68rem;
+        letter-spacing: 0.3px;
+        padding: 5px 8px;
     }
 }
 
@@ -2972,7 +3040,9 @@ body.gallery-page {
     overflow: hidden;
 }
 
-body.gallery-page nav {
+/* Scoped away from the React navigation — unscoped, this also hit .nav-row and
+   the .menu-content drawer, forcing the drawer out of position:absolute. */
+body.gallery-page nav:not(.nav-row):not(.menu-content) {
     position: relative; /* Remove fixed position so it takes up layout space */
     z-index: 1000;
 }
@@ -3180,6 +3250,9 @@ body.gallery-page footer {
     border-radius: 4px;
     padding: 8px 18px;
     color: #fff;
+    /* Buttons do not inherit the page font — without this it falls back to the
+       UA default (Arial). */
+    font-family: 'Montserrat', sans-serif;
     cursor: pointer;
     /* Explicit property list instead of `all`: `all` also transitions the
        transform GSAP writes to the icon's ancestors during the menu tween. */
@@ -3210,10 +3283,11 @@ body.gallery-page footer {
     flex-direction: column;
 }
 
+/* Montserrat 900 to match the vasosofuji logo across the bar. */
 .menu-text-slide {
-    font-family: var(--font-heading, 'Syne', sans-serif);
+    font-family: 'Montserrat', sans-serif;
     font-size: 0.9rem;
-    font-weight: 700;
+    font-weight: 900;
     text-transform: uppercase;
     letter-spacing: 1px;
     line-height: 22px;
@@ -3255,6 +3329,12 @@ body.gallery-page footer {
     display: block;
     visibility: hidden;
     pointer-events: none;
+    /* The closed drawer is parked at translateX(100%), one full width to the
+       right. Now that it stays laid out, that parked position would widen the
+       document and push the fixed header past the viewport — which threw the
+       menu button off the right edge on every page without an overflow-hidden
+       wrapper. Clip it here: the drawer only ever slides inward. */
+    overflow: hidden;
 }
 
 .nav-overlay-wrapper[data-nav="open"] {
@@ -3424,9 +3504,9 @@ body.gallery-page footer {
 }
 
 .extra-label {
-    font-family: var(--font-heading, 'Syne', sans-serif);
+    font-family: 'Montserrat', sans-serif;
     font-size: 0.72rem;
-    font-weight: 700;
+    font-weight: 900;
     text-transform: uppercase;
     letter-spacing: 2px;
     color: var(--accent, #ff8533);
