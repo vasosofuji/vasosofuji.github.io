@@ -104,6 +104,9 @@ var translations = {
         optionOther: 'Other',
         otherEventPlaceholder: 'Please specify the event',
         scheduledEvents: 'Scheduled Events:',
+        sheetFrames: 'Frames',
+        sheetFilms: 'Films',
+        sheetShotOn: 'Shot on',
         alreadyBooked: 'Date is already booked.',
         clickToBook: 'Click to book',
         bookSession: 'Book a Session',
@@ -221,6 +224,9 @@ var translations = {
         optionOther: 'Друго',
         otherEventPlaceholder: 'Ве молиме наведете го настанот',
         scheduledEvents: 'Резервирани настани:',
+        sheetFrames: 'Фотографии',
+        sheetFilms: 'Видеа',
+        sheetShotOn: 'Снимано со',
         alreadyBooked: 'Датумот е веќе резервиран.',
         clickToBook: 'Кликни за резервација',
         bookSession: 'Резервирај Термин',
@@ -403,6 +409,33 @@ if (preloader) {
     }
 }
 
+// Hover styling on the hero text stays disabled until its entrance animation
+// has finished. The hover rules drive opacity and letter-spacing, which the
+// reveal keyframes also animate, so a pointer already resting over the text
+// made the reveal stutter. Waits for the last reveal to end, with a timeout
+// fallback for when animations never run (reduced motion, or a restored page).
+function markHeroEnteredWhenSettled(heroHeader) {
+    if (!heroHeader || heroHeader.classList.contains('hero-entered')) return;
+
+    let settled = false;
+    const settle = () => {
+        if (settled) return;
+        settled = true;
+        clearTimeout(fallback);
+        heroHeader.removeEventListener('animationend', onEnd);
+        heroHeader.classList.add('hero-entered');
+    };
+
+    // .hero-desc starts last (0.6s delay + 1.2s duration)
+    const last = heroHeader.querySelector('.hero-desc');
+    const onEnd = (e) => {
+        if (!last || e.target === last) settle();
+    };
+
+    heroHeader.addEventListener('animationend', onEnd);
+    const fallback = setTimeout(settle, 2200);
+}
+
 const isFirstVisit = !sessionStorage.getItem('hasVisited');
 const preloaderDuration = isFirstVisit ? 2500 : 1500;
 
@@ -447,6 +480,7 @@ setTimeout(() => {
                     preloader.classList.add('done');
                     if (heroHeader) {
                         heroHeader.classList.add('hero-active');
+                        markHeroEnteredWhenSettled(heroHeader);
                     }
                     if (sequenceAnimationFrameId) cancelAnimationFrame(sequenceAnimationFrameId);
                     
@@ -598,6 +632,78 @@ const monthYearDisplay = document.getElementById('monthYearDisplay');
 const calendarGrid = document.getElementById('calendarGrid');
 const contactMessage = document.getElementById('contactMessage');
 const bookingDetailsContainer = document.getElementById('bookingDetails');
+
+// --- BOOKING MODALS ON EVERY PAGE ---
+// Only index.html carried this markup, so Contact in the menu silently did
+// nothing on the gallery and video pages — openPopupCalendar() found no modal
+// and returned. Injecting it here keeps one copy rather than pasting seventy
+// lines into each page and letting them drift apart. This runs at module scope,
+// which for a deferred module means the DOM is parsed but DOMContentLoaded has
+// not fired yet, so the listener wiring further down still picks these up.
+function injectBookingModals() {
+    if (document.getElementById('popupCalendarModal')) return;
+
+    const host = document.getElementById('page-wrapper') || document.body;
+    const weekdays = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']
+        .map(d => `<div data-translate="weekday${d}">${d}</div>`)
+        .join('');
+
+    const markup = `
+        <div id="popupCalendarModal" class="modal-overlay">
+            <div class="modal-content calendar-modal-content">
+                <span class="close-modal" id="closePopupCalendarModal">&times;</span>
+                <h3 class="modal-heading" data-translate="bookSession" style="font-size: 1.3rem; margin-bottom: 0.6rem; padding-bottom: 0;">Book a Session</h3>
+                <div class="calendar-container popup-calendar-container">
+                    <div class="calendar-header">
+                        <span class="month-year" id="popupMonthYearDisplay"></span>
+                        <div class="nav-arrows">
+                            <span class="arrow left" id="popupPrevMonth">&#8592;</span>
+                            <span class="arrow right" id="popupNextMonth">&#8594;</span>
+                        </div>
+                    </div>
+                    <div class="weekdays">${weekdays}</div>
+                    <div class="calendar-grid" id="popupCalendarGrid"></div>
+                    <p class="calendar-legend" data-translate="bookedDay" data-html
+                        style="display: flex; align-items: center; justify-content: center; gap: 8px;"><img
+                            src="misc/loading/Sequence%200150.gif" alt="Booked"
+                            style="width: 24px; height: auto; filter: drop-shadow(0 0 2px rgba(255, 133, 51, 0.6));"> =
+                        Booked Day</p>
+                    <div id="popupBookingDetails" class="booking-details-container"></div>
+                </div>
+            </div>
+        </div>
+
+        <div id="bookingModal" class="modal-overlay">
+            <div class="modal-content">
+                <span class="close-modal" id="closeModal">&times;</span>
+                <h3 class="modal-heading" data-translate="bookingTitle">Book a Date</h3>
+                <p id="modalDateDisplay" class="modal-subheading"></p>
+                <form id="contact-form" action="https://formspree.io/f/mbdaobka" method="post" autocomplete="off">
+                    <input type="hidden" name="_subject" id="formspreeSubject" value="New Booking Request">
+                    <input type="hidden" name="date" id="dateInput">
+                    <input type="email" name="email" placeholder="Email" required>
+                    <select name="event_type" id="eventTypeSelect" required>
+                        <option value="" disabled selected data-translate="selectEventType">Select Event Type</option>
+                        <option value="Concert" data-translate="optionConcert">Concert</option>
+                        <option value="Wedding" data-translate="optionWedding">Wedding</option>
+                        <option value="Birthday" data-translate="optionBirthday">Birthday</option>
+                        <option value="Portrait Shoot" data-translate="optionPortrait">Portrait Shoot</option>
+                        <option value="Commercial" data-translate="optionCommercial">Commercial / Brand</option>
+                        <option value="Other" data-translate="optionOther">Other</option>
+                    </select>
+                    <input type="text" name="other_event_type" id="otherEventInput"
+                        placeholder="Please specify the event" style="display: none;">
+                    <textarea name="message" rows="4" placeholder="Additional Notes" id="contactMessage"></textarea>
+                    <p id="my-form-status"></p>
+                    <button type="submit" class="btn" data-translate="sendMessage"
+                        style="width: 100%; opacity: 1; transform: none; box-shadow: none;">Send Message</button>
+                </form>
+            </div>
+        </div>`;
+
+    host.insertAdjacentHTML('beforeend', markup);
+}
+injectBookingModals();
 
 function openPopupCalendar() {
     const popupCalendarModal = document.getElementById('popupCalendarModal');
@@ -1064,6 +1170,49 @@ window.addEventListener('pageshow', (event) => {
         updateLanguage(savedLang);
     }
 });
+
+// --- CATEGORY SHEET HEADER META ---
+// Fills the caption under a category title from what is actually on the page:
+// how many frames it holds, and which bodies they were shot on (read off the
+// "Camera:" line already printed in each photo's info panel). Re-runs on a
+// language change so the labels follow.
+function updateSheetMeta() {
+    const target = document.querySelector('[data-sheet-meta]');
+    if (!target) return;
+
+    const t = (typeof translations !== 'undefined' && translations[currentLang]) || {};
+    const photos = document.querySelectorAll('.gallery-grid .photo-card');
+    const videos = document.querySelectorAll('.video-grid .video-card');
+
+    const count = photos.length || videos.length;
+    if (!count) {
+        target.textContent = '';
+        return;
+    }
+
+    const noun = photos.length ? (t.sheetFrames || 'Frames') : (t.sheetFilms || 'Films');
+    const parts = [`<em>${count}</em> ${noun}`];
+
+    if (photos.length) {
+        const bodies = new Set();
+        photos.forEach(card => {
+            card.querySelectorAll('.photo-info p').forEach(p => {
+                const label = p.querySelector('span');
+                if (!label || !/camera/i.test(label.textContent)) return;
+                const body = p.textContent.replace(label.textContent, '').trim();
+                if (body) bodies.add(body);
+            });
+        });
+        if (bodies.size) {
+            parts.push(`${t.sheetShotOn || 'Shot on'} ${[...bodies].sort().join(' · ')}`);
+        }
+    }
+
+    target.innerHTML = parts.join(' &nbsp;/&nbsp; ');
+}
+
+document.addEventListener('DOMContentLoaded', updateSheetMeta);
+window.addEventListener('languagechange', updateSheetMeta);
 
 // --- HERO PARALLAX FLOATING LOGIC ---
 document.addEventListener('DOMContentLoaded', () => {

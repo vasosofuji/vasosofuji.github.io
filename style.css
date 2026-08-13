@@ -632,7 +632,40 @@ header.hero-active .floating-el:nth-child(8) { animation-delay: 2.05s; }
     transition: color 0.4s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.4s cubic-bezier(0.16, 1, 0.3, 1), letter-spacing 0.4s cubic-bezier(0.16, 1, 0.3, 1), text-shadow 0.4s ease;
 }
 
-.hero-subtitle:hover {
+/* Once the entrance has finished, hand the properties back to CSS.
+   The reveal keyframes run with `forwards`, and a filling animation keeps
+   ownership of everything it animates — opacity and letter-spacing, the exact
+   properties these hover rules need. So the hover effect could only ever fire
+   *before* the reveal settled, which is precisely the stutter it caused. These
+   rules restate each keyframe's end state and drop the animation, leaving hover
+   free to take over afterwards. */
+header.hero-active.hero-entered .hero-subtitle,
+header.hero-active.hero-entered .hero-desc,
+header.hero-active.hero-entered .btn {
+    animation: none;
+    filter: blur(0);
+    transform: translateY(0);
+}
+
+header.hero-active.hero-entered .hero-subtitle {
+    opacity: 0.85;
+    letter-spacing: 0.05em;
+}
+
+header.hero-active.hero-entered .hero-desc {
+    opacity: 0.95;
+    letter-spacing: 0.15em;
+}
+
+header.hero-active.hero-entered .btn {
+    opacity: 1;
+}
+
+/* Hover is gated on .hero-entered, which script.js adds once the entrance
+   animation has finished. These rules set opacity and letter-spacing — the very
+   properties the entrance keyframes animate — so a pointer already resting on
+   the text fought the reveal and made it stutter. */
+header.hero-active.hero-entered .hero-subtitle:hover {
     color: #ffffff;
     opacity: 1;
     letter-spacing: 0.12em; /* Smooth elegant stretch */
@@ -717,7 +750,7 @@ header.hero-active h1 {
     transition: color 0.4s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.4s cubic-bezier(0.16, 1, 0.3, 1), letter-spacing 0.4s cubic-bezier(0.16, 1, 0.3, 1), transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), text-shadow 0.4s ease;
 }
 
-.hero-desc:hover {
+header.hero-active.hero-entered .hero-desc:hover {
     color: #ffffff;
     opacity: 1;
     letter-spacing: 0.22em; /* Smooth elegant stretch */
@@ -853,20 +886,21 @@ header.hero-active .btn {
     box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
 }
 
-header.hero-active .btn:hover {
+header.hero-active.hero-entered .btn:hover {
     background: var(--accent);
     color: var(--bg-color);
     border-color: var(--accent);
 }
 
+/* The generic .btn fill sweep is suppressed on the hero button until the
+   entrance is done, for the same reason. */
+header:not(.hero-entered) .btn:hover::before {
+    width: 0%;
+}
+
 /* =========================================
    VIDEO PAGE STYLES
    ========================================= */
-/* Reduce spacing around title */
-.sub-header {
-    padding: 2rem 0 0.5rem 0;
-    margin-bottom: 0.5rem;
-}
 
 /* Custom styling for video grid */
 .video-grid {
@@ -1932,8 +1966,9 @@ section {
 /* A label introducing a list, not a display heading — small tracked-out Geist
    so it sits with the data it labels instead of competing with the month. */
 .booking-details-container h3 {
-    font-family: var(--font-main);
-    letter-spacing: 0.16em;
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 900 !important;
+    letter-spacing: 0.1em;
     text-align: left;
     font-weight: 500;
     text-transform: uppercase;
@@ -1985,12 +2020,13 @@ section {
    Syne was tried here and was far too heavy at display size — set in caps at
    700 the month turned into a solid orange slab. */
 .month-year {
-    font-family: 'Playfair Display', Georgia, serif;
-    font-size: 1.9rem;
-    font-weight: 700;
+    /* Same face as the vasosofuji wordmark in the navbar */
+    font-family: 'Montserrat', sans-serif;
+    font-size: 1.5rem;
+    font-weight: 900;
     color: var(--accent);
-    letter-spacing: 0;
-    text-transform: none;
+    letter-spacing: -0.03em;
+    text-transform: uppercase;
 }
 
 .nav-arrows .arrow {
@@ -2012,7 +2048,8 @@ section {
     display: grid;
     grid-template-columns: repeat(7, 1fr);
     text-align: center;
-    font-weight: 600;
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 900;
     color: var(--text-muted);
     margin-bottom: 15px;
     font-size: 0.78rem;
@@ -2315,8 +2352,9 @@ section {
     font-size: 1.8rem;
     color: var(--accent);
     /* Pairs with the month line directly beneath it */
-    font-family: 'Playfair Display', Georgia, serif;
-    font-weight: 700;
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 900;
+    text-transform: uppercase;
     margin-bottom: 0.2rem;
     padding-bottom: 0.3em; /* Aggressive padding to fully protect deep descenders */
     letter-spacing: 0; /* -1px was tuned for Syne; the serif needs its own metrics */
@@ -2927,25 +2965,94 @@ footer {
 
 
 /* --- SUB-PAGE HEADER (UPDATED: SMALLER SPACING) --- */
+/* =========================================
+   CATEGORY SHEET HEADER
+   Was a 50vh / 250px-minimum box holding a single word, which on a phone left
+   the title stranded in a tall empty band. It is now sized by its contents:
+   the title runs large, a caption underneath carries the frame count and the
+   bodies the work was shot on, and the site's light leak blooms behind it so
+   these pages share the home page's atmosphere instead of a flat grey panel.
+   ========================================= */
 .sub-header {
-    /* CHANGED: Reduced height significantly (was 60vh) */
-    height: 50vh;
-    min-height: 250px;
+    position: relative;
+    height: auto;
+    min-height: 0;
 
     display: flex;
     flex-direction: column;
-    justify-content: center;
+    justify-content: flex-end;
     align-items: center;
     text-align: center;
-    padding: 0 15px;
 
-    /* Background gradient */
-    background:
-            linear-gradient(to bottom, transparent 80%, var(--bg-color) 100%),
-            radial-gradient(circle at center, #161616 0%, #0b0b0b 70%);
+    /* Top padding clears the fixed navbar; the rest is breathing room. */
+    padding: calc(73px + 4.5rem) 5% 2.25rem;
+    margin-bottom: 0;
 
-    /* CHANGED: Reduced margin below header */
-    margin-bottom: 5px;
+    /* Transparent so the light leak behind the page shows through. */
+    background: transparent;
+    overflow: hidden;
+}
+
+/* The signature: the same warm bloom as the home hero, sitting behind the
+   category name so the sub-pages read as part of that world. */
+.sheet-glow {
+    position: absolute;
+    left: 50%;
+    top: 42%;
+    width: min(90vw, 900px);
+    height: min(60vh, 460px);
+    transform: translate(-50%, -50%);
+    background: radial-gradient(
+        ellipse at center,
+        rgba(255, 133, 51, 0.22) 0%,
+        rgba(255, 107, 0, 0.10) 38%,
+        transparent 72%
+    );
+    filter: blur(40px);
+    pointer-events: none;
+    z-index: -1;
+}
+
+.sub-header h1 {
+    position: relative;
+    font-size: clamp(2.8rem, 15vw, 8rem);
+    line-height: 0.94;
+    margin: 0;
+    padding-bottom: 0.1em; /* Playfair descenders vs background-clip */
+}
+
+/* Frame count and camera bodies — the page's own content, in the wordmark's
+   face so it ties back to the navbar. */
+.sheet-meta {
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 900;
+    font-size: clamp(0.6rem, 2.4vw, 0.72rem);
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    margin-top: 1rem;
+    max-width: min(92%, 64ch);
+    line-height: 1.7;
+}
+
+.sheet-meta em {
+    font-style: normal;
+    color: var(--accent);
+}
+
+.sheet-meta:empty {
+    display: none;
+}
+
+@media (max-width: 768px) {
+    .sub-header {
+        padding: calc(58px + 2.75rem) 5% 1.5rem;
+    }
+
+    .sheet-meta {
+        margin-top: 0.75rem;
+        letter-spacing: 0.16em;
+    }
 }
 
 /* Adjust the section padding for the gallery page only */
@@ -2970,6 +3077,10 @@ footer {
     position: fixed;
     bottom: 15px;
     right: 30px;
+    /* .photo-card creates a stacking context at z-index 5, so without this the
+       category switcher was painted underneath the grid it floats over. Sits
+       below the navbar (2100) and the modals (3000). */
+    z-index: 900;
     /* Optimized: Removed backdrop-filter to prevent WebGL lag */
     background: rgba(26, 26, 26, 0.98);
     border: 1px solid rgba(255, 107, 0, 0.3);
