@@ -76,7 +76,7 @@ body.webdev-page {
 }
 
 /* ══════════════════════════════════════════════════════════════════
-   HERO SECTION: CINEMATIC IMAGE/VIDEO BACKDROP & TYPOGRAPHY
+   HERO SECTION: CINEMATIC VISUAL BACKDROP & TYPOGRAPHY
    ══════════════════════════════════════════════════════════════════ */
 .webdev-hero-section {
     position: relative;
@@ -136,11 +136,6 @@ body.webdev-page {
     color: var(--dev-cream);
     margin-bottom: 22px;
     text-wrap: balance;
-}
-
-.webdev-hero-title .title-accent {
-    color: var(--dev-amber);
-    text-shadow: 0 0 40px var(--dev-amber-glow);
 }
 
 .webdev-hero-sub {
@@ -248,53 +243,7 @@ body.webdev-page {
     pointer-events: none;
 }
 
-/* Floating Code Language Badges (No Pills, Geometric Code Cards) */
-.laptop-floating-code {
-    position: absolute;
-    display: flex;
-    flex-direction: column;
-    gap: 4px;
-    padding: 10px 16px;
-    background: rgba(22, 19, 8, 0.92);
-    border: 1px solid rgba(235, 227, 167, 0.2);
-    border-radius: 8px;
-    backdrop-filter: blur(16px);
-    box-shadow: 0 12px 35px rgba(0, 0, 0, 0.7), 0 0 20px rgba(44, 87, 69, 0.25);
-    z-index: 10;
-    pointer-events: none;
-    transition: transform 0.1s ease-out;
-}
-
-.code-lang-tag {
-    font-family: monospace;
-    font-size: 0.72rem;
-    font-weight: 700;
-    color: var(--dev-amber);
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-}
-
-.code-snippet {
-    font-family: 'Geist Mono', Consolas, Monaco, monospace;
-    font-size: 0.76rem;
-    color: var(--dev-cream);
-    white-space: nowrap;
-}
-
-.chip-ts { top: 6%; left: 2%; }
-.chip-react { top: 12%; right: 3%; }
-.chip-gsap { bottom: 26%; left: -2%; }
-.chip-lenis { bottom: 20%; right: 0%; }
-.chip-css { top: 50%; right: -2%; }
-.chip-canvas { top: 46%; left: -3%; }
-
-@media (max-width: 1024px) {
-    .laptop-floating-code {
-        display: none;
-    }
-}
-
-/* Stage Navigation Tabs (Geometric Architectural Tabs) */
+/* Stage Navigation Tabs */
 .laptop-stage-nav {
     display: flex;
     justify-content: space-between;
@@ -441,8 +390,8 @@ body.webdev-page {
 
 .laptop-screen-content {
     background: #151307;
-    min-height: 520px;
-    height: 540px;
+    min-height: 540px;
+    height: 560px;
     position: relative;
     overflow-y: auto;
     overflow-x: hidden;
@@ -453,8 +402,8 @@ body.webdev-page {
 
 @media (max-width: 768px) {
     .laptop-screen-content {
-        height: 460px;
-        min-height: 460px;
+        height: 480px;
+        min-height: 480px;
     }
 }
 
@@ -498,7 +447,7 @@ body.webdev-page {
 }
 
 /* ══════════════════════════════════════════════════════════════════
-   LAPTOP SCREEN INNER VIEWS
+   LAPTOP SCREEN INNER VIEWS (STAGES 0, 1, 2, 3)
    ══════════════════════════════════════════════════════════════════ */
 .stage-screen {
     padding: 20px;
@@ -915,54 +864,159 @@ body.webdev-page {
 }
 
 /* ══════════════════════════════════════════════════════════════════
-   STAGE 3: ACTUAL INTERACTABLE WEBSITE DEMO (VASOSOFUJI.GITHUB.IO)
+   STAGE 3: AUTHENTIC MACOS BROWSER WINDOW & COMPLETE SCROLLABLE DEMO
    ══════════════════════════════════════════════════════════════════ */
-.stage-live-demo {
+.stage-macos-browser {
     padding: 0;
     display: flex;
     flex-direction: column;
     height: 100%;
     background: #0d0c05;
+    position: relative;
 }
 
-.live-demo-browser-chrome {
+/* macOS Window Header & Controls */
+.macos-window-header {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 10px 14px;
-    background: #19160a;
-    border-bottom: 1px solid rgba(235, 227, 167, 0.15);
+    padding: 8px 14px;
+    background: #1c1809;
+    border-bottom: 1px solid rgba(235, 227, 167, 0.14);
+    gap: 12px;
+    user-select: none;
 }
 
-.browser-url-bar {
-    background: #0d0c05;
-    border: 1px solid rgba(235, 227, 167, 0.15);
+/* Authentic macOS Traffic Lights */
+.macos-traffic-lights {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+}
+
+.traffic-light {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    position: relative;
+}
+
+.tl-red { background: #ff5f56; border: 1px solid #e0443e; }
+.tl-yellow { background: #ffbd2e; border: 1px solid #dea123; }
+.tl-green { background: #27c93f; border: 1px solid #1aab29; }
+
+.tl-icon {
+    font-size: 8px;
+    color: rgba(0, 0, 0, 0.65);
+    font-weight: 900;
+    opacity: 0;
+    transition: opacity 0.15s ease;
+    line-height: 1;
+}
+
+.macos-traffic-lights:hover .tl-icon {
+    opacity: 1;
+}
+
+/* macOS Back/Forward Nav Arrows */
+.macos-nav-arrows {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.macos-icon-btn {
+    background: transparent;
+    border: none;
+    color: var(--dev-cream-dim);
+    padding: 4px;
     border-radius: 4px;
-    padding: 3px 12px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.15s ease;
+}
+
+.macos-icon-btn:hover:not(:disabled) {
+    background: rgba(235, 227, 167, 0.1);
+    color: var(--dev-cream);
+}
+
+.macos-icon-btn:disabled {
+    opacity: 0.3;
+    cursor: default;
+}
+
+/* macOS Smart URL & Search Bar (vasojevich.com) */
+.macos-search-bar {
+    flex-grow: 1;
+    max-width: 480px;
+    background: #0d0c05;
+    border: 1px solid rgba(235, 227, 167, 0.16);
+    border-radius: 6px;
+    padding: 4px 12px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.macos-search-bar:hover {
+    border-color: var(--dev-amber);
+    background: #141207;
+}
+
+.macos-padlock {
+    font-size: 0.72rem;
+    opacity: 0.8;
+}
+
+.macos-url-text {
+    font-family: 'Geist Mono', Consolas, Monaco, monospace;
+    font-size: 0.76rem;
+    color: var(--dev-cream);
+    font-weight: 500;
+    letter-spacing: 0.2px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.macos-ssl-badge {
+    font-size: 0.62rem;
+    font-weight: 700;
+    color: #2ed573;
+    background: rgba(46, 213, 115, 0.15);
+    padding: 2px 6px;
+    border-radius: 3px;
+    white-space: nowrap;
+}
+
+.macos-copied-badge {
+    font-size: 0.62rem;
+    font-weight: 700;
+    color: #000;
+    background: var(--dev-amber);
+    padding: 2px 6px;
+    border-radius: 3px;
+    white-space: nowrap;
+}
+
+/* macOS Right Window Actions */
+.macos-window-right-actions {
     display: flex;
     align-items: center;
     gap: 8px;
-    font-size: 0.74rem;
-    color: var(--dev-cream-dim);
 }
 
-.url-lock { font-size: 0.7rem; }
-.url-status-tag {
-    background: var(--dev-forest);
-    color: #fff;
-    font-size: 0.6rem;
-    font-weight: 700;
-    padding: 1px 5px;
-    border-radius: 2px;
-}
-
-.browser-top-actions {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-}
-
-.demo-lang-btn {
+.macos-lang-toggle {
     background: rgba(235, 227, 167, 0.12);
     border: 1px solid rgba(235, 227, 167, 0.2);
     color: var(--dev-cream);
@@ -971,236 +1025,478 @@ body.webdev-page {
     padding: 3px 8px;
     border-radius: 4px;
     cursor: pointer;
-}
-
-.demo-open-external {
-    color: var(--dev-amber);
-    text-decoration: none;
-    font-weight: bold;
-    font-size: 0.85rem;
-    padding: 0 4px;
-}
-
-.mini-site-viewport {
-    flex-grow: 1;
-    overflow-y: auto;
-    display: flex;
-    flex-direction: column;
-    position: relative;
-}
-
-/* Mini Navigation inside laptop */
-.mini-site-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 10px 16px;
-    background: rgba(16, 15, 6, 0.95);
-    border-bottom: 1px solid rgba(235, 227, 167, 0.1);
-    position: sticky;
-    top: 0;
-    z-index: 10;
-}
-
-.mini-site-logo {
-    font-weight: 800;
-    font-size: 0.92rem;
-    color: var(--dev-cream);
-    cursor: pointer;
-    letter-spacing: 0.5px;
-}
-
-.mini-site-nav-links {
-    display: flex;
-    gap: 4px;
-}
-
-.mini-nav-btn {
-    background: transparent;
-    border: none;
-    color: var(--dev-cream-dim);
-    font-size: 0.72rem;
-    padding: 4px 8px;
-    border-radius: 4px;
-    cursor: pointer;
-    font-weight: 500;
     transition: all 0.15s ease;
 }
 
-.mini-nav-btn:hover {
+.macos-lang-toggle:hover {
+    background: var(--dev-forest);
+    color: #fff;
+}
+
+.macos-icon-btn.external-link {
+    color: var(--dev-amber);
+}
+
+/* macOS Tabs Strip */
+.macos-tab-strip {
+    display: flex;
+    align-items: center;
+    background: #141207;
+    padding: 0 10px;
+    border-bottom: 1px solid rgba(235, 227, 167, 0.1);
+    gap: 4px;
+}
+
+.macos-tab {
+    background: #0d0c05;
+    border: 1px solid rgba(235, 227, 167, 0.12);
+    border-bottom: none;
+    border-radius: 6px 6px 0 0;
+    padding: 5px 14px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    max-width: 220px;
+}
+
+.tab-favicon { font-size: 0.7rem; color: var(--dev-amber); }
+.tab-title {
+    font-size: 0.72rem;
+    color: var(--dev-cream);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+.tab-close {
+    font-size: 0.65rem;
+    color: var(--dev-cream-dim);
+    cursor: pointer;
+}
+
+.macos-tab-new {
+    color: var(--dev-cream-dim);
+    font-size: 0.9rem;
+    padding: 2px 8px;
+    cursor: pointer;
+}
+
+/* ══════════════════════════════════════════════════════════════════
+   SCROLLABLE MINI-WEBSITE DEMO (INSIDE MACOS BROWSER)
+   ══════════════════════════════════════════════════════════════════ */
+.macos-browser-viewport {
+    flex-grow: 1;
+    overflow-y: auto;
+    overflow-x: hidden;
+    scroll-behavior: smooth;
+    background: #0e0d05;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Custom Film Scrollbar for the Mini-Site */
+.macos-browser-viewport::-webkit-scrollbar {
+    width: 8px;
+}
+.macos-browser-viewport::-webkit-scrollbar-track {
+    background: #0d0c05;
+}
+.macos-browser-viewport::-webkit-scrollbar-thumb {
+    background: var(--dev-forest);
+    border-radius: 4px;
+}
+
+/* Mini Demo Hero */
+.demo-site-hero {
+    padding: 20px 24px 24px;
+    background: linear-gradient(180deg, rgba(44, 87, 69, 0.25) 0%, #0e0d05 100%);
+    border-bottom: 1px solid rgba(235, 227, 167, 0.1);
+}
+
+.demo-site-nav {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid rgba(235, 227, 167, 0.08);
+}
+
+.demo-brand {
+    font-weight: 800;
+    font-size: 1rem;
+    color: var(--dev-cream);
+    letter-spacing: 0.5px;
+    cursor: pointer;
+}
+
+.demo-nav-anchors {
+    display: flex;
+    gap: 6px;
+}
+
+.demo-nav-anchors button {
+    background: transparent;
+    border: none;
+    color: var(--dev-cream-dim);
+    font-size: 0.74rem;
+    padding: 4px 8px;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: all 0.15s ease;
+}
+
+.demo-nav-anchors button:hover {
     color: var(--dev-cream);
     background: rgba(235, 227, 167, 0.08);
 }
 
-.mini-nav-btn.active {
-    color: #120e00;
-    background: var(--dev-amber);
+.demo-nav-cta {
+    color: var(--dev-amber) !important;
     font-weight: 700;
 }
 
-/* Mini Gallery View */
-.mini-gallery-scroll {
-    padding: 16px;
-    display: flex;
-    flex-direction: column;
-    gap: 16px;
+.demo-hero-body {
+    max-width: 600px;
 }
 
-.mini-gallery-intro {
-    background: rgba(44, 87, 69, 0.2);
-    border: 1px solid var(--dev-border);
-    border-radius: 8px;
-    padding: 14px;
-}
-
-.mini-intro-sub {
+.demo-hero-kicker {
+    font-family: monospace;
     font-size: 0.68rem;
     color: var(--dev-amber);
     font-weight: 700;
-    letter-spacing: 0.5px;
-    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    display: block;
+    margin-bottom: 4px;
 }
 
-.mini-gallery-intro h6 {
+.demo-hero-body h4 {
     font-family: var(--font-heading);
-    font-size: 0.98rem;
+    font-size: 1.6rem;
     color: var(--dev-cream);
-    margin: 3px 0 4px;
+    margin-bottom: 2px;
+    line-height: 1.1;
 }
 
-.mini-intro-desc {
-    font-size: 0.75rem;
+.demo-hero-author {
+    font-size: 0.82rem;
+    color: var(--dev-amber);
+    margin-bottom: 8px;
+    font-weight: 600;
+}
+
+.demo-hero-desc {
+    font-size: 0.8rem;
     color: var(--dev-cream-dim);
-    line-height: 1.4;
+    line-height: 1.5;
 }
 
-.mini-photos-grid {
+/* Demo Section Layout */
+.demo-section {
+    padding: 24px;
+    border-bottom: 1px solid rgba(235, 227, 167, 0.08);
+}
+
+.demo-section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-bottom: 16px;
+}
+
+.demo-section-header h5 {
+    font-family: var(--font-heading);
+    font-size: 1.05rem;
+    color: var(--dev-cream);
+}
+
+.demo-filter-tabs {
+    display: flex;
+    gap: 4px;
+}
+
+.demo-filter-btn {
+    background: rgba(0, 0, 0, 0.4);
+    border: 1px solid rgba(235, 227, 167, 0.12);
+    color: var(--dev-cream-dim);
+    font-size: 0.72rem;
+    padding: 4px 10px;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: all 0.15s ease;
+}
+
+.demo-filter-btn:hover {
+    color: var(--dev-cream);
+    border-color: var(--dev-cream-dim);
+}
+
+.demo-filter-btn.active {
+    background: var(--dev-forest);
+    border-color: var(--dev-amber);
+    color: #fff;
+    font-weight: 700;
+}
+
+/* Interactive Masonry Grid inside Demo */
+.demo-masonry-grid {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
     gap: 10px;
 }
 
 @media (max-width: 700px) {
-    .mini-photos-grid {
+    .demo-masonry-grid {
         grid-template-columns: repeat(2, 1fr);
     }
 }
 
-.mini-photo-card {
+.demo-photo-item {
+    position: relative;
     background: #141207;
     border: 1px solid rgba(235, 227, 167, 0.12);
     border-radius: 6px;
     overflow: hidden;
     cursor: pointer;
     transition: all 0.2s ease;
+    height: 120px;
 }
 
-.mini-photo-card:hover {
+.demo-photo-item:hover {
     border-color: var(--dev-amber);
     transform: translateY(-2px);
 }
 
-.mini-photo-card img {
+.demo-photo-item img {
     width: 100%;
-    height: 90px;
+    height: 100%;
     object-fit: cover;
     display: block;
+    transition: transform 0.3s ease;
 }
 
-.mini-photo-caption {
-    padding: 6px 8px;
+.demo-photo-item:hover img {
+    transform: scale(1.06);
+}
+
+.demo-photo-overlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(180deg, transparent 40%, rgba(0, 0, 0, 0.9) 100%);
+    padding: 8px;
     display: flex;
     flex-direction: column;
+    justify-content: flex-end;
 }
 
-.mini-photo-caption strong {
+.demo-photo-overlay strong {
     font-size: 0.72rem;
-    color: var(--dev-cream);
+    color: #fff;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
 }
 
-.mini-photo-caption small {
+.demo-photo-overlay small {
     font-size: 0.62rem;
-    color: var(--dev-cream-dim);
+    color: var(--dev-amber);
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
 }
 
-/* Mini About View inside Laptop */
-.mini-about-view {
-    padding: 20px 16px;
+.photo-loc {
+    font-size: 0.58rem;
+    color: var(--dev-cream-dim);
 }
 
-.mini-about-card {
-    background: rgba(44, 87, 69, 0.22);
-    border: 1px solid var(--dev-border);
-    border-radius: 8px;
-    padding: 18px;
-    display: flex;
-    gap: 16px;
-    align-items: flex-start;
+/* Bento Grid inside Demo */
+.demo-bento-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
 }
 
-@media (max-width: 600px) {
-    .mini-about-card {
-        flex-direction: column;
+@media (max-width: 650px) {
+    .demo-bento-grid {
+        grid-template-columns: 1fr;
     }
 }
 
-.mini-avatar {
-    width: 72px;
-    height: 72px;
+.demo-bento-card {
+    background: rgba(44, 87, 69, 0.18);
+    border: 1px solid rgba(235, 227, 167, 0.12);
+    border-radius: 8px;
+    padding: 16px;
+}
+
+.demo-bento-card.span-2 {
+    grid-column: span 2;
+}
+
+@media (max-width: 650px) {
+    .demo-bento-card.span-2 {
+        grid-column: span 1;
+    }
+}
+
+.demo-bento-author-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 10px;
+}
+
+.demo-bento-avatar {
+    width: 44px;
+    height: 44px;
     border-radius: 6px;
     object-fit: cover;
     border: 1px solid var(--dev-amber);
 }
 
-.mini-about-text h5 {
+.demo-bento-card h6 {
     font-family: var(--font-heading);
-    font-size: 1.05rem;
+    font-size: 0.95rem;
     color: var(--dev-cream);
     margin-bottom: 2px;
 }
 
-.mini-role {
-    font-size: 0.7rem;
+.demo-bento-sub {
+    font-size: 0.72rem;
     color: var(--dev-amber);
-    display: block;
-    margin-bottom: 8px;
-    font-weight: 600;
 }
 
-.mini-about-text p {
-    font-size: 0.78rem;
+.demo-bento-text {
+    font-size: 0.76rem;
     color: var(--dev-cream-dim);
     line-height: 1.5;
-    margin-bottom: 12px;
 }
 
-.mini-gear-row {
+.demo-gear-items {
+    list-style: none;
     display: flex;
-    flex-wrap: wrap;
+    flex-direction: column;
+    gap: 4px;
+    margin-top: 8px;
+}
+
+.demo-gear-items li {
+    font-size: 0.74rem;
+    color: var(--dev-cream);
+    display: flex;
+    align-items: center;
     gap: 6px;
 }
 
-.mini-gear-row span {
-    background: rgba(0, 0, 0, 0.4);
-    border: 1px solid rgba(235, 227, 167, 0.15);
-    font-size: 0.68rem;
-    color: var(--dev-cream);
-    padding: 2px 6px;
-    border-radius: 4px;
+.demo-band-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
 }
 
-/* Mini Lightbox Modal inside Laptop */
-.mini-lightbox-modal {
+.demo-band-thumb {
+    width: 48px;
+    height: 48px;
+    border-radius: 6px;
+    object-fit: cover;
+    border: 1px solid rgba(235, 227, 167, 0.2);
+}
+
+.demo-band-desc {
+    font-size: 0.74rem;
+    color: var(--dev-cream-dim);
+    line-height: 1.4;
+}
+
+.demo-mini-score-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 6px;
+    margin-top: 8px;
+}
+
+.demo-score-chip {
+    background: rgba(0, 0, 0, 0.4);
+    border: 1px solid rgba(46, 213, 115, 0.4);
+    border-radius: 4px;
+    padding: 6px 2px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.score-num {
+    font-size: 0.92rem;
+    font-weight: 800;
+    color: #2ed573;
+}
+
+.score-lbl {
+    font-size: 0.6rem;
+    color: var(--dev-cream-dim);
+}
+
+/* Demo Contact Strip */
+.demo-contact-strip {
+    padding: 18px 24px;
+    background: linear-gradient(90deg, rgba(44, 87, 69, 0.3) 0%, rgba(235, 125, 0, 0.15) 100%);
+    border-bottom: 1px solid rgba(235, 227, 167, 0.08);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 16px;
+}
+
+.demo-contact-strip h6 {
+    font-size: 0.92rem;
+    color: var(--dev-cream);
+    margin-bottom: 2px;
+}
+
+.demo-contact-strip p {
+    font-size: 0.74rem;
+    color: var(--dev-cream-dim);
+}
+
+.demo-contact-cta-btn {
+    background: var(--dev-amber);
+    color: #120e00;
+    font-size: 0.78rem;
+    font-weight: 700;
+    padding: 6px 14px;
+    border-radius: 4px;
+    text-decoration: none;
+    white-space: nowrap;
+}
+
+/* Demo Footer */
+.demo-mini-footer {
+    padding: 12px 24px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 0.7rem;
+    color: var(--dev-cream-dim);
+    background: #090803;
+}
+
+.demo-mini-footer button {
+    background: transparent;
+    border: none;
+    color: var(--dev-amber);
+    cursor: pointer;
+    font-size: 0.7rem;
+    font-weight: bold;
+}
+
+/* macOS Modal Lightbox Backdrop */
+.macos-modal-backdrop {
     position: absolute;
     inset: 0;
-    background: rgba(0, 0, 0, 0.85);
-    backdrop-filter: blur(8px);
+    background: rgba(0, 0, 0, 0.88);
+    backdrop-filter: blur(10px);
     z-index: 50;
     display: flex;
     align-items: center;
@@ -1208,54 +1504,80 @@ body.webdev-page {
     padding: 16px;
 }
 
-.mini-lightbox-box {
+.macos-modal-card {
     position: relative;
-    max-width: 85%;
-    max-height: 85%;
+    max-width: 90%;
+    max-height: 90%;
     background: #141208;
     border: 1px solid var(--dev-amber);
     border-radius: 8px;
     overflow: hidden;
     display: flex;
     flex-direction: column;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.9);
 }
 
-.mini-lightbox-close {
-    position: absolute;
-    top: 8px;
-    right: 8px;
-    background: rgba(0, 0, 0, 0.7);
-    border: 1px solid #fff;
-    color: #fff;
-    width: 24px;
-    height: 24px;
-    border-radius: 4px;
-    cursor: pointer;
-    font-size: 0.75rem;
+.macos-modal-header {
     display: flex;
+    justify-content: space-between;
     align-items: center;
-    justify-content: center;
+    padding: 10px 14px;
+    background: #1c1809;
+    border-bottom: 1px solid rgba(235, 227, 167, 0.15);
 }
 
-.mini-lightbox-box img {
+.modal-title {
+    font-size: 0.84rem;
+    font-weight: 700;
+    color: var(--dev-cream);
+}
+
+.macos-modal-close {
+    background: transparent;
+    border: none;
+    color: var(--dev-cream-dim);
+    font-size: 0.85rem;
+    cursor: pointer;
+}
+
+.macos-modal-close:hover {
+    color: #fff;
+}
+
+.macos-modal-body {
+    display: flex;
+    flex-direction: column;
+}
+
+.macos-modal-body img {
     max-width: 100%;
-    max-height: 240px;
+    max-height: 250px;
     object-fit: contain;
     background: #000;
 }
 
-.mini-lightbox-meta {
-    padding: 10px 14px;
+.macos-modal-meta {
+    padding: 12px 14px;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+    background: #121006;
+    border-top: 1px solid rgba(235, 227, 167, 0.1);
 }
 
-.mini-lightbox-meta h6 {
-    font-size: 0.85rem;
-    color: var(--dev-cream);
+.meta-col {
+    display: flex;
+    flex-direction: column;
 }
 
-.mini-lightbox-meta p {
-    font-size: 0.72rem;
+.meta-label {
+    font-size: 0.65rem;
     color: var(--dev-cream-dim);
+}
+
+.meta-col strong {
+    font-size: 0.75rem;
+    color: var(--dev-cream);
 }
 
 /* ══════════════════════════════════════════════════════════════════

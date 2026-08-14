@@ -9,34 +9,36 @@ interface DemoPhoto {
   category: "concerts" | "portraits" | "landscapes";
   title: string;
   camera: string;
+  location: string;
   src: string;
 }
 
 const DEMO_PHOTOS: DemoPhoto[] = [
-  { id: "1", category: "concerts", title: "LoveRave Festival", camera: "Fujifilm X-T2 • XF 35mm F/2", src: "photos/concerts/Untitled-13.jpg" },
-  { id: "2", category: "portraits", title: "Editorial Portrait", camera: "Fujifilm X-T2 • 35mm F/2", src: "photos/portraits/DSCF0950.jpg" },
-  { id: "3", category: "landscapes", title: "Misty Horizon", camera: "Fujifilm X-T2 • 16-50mm", src: "photos/landscapes/IMG_8896.jpg" },
-  { id: "4", category: "concerts", title: "Korka Live Performance", camera: "Fujifilm X-T2 • 35mm F/2", src: "photos/concerts/kork.jpg" },
-  { id: "5", category: "portraits", title: "Studio Light Study", camera: "Fujifilm X-T2 • 35mm F/2", src: "photos/portraits/IMG_5213.jpg" },
-  { id: "6", category: "concerts", title: "Sickabass Stage", camera: "Fujifilm X-T2 • 35mm F/2", src: "photos/concerts/sickabass.jpg" },
-  { id: "7", category: "portraits", title: "Golden Hour Flare", camera: "Fujifilm X-T2 • 35mm F/2", src: "photos/portraits/DSCF7475.jpg" },
-  { id: "8", category: "landscapes", title: "Mountain Fog", camera: "Fujifilm X-T2 • 16-50mm", src: "photos/landscapes/IMG_8635.jpg" },
+  { id: "1", category: "concerts", title: "LoveRave Festival 2025", camera: "Fujifilm X-T2 • XF 35mm F/2", location: "MKC Skopje", src: "photos/concerts/Untitled-13.jpg" },
+  { id: "2", category: "portraits", title: "Studio Light Experiment", camera: "Fujifilm X-T2 • XF 35mm F/2", location: "Studio Skopje", src: "photos/portraits/DSCF0950.jpg" },
+  { id: "3", category: "landscapes", title: "Misty Mountain Ridge", camera: "Fujifilm X-T2 • XC 16-50mm", location: "Vodno Peak", src: "photos/landscapes/IMG_8896.jpg" },
+  { id: "4", category: "concerts", title: "Korka Live Set", camera: "Fujifilm X-T2 • XF 35mm F/2", location: "Laboratorium", src: "photos/concerts/kork.jpg" },
+  { id: "5", category: "portraits", title: "Atmospheric Portrait", camera: "Fujifilm X-T2 • XF 35mm F/2", location: "Old Bazaar", src: "photos/portraits/IMG_5213.jpg" },
+  { id: "6", category: "concerts", title: "Sickabass Energy", camera: "Fujifilm X-T2 • XF 35mm F/2", location: "Havana Club", src: "photos/concerts/sickabass.jpg" },
+  { id: "7", category: "portraits", title: "Golden Hour Glow", camera: "Fujifilm X-T2 • XF 35mm F/2", location: "City Park", src: "photos/portraits/DSCF7475.jpg" },
+  { id: "8", category: "landscapes", title: "Overcast Horizon", camera: "Fujifilm X-T2 • XC 16-50mm", location: "Mavrovo", src: "photos/landscapes/IMG_8635.jpg" },
 ];
 
 export function ParallaxLaptopBuilder({ initialStage = 3 }: ParallaxLaptopBuilderProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const laptopRef = useRef<HTMLDivElement>(null);
-  const screenContentRef = useRef<HTMLDivElement>(null);
+  const browserViewportRef = useRef<HTMLDivElement>(null);
   
-  // Stages: 0: Terminal/Wireframe, 1: Design Tokens/Colors, 2: Component Assembly, 3: Live Website Demo
+  // Stages: 0: Terminal/Scaffold, 1: Design Tokens/Colors, 2: Component Assembly, 3: Live macOS Browser Website
   const [activeStage, setActiveStage] = useState(initialStage);
   const [copiedPalette, setCopiedPalette] = useState<string | null>(null);
   const [isAutoPlaying, setIsAutoPlaying] = useState(false);
 
-  // Interactive Mini Website Demo State
-  const [demoCategory, setDemoCategory] = useState<"all" | "concerts" | "portraits" | "landscapes">("all");
+  // macOS Browser State
+  const [currentUrl, setCurrentUrl] = useState("https://vasojevich.com");
+  const [isCopiedUrl, setIsCopiedUrl] = useState(false);
+  const [demoFilter, setDemoFilter] = useState<"all" | "concerts" | "portraits" | "landscapes">("all");
   const [selectedPhoto, setSelectedPhoto] = useState<DemoPhoto | null>(null);
-  const [demoView, setDemoView] = useState<"gallery" | "about">("gallery");
   const [demoLang, setDemoLang] = useState<"en" | "mk">("en");
 
   const [lang, setLang] = useState<string>(() => {
@@ -59,7 +61,7 @@ export function ParallaxLaptopBuilder({ initialStage = 3 }: ParallaxLaptopBuilde
     return () => window.removeEventListener("languagechange", handleLangChange);
   }, []);
 
-  // 3D Mouse Parallax on Laptop & Floating Code Badges
+  // 3D Mouse Parallax on Laptop Chassis
   useEffect(() => {
     const container = containerRef.current;
     const laptop = laptopRef.current;
@@ -76,26 +78,13 @@ export function ParallaxLaptopBuilder({ initialStage = 3 }: ParallaxLaptopBuilde
       const x = (e.clientX - rect.left) / rect.width - 0.5;
       const y = (e.clientY - rect.top) / rect.height - 0.5;
 
-      targetRotY = x * 12; // max 12deg Y rotation
-      targetRotX = -y * 8; // max 8deg X rotation
-
-      // Parallax floating code badges
-      const badges = container.querySelectorAll<HTMLElement>(".laptop-floating-code");
-      badges.forEach((badge) => {
-        const depth = parseFloat(badge.getAttribute("data-depth") || "1");
-        const moveX = x * 32 * depth;
-        const moveY = y * 28 * depth;
-        badge.style.transform = `translate3d(${moveX}px, ${moveY}px, ${depth * 20}px)`;
-      });
+      targetRotY = x * 10; // 10deg max Y tilt
+      targetRotX = -y * 7; // 7deg max X tilt
     };
 
     const handleMouseLeave = () => {
       targetRotX = 0;
       targetRotY = 0;
-      const badges = container.querySelectorAll<HTMLElement>(".laptop-floating-code");
-      badges.forEach((badge) => {
-        badge.style.transform = `translate3d(0px, 0px, 0px)`;
-      });
     };
 
     const renderLoop = () => {
@@ -150,7 +139,7 @@ export function ParallaxLaptopBuilder({ initialStage = 3 }: ParallaxLaptopBuilde
     if (!isAutoPlaying) return;
     const interval = setInterval(() => {
       setActiveStage((prev) => (prev + 1) % 4);
-    }, 3800);
+    }, 4000);
     return () => clearInterval(interval);
   }, [isAutoPlaying]);
 
@@ -165,45 +154,28 @@ export function ParallaxLaptopBuilder({ initialStage = 3 }: ParallaxLaptopBuilde
     setTimeout(() => setCopiedPalette(null), 1800);
   };
 
-  const filteredPhotos = demoCategory === "all" 
+  const copyUrl = () => {
+    navigator.clipboard.writeText(currentUrl);
+    setIsCopiedUrl(true);
+    setTimeout(() => setIsCopiedUrl(false), 2000);
+  };
+
+  const filteredPhotos = demoFilter === "all" 
     ? DEMO_PHOTOS 
-    : DEMO_PHOTOS.filter(p => p.category === demoCategory);
+    : DEMO_PHOTOS.filter(p => p.category === demoFilter);
+
+  const scrollToDemoSection = (id: string) => {
+    if (!browserViewportRef.current) return;
+    const el = browserViewportRef.current.querySelector(`#${id}`);
+    if (el) {
+      el.scrollIntoView({ behavior: "smooth" });
+    }
+  };
 
   return (
     <div ref={containerRef} className="laptop-builder-wrapper">
       {/* Ambient Lighting Depth Aura */}
       <div className="laptop-aura-glow" />
-
-      {/* Floating Code Languages & Technologies (Used to build this site) */}
-      <div className="laptop-floating-code chip-ts" data-depth="1.6">
-        <span className="code-lang-tag">TypeScript</span>
-        <code className="code-snippet">type Site = StrictMode &amp; Typed;</code>
-      </div>
-
-      <div className="laptop-floating-code chip-react" data-depth="2.2">
-        <span className="code-lang-tag">React 19</span>
-        <code className="code-snippet">&lt;SterlingNav active="webdev" /&gt;</code>
-      </div>
-
-      <div className="laptop-floating-code chip-gsap" data-depth="1.3">
-        <span className="code-lang-tag">GSAP 3.15</span>
-        <code className="code-snippet">gsap.timeline(&#123; scrub: 1 &#125;)</code>
-      </div>
-
-      <div className="laptop-floating-code chip-lenis" data-depth="2.6">
-        <span className="code-lang-tag">Lenis</span>
-        <code className="code-snippet">lenis.on('scroll', onScroll)</code>
-      </div>
-
-      <div className="laptop-floating-code chip-css" data-depth="1.8">
-        <span className="code-lang-tag">Tailwind v4</span>
-        <code className="code-snippet">--color-olive: #2E2910;</code>
-      </div>
-
-      <div className="laptop-floating-code chip-canvas" data-depth="2.0">
-        <span className="code-lang-tag">HTML5 Canvas</span>
-        <code className="code-snippet">ctx.drawImage(frameSequence, 0, 0)</code>
-      </div>
 
       {/* Stage Selector Bar (Geometric Architectural Tabs) */}
       <div className="laptop-stage-nav">
@@ -222,7 +194,7 @@ export function ParallaxLaptopBuilder({ initialStage = 3 }: ParallaxLaptopBuilde
             onClick={() => setStageDirect(1)}
           >
             <span className="tab-idx">02</span>
-            <span className="tab-title">{isMk ? "Палета & Токени" : "Design System & Tokens"}</span>
+            <span className="tab-title">{isMk ? "Палета & Токени" : "Design Tokens"}</span>
           </button>
           <button
             type="button"
@@ -230,7 +202,7 @@ export function ParallaxLaptopBuilder({ initialStage = 3 }: ParallaxLaptopBuilde
             onClick={() => setStageDirect(2)}
           >
             <span className="tab-idx">03</span>
-            <span className="tab-title">{isMk ? "Монтажа на Компоненти" : "Component Assembly"}</span>
+            <span className="tab-title">{isMk ? "Монтажа на Модули" : "Component Assembly"}</span>
           </button>
           <button
             type="button"
@@ -238,7 +210,7 @@ export function ParallaxLaptopBuilder({ initialStage = 3 }: ParallaxLaptopBuilde
             onClick={() => setStageDirect(3)}
           >
             <span className="tab-idx">04</span>
-            <span className="tab-title">{isMk ? "Интерактивно Демо (Live)" : "Live Website Demo"}</span>
+            <span className="tab-title">{isMk ? "Интерактивно Демо (macOS Browser)" : "Live Website Demo (macOS Browser)"}</span>
           </button>
         </div>
 
@@ -266,7 +238,7 @@ export function ParallaxLaptopBuilder({ initialStage = 3 }: ParallaxLaptopBuilde
             <div className="laptop-screen-glare" />
 
             {/* Screen Inner Display Area */}
-            <div ref={screenContentRef} className={`laptop-screen-content stage-view-${activeStage}`}>
+            <div className={`laptop-screen-content stage-view-${activeStage}`}>
               
               {/* STAGE 0: TERMINAL & BLUEPRINT WIREFRAME */}
               {activeStage === 0 && (
@@ -277,15 +249,15 @@ export function ParallaxLaptopBuilder({ initialStage = 3 }: ParallaxLaptopBuilde
                       <span className="dot dot-yellow" />
                       <span className="dot dot-green" />
                     </div>
-                    <div className="term-title">vasosofuji-engine ~ zsh - 80x24</div>
+                    <div className="term-title">vaso@m4-max ~ zsh - 80x24</div>
                     <div className="term-badge">STAGE 01 / SCAFFOLD</div>
                   </div>
 
                   <div className="terminal-body">
                     <div className="term-line prompt">
-                      <span className="term-usr">vaso@workstation</span>:<span className="term-path">~/code/vasosofuji</span>$ npm run dev
+                      <span className="term-usr">vaso@workstation</span>:<span className="term-path">~/code/vasojevich.com</span>$ npm run dev
                     </div>
-                    <div className="term-line success">✓ Vite 8.1 ready in 140ms</div>
+                    <div className="term-line success">✓ Vite 8.1 ready in 140ms (ESM Edge)</div>
                     <div className="term-line success">✓ TypeScript 6.0 initialized with strict typing</div>
                     <div className="term-line success">✓ GSAP 3.15 + Lenis smooth inertial scroll mounted</div>
                     <div className="term-line info">
@@ -483,173 +455,307 @@ export function ParallaxLaptopBuilder({ initialStage = 3 }: ParallaxLaptopBuilde
                 </div>
               )}
 
-              {/* STAGE 3: ACTUAL INTERACTABLE WEBSITE DEMO (VASOSOFUJI.GITHUB.IO) */}
+              {/* STAGE 3: AUTHENTIC MACOS BROWSER WITH COMPLETE SCROLLABLE DEMO SITE */}
               {activeStage === 3 && (
-                <div className="stage-screen stage-live-demo">
-                  {/* Miniature Browser Chrome Bar */}
-                  <div className="live-demo-browser-chrome">
-                    <div className="browser-dots">
-                      <span className="dot dot-red" />
-                      <span className="dot dot-yellow" />
-                      <span className="dot dot-green" />
+                <div className="stage-screen stage-macos-browser">
+                  
+                  {/* macOS Safari / Arc Style Window Chrome */}
+                  <div className="macos-window-header">
+                    {/* Traffic Light Buttons */}
+                    <div className="macos-traffic-lights">
+                      <span className="traffic-light tl-red" title="Close">
+                        <span className="tl-icon">✕</span>
+                      </span>
+                      <span className="traffic-light tl-yellow" title="Minimize">
+                        <span className="tl-icon">−</span>
+                      </span>
+                      <span className="traffic-light tl-green" title="Maximize">
+                        <span className="tl-icon">+</span>
+                      </span>
                     </div>
-                    <div className="browser-url-bar">
-                      <span className="url-lock">🔒</span>
-                      <span className="url-text">https://vasosofuji.github.io</span>
-                      <span className="url-status-tag">LIVE DEMO</span>
+
+                    {/* Navigation Buttons */}
+                    <div className="macos-nav-arrows">
+                      <button type="button" className="macos-icon-btn" title="Back">
+                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+                      </button>
+                      <button type="button" className="macos-icon-btn" title="Forward" disabled>
+                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+                      </button>
+                      <button type="button" className="macos-icon-btn" title="Reload" onClick={() => scrollToDemoSection("demo-top")}>
+                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67"/></svg>
+                      </button>
                     </div>
-                    <div className="browser-top-actions">
+
+                    {/* macOS Centered Smart Search & Address Bar */}
+                    <div className="macos-search-bar" onClick={copyUrl} title="Click to copy URL">
+                      <span className="macos-padlock">🔒</span>
+                      <span className="macos-url-text">{currentUrl}</span>
+                      {isCopiedUrl ? (
+                        <span className="macos-copied-badge">Copied!</span>
+                      ) : (
+                        <span className="macos-ssl-badge">TLS 1.3 • A+</span>
+                      )}
+                    </div>
+
+                    {/* macOS Right Window Actions */}
+                    <div className="macos-window-right-actions">
                       <button
                         type="button"
-                        className="demo-lang-btn"
+                        className="macos-lang-toggle"
                         onClick={() => setDemoLang(prev => prev === "en" ? "mk" : "en")}
-                        title="Toggle Demo Language"
+                        title="Toggle Site Language"
                       >
                         {demoLang.toUpperCase()}
                       </button>
                       <a
                         href="index.html"
-                        className="demo-open-external"
-                        title="Open Full Site"
+                        className="macos-icon-btn external-link"
+                        title="Open Fullscreen Site in New Tab"
                       >
-                        ↗
+                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
                       </a>
                     </div>
                   </div>
 
-                  {/* Miniature Website Operating Interface */}
-                  <div className="mini-site-viewport">
-                    {/* Mini Site Navigation Header */}
-                    <div className="mini-site-header">
-                      <span className="mini-site-logo" onClick={() => { setDemoView("gallery"); setDemoCategory("all"); }}>
-                        vasosofuji
-                      </span>
-                      <nav className="mini-site-nav-links">
-                        <button
-                          type="button"
-                          className={`mini-nav-btn ${demoView === "gallery" && demoCategory === "all" ? "active" : ""}`}
-                          onClick={() => { setDemoView("gallery"); setDemoCategory("all"); }}
-                        >
-                          {demoLang === "mk" ? "Сите" : "All"}
-                        </button>
-                        <button
-                          type="button"
-                          className={`mini-nav-btn ${demoView === "gallery" && demoCategory === "concerts" ? "active" : ""}`}
-                          onClick={() => { setDemoView("gallery"); setDemoCategory("concerts"); }}
-                        >
-                          {demoLang === "mk" ? "Концерти" : "Concerts"}
-                        </button>
-                        <button
-                          type="button"
-                          className={`mini-nav-btn ${demoView === "gallery" && demoCategory === "portraits" ? "active" : ""}`}
-                          onClick={() => { setDemoView("gallery"); setDemoCategory("portraits"); }}
-                        >
-                          {demoLang === "mk" ? "Портрети" : "Portraits"}
-                        </button>
-                        <button
-                          type="button"
-                          className={`mini-nav-btn ${demoView === "gallery" && demoCategory === "landscapes" ? "active" : ""}`}
-                          onClick={() => { setDemoView("gallery"); setDemoCategory("landscapes"); }}
-                        >
-                          {demoLang === "mk" ? "Пејсажи" : "Landscapes"}
-                        </button>
-                        <button
-                          type="button"
-                          className={`mini-nav-btn ${demoView === "about" ? "active" : ""}`}
-                          onClick={() => setDemoView("about")}
-                        >
-                          {demoLang === "mk" ? "За Мене" : "About"}
-                        </button>
-                      </nav>
+                  {/* macOS Tab Strip */}
+                  <div className="macos-tab-strip">
+                    <div className="macos-tab active">
+                      <span className="tab-favicon">⚡</span>
+                      <span className="tab-title">vasosofuji — Mateja Vasojević</span>
+                      <span className="tab-close">✕</span>
+                    </div>
+                    <div className="macos-tab-new" onClick={() => setCurrentUrl("https://vasojevich.com/portfolio")}>
+                      +
+                    </div>
+                  </div>
+
+                  {/* Complete Scrollable Live Website Inside macOS Browser */}
+                  <div ref={browserViewportRef} className="macos-browser-viewport">
+                    
+                    {/* DEMO SITE HERO SECTION */}
+                    <div id="demo-top" className="demo-site-hero">
+                      <div className="demo-site-nav">
+                        <div className="demo-brand" onClick={() => scrollToDemoSection("demo-top")}>
+                          vasosofuji
+                        </div>
+                        <div className="demo-nav-anchors">
+                          <button type="button" onClick={() => scrollToDemoSection("demo-gallery")}>
+                            {demoLang === "mk" ? "Галерија" : "Gallery"}
+                          </button>
+                          <button type="button" onClick={() => scrollToDemoSection("demo-about")}>
+                            {demoLang === "mk" ? "За Мене" : "About"}
+                          </button>
+                          <button type="button" onClick={() => scrollToDemoSection("demo-gear")}>
+                            {demoLang === "mk" ? "Опрема" : "Gear"}
+                          </button>
+                          <button type="button" onClick={() => scrollToDemoSection("demo-contact")} className="demo-nav-cta">
+                            {demoLang === "mk" ? "Контакт" : "Contact"}
+                          </button>
+                        </div>
+                      </div>
+
+                      <div className="demo-hero-body">
+                        <span className="demo-hero-kicker">
+                          {demoLang === "mk" ? "ФОТОГРАФИЈА & ВЕБ РАЗВОЈ" : "PHOTOGRAPHY & CREATIVE WEB"}
+                        </span>
+                        <h4>vasosofuji</h4>
+                        <p className="demo-hero-author">
+                          {demoLang === "mk" ? "Матеја Васојевиќ • Скопје, Македонија" : "Mateja Vasojevikj • Skopje, North Macedonia"}
+                        </p>
+                        <p className="demo-hero-desc">
+                          {demoLang === "mk"
+                            ? "Студент по Сајбер Безбедност на ФИНКИ и креативен девелопер. Овој сајт е рачно изработен со React 19, TypeScript и GSAP физика."
+                            : "Cybersecurity student at FCSE (FINKI) and creative engineer. This entire site is hand-crafted with React 19, TypeScript, and 60fps GSAP physics."}
+                        </p>
+                      </div>
                     </div>
 
-                    {/* View 1: Interactive Gallery */}
-                    {demoView === "gallery" && (
-                      <div className="mini-gallery-scroll">
-                        <div className="mini-gallery-intro">
-                          <span className="mini-intro-sub">
-                            {demoLang === "mk" ? "Фотографија & Креативен Веб" : "Photography & Creative Web"}
-                          </span>
-                          <h6>
-                            {demoLang === "mk" 
-                              ? "Матеја Васојевиќ — Креативен Девелопер & Фотограф" 
-                              : "Mateja Vasojevikj — Creative Developer & Photographer"}
-                          </h6>
-                          <p className="mini-intro-desc">
+                    {/* DEMO SITE GALLERY SECTION WITH CATEGORY FILTERS */}
+                    <div id="demo-gallery" className="demo-section">
+                      <div className="demo-section-header">
+                        <h5>{demoLang === "mk" ? "Избрани Фотографии" : "Selected Photographs"}</h5>
+                        <div className="demo-filter-tabs">
+                          <button
+                            type="button"
+                            className={`demo-filter-btn ${demoFilter === "all" ? "active" : ""}`}
+                            onClick={() => setDemoFilter("all")}
+                          >
+                            {demoLang === "mk" ? "Сите" : "All"}
+                          </button>
+                          <button
+                            type="button"
+                            className={`demo-filter-btn ${demoFilter === "concerts" ? "active" : ""}`}
+                            onClick={() => setDemoFilter("concerts")}
+                          >
+                            {demoLang === "mk" ? "Концерти" : "Concerts"}
+                          </button>
+                          <button
+                            type="button"
+                            className={`demo-filter-btn ${demoFilter === "portraits" ? "active" : ""}`}
+                            onClick={() => setDemoFilter("portraits")}
+                          >
+                            {demoLang === "mk" ? "Портрети" : "Portraits"}
+                          </button>
+                          <button
+                            type="button"
+                            className={`demo-filter-btn ${demoFilter === "landscapes" ? "active" : ""}`}
+                            onClick={() => setDemoFilter("landscapes")}
+                          >
+                            {demoLang === "mk" ? "Пејсажи" : "Landscapes"}
+                          </button>
+                        </div>
+                      </div>
+
+                      {/* Interactive Masonry Grid */}
+                      <div className="demo-masonry-grid">
+                        {filteredPhotos.map((photo) => (
+                          <div
+                            key={photo.id}
+                            className="demo-photo-item"
+                            onClick={() => setSelectedPhoto(photo)}
+                          >
+                            <img
+                              src={photo.src}
+                              alt={photo.title}
+                              loading="lazy"
+                            />
+                            <div className="demo-photo-overlay">
+                              <strong>{photo.title}</strong>
+                              <small>{photo.camera}</small>
+                              <span className="photo-loc">{photo.location}</span>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+
+                    {/* DEMO SITE BENTO ABOUT & GEAR SECTION */}
+                    <div id="demo-about" className="demo-section">
+                      <div className="demo-bento-grid">
+                        
+                        {/* Bio Card */}
+                        <div className="demo-bento-card span-2">
+                          <div className="demo-bento-author-row">
+                            <img src="misc/vaso.jpg" alt="Mateja Vasojevic" className="demo-bento-avatar" />
+                            <div>
+                              <h6>{demoLang === "mk" ? "Зад Објективот & Кодот" : "Behind the Lens & Code"}</h6>
+                              <span className="demo-bento-sub">
+                                {demoLang === "mk" ? "Матеја Васојевиќ (vasosofuji)" : "Mateja Vasojevikj (vasosofuji)"}
+                              </span>
+                            </div>
+                          </div>
+                          <p className="demo-bento-text">
                             {demoLang === "mk"
-                              ? "Кликнете на која било фотографија за преглед на метаподатоците."
-                              : "Click any image below to test interactive lightbox and camera metadata."}
+                              ? "Балансирам помеѓу студиите по сајбер безбедност на ФИНКИ и љубовта кон фотографијата, кинематографијата и креативниот веб развој. Секоја линија код и секој кадар се направени со внимание кон деталите."
+                              : "Balancing cybersecurity studies at FCSE (FINKI) with cinematography, live concert photography, and bespoke web development. Every line of code and every frame are crafted with precision."}
                           </p>
                         </div>
 
-                        {/* Interactive Photo Cards Grid */}
-                        <div className="mini-photos-grid">
-                          {filteredPhotos.map((photo) => (
-                            <div
-                              key={photo.id}
-                              className="mini-photo-card"
-                              onClick={() => setSelectedPhoto(photo)}
-                            >
-                              <img
-                                src={photo.src}
-                                alt={photo.title}
-                                loading="lazy"
-                              />
-                              <div className="mini-photo-caption">
-                                <strong>{photo.title}</strong>
-                                <small>{photo.camera}</small>
-                              </div>
-                            </div>
-                          ))}
+                        {/* Camera Gear Card */}
+                        <div id="demo-gear" className="demo-bento-card">
+                          <h6>{demoLang === "mk" ? "Моја Опрема" : "Camera Setup"}</h6>
+                          <ul className="demo-gear-items">
+                            <li><span>📷</span> Fujifilm X-T2</li>
+                            <li><span>🔍</span> Fujinon XF 35mm F/2</li>
+                            <li><span>🔍</span> Fujinon XC 16-50mm</li>
+                            <li><span>📹</span> Sony Vintage Camcorder</li>
+                          </ul>
                         </div>
-                      </div>
-                    )}
 
-                    {/* View 2: Interactive About Me Card */}
-                    {demoView === "about" && (
-                      <div className="mini-about-view">
-                        <div className="mini-about-card">
-                          <img src="misc/vaso.jpg" alt="Mateja Vasojevikj" className="mini-avatar" />
-                          <div className="mini-about-text">
-                            <h5>Mateja Vasojevikj (vasosofuji)</h5>
-                            <span className="mini-role">Cybersecurity Student @ FCSE (FINKI) • Creative Web Developer</span>
-                            <p>
-                              {demoLang === "mk"
-                                ? "Студент по Сајбер Безбедност на ФИНКИ и freelance девелопер и фотограф од Скопје. Оваа веб-страница е комплетно рачно изработена со React 19, TypeScript и GSAP анимации."
-                                : "Cybersecurity student at the Faculty of Computer Science & Engineering (FINKI) and freelance developer/photographer in Skopje. This entire website is bespoke-engineered with React 19, TypeScript, and GSAP."}
-                            </p>
-                            <div className="mini-gear-row">
-                              <span>Fujifilm X-T2</span>
-                              <span>XF 35mm F/2</span>
-                              <span>React 19</span>
-                              <span>TypeScript</span>
+                        {/* Golemata Voda Band Card */}
+                        <div className="demo-bento-card span-2">
+                          <div className="demo-band-row">
+                            <img src="misc/gvcover.jpg" alt="Golemata Voda" className="demo-band-thumb" />
+                            <div>
+                              <h6>Golemata Voda</h6>
+                              <p className="demo-band-desc">
+                                {demoLang === "mk"
+                                  ? "Бенд со кој соработувам од почетокот. Снимено на касета со стар Sony Camcorder во Прилеп."
+                                  : "Indie band collaboration from the very start. Shot on vintage cassette tape in Prilep."}
+                              </p>
                             </div>
                           </div>
                         </div>
-                      </div>
-                    )}
 
-                    {/* Lightbox Overlay Inside Laptop Screen */}
-                    {selectedPhoto && (
-                      <div className="mini-lightbox-modal" onClick={() => setSelectedPhoto(null)}>
-                        <div className="mini-lightbox-box" onClick={(e) => e.stopPropagation()}>
+                        {/* Lighthouse Performance Metric Card */}
+                        <div className="demo-bento-card">
+                          <h6>{demoLang === "mk" ? "Перформанси" : "Core Metrics"}</h6>
+                          <div className="demo-mini-score-grid">
+                            <div className="demo-score-chip">
+                              <span className="score-num">100</span>
+                              <span className="score-lbl">Perf</span>
+                            </div>
+                            <div className="demo-score-chip">
+                              <span className="score-num">100</span>
+                              <span className="score-lbl">SEO</span>
+                            </div>
+                            <div className="demo-score-chip">
+                              <span className="score-num">100</span>
+                              <span className="score-lbl">A11y</span>
+                            </div>
+                          </div>
+                        </div>
+
+                      </div>
+                    </div>
+
+                    {/* DEMO CONTACT BANNER */}
+                    <div id="demo-contact" className="demo-contact-strip">
+                      <div>
+                        <h6>{demoLang === "mk" ? "Сакате соработка?" : "Looking for custom web development?"}</h6>
+                        <p>{demoLang === "mk" ? "Контактирајте ме за фотографски сесии или веб проекти." : "Get in touch for photo shoots or bespoke web engineering."}</p>
+                      </div>
+                      <a href="mailto:vasosofuji@gmail.com" className="demo-contact-cta-btn">
+                        vasosofuji@gmail.com →
+                      </a>
+                    </div>
+
+                    {/* DEMO FOOTER */}
+                    <div className="demo-mini-footer">
+                      <span>&copy; 2026 Mateja Vasojevikj (vasosofuji). All rights reserved.</span>
+                      <button type="button" onClick={() => scrollToDemoSection("demo-top")}>
+                        ↑ Top
+                      </button>
+                    </div>
+
+                  </div>
+
+                  {/* Lightbox Inspector Overlay Inside macOS Browser */}
+                  {selectedPhoto && (
+                    <div className="macos-modal-backdrop" onClick={() => setSelectedPhoto(null)}>
+                      <div className="macos-modal-card" onClick={(e) => e.stopPropagation()}>
+                        <div className="macos-modal-header">
+                          <span className="modal-title">{selectedPhoto.title}</span>
                           <button
                             type="button"
-                            className="mini-lightbox-close"
+                            className="macos-modal-close"
                             onClick={() => setSelectedPhoto(null)}
                           >
                             ✕
                           </button>
+                        </div>
+                        <div className="macos-modal-body">
                           <img src={selectedPhoto.src} alt={selectedPhoto.title} />
-                          <div className="mini-lightbox-meta">
-                            <h6>{selectedPhoto.title}</h6>
-                            <p>{selectedPhoto.camera}</p>
+                          <div className="macos-modal-meta">
+                            <div className="meta-col">
+                              <span className="meta-label">Camera &amp; Lens</span>
+                              <strong>{selectedPhoto.camera}</strong>
+                            </div>
+                            <div className="meta-col">
+                              <span className="meta-label">Location</span>
+                              <strong>{selectedPhoto.location}</strong>
+                            </div>
+                            <div className="meta-col">
+                              <span className="meta-label">Category</span>
+                              <strong style={{ textTransform: "capitalize" }}>{selectedPhoto.category}</strong>
+                            </div>
                           </div>
                         </div>
                       </div>
-                    )}
+                    </div>
+                  )}
 
-                  </div>
                 </div>
               )}
 
