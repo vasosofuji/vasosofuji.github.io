@@ -1,4 +1,4 @@
-import { StrictMode, useCallback, useEffect, useState } from 'react';
+import { StrictMode, useCallback, useEffect, useMemo, useState } from 'react';
 import { createRoot } from 'react-dom/client';
 import MasonryGrid from '@/components/ui/masonry-grid';
 import PhotoLightbox, { type LightboxPhoto } from '@/components/ui/photo-lightbox';
@@ -6,6 +6,12 @@ import PhotoLightbox, { type LightboxPhoto } from '@/components/ui/photo-lightbo
 declare global {
   interface Window {
     updateSheetMeta?: () => void;
+    photoI18n?: {
+      label: (kind: string) => string;
+      value: (kind: string, value: string) => string;
+      title: (value: string) => string;
+      lang: () => string;
+    };
   }
 }
 
@@ -47,6 +53,42 @@ function PhotoGallery({ photos }: { photos: Photo[] }) {
   const [openIndex, setOpenIndex] = useState<number | null>(null);
   const close = useCallback(() => setOpenIndex(null), []);
 
+  // The markup is authored in English; script.js holds the Macedonian for the
+  // field labels, the places and the descriptive titles. Re-render whenever the
+  // visitor switches language.
+  const [lang, setLang] = useState(() => window.photoI18n?.lang() ?? 'en');
+  useEffect(() => {
+    const onLang = () => setLang(window.photoI18n?.lang() ?? 'en');
+    window.addEventListener('languagechange', onLang);
+    return () => window.removeEventListener('languagechange', onLang);
+  }, []);
+
+  const translated = useMemo(
+    () =>
+      photos.map((photo) => {
+        const title = photo.title ? window.photoI18n?.title(photo.title) ?? photo.title : undefined;
+        const details = photo.details.map((d) => ({
+          label: window.photoI18n?.label(d.label) ?? d.label,
+          value: window.photoI18n?.value(d.label, d.value) ?? d.value,
+        }));
+
+        // Alt text follows the language too. Locations are all written
+        // "City, Country - Venue", so the venue reads first and the city
+        // second — "Flying Bird — Ostrovche, Ohrid".
+        const place = details.find((d) => /^(Location|Локација)$/.test(d.label))?.value;
+        const parts = place?.match(/^(.*?),\s*[^,-]+\s*-\s*(.*)$/);
+        const alt = title
+          ? parts
+            ? `${title} — ${parts[2].trim()}, ${parts[1].trim()}`
+            : title
+          : photo.alt;
+
+        return { ...photo, title, details, alt };
+      }),
+    // `lang` is the trigger: photoI18n reads the current language internally.
+    [photos, lang]
+  );
+
   // The header caption counts the cards in the grid, but script.js computes it
   // on DOMContentLoaded — by which point this module has already emptied the
   // grid and React has not committed yet, so it would count zero and hide
@@ -58,7 +100,7 @@ function PhotoGallery({ photos }: { photos: Photo[] }) {
   return (
     <>
       <MasonryGrid
-        items={photos}
+        items={translated}
         className="masonry-grid--gallery"
         gap="1.5rem"
         staggerDelay={0.035}
@@ -103,7 +145,7 @@ function PhotoGallery({ photos }: { photos: Photo[] }) {
           </div>
         )}
       />
-      <PhotoLightbox photos={photos} index={openIndex} onClose={close} onNavigate={setOpenIndex} />
+      <PhotoLightbox photos={translated} index={openIndex} onClose={close} onNavigate={setOpenIndex} />
     </>
   );
 }

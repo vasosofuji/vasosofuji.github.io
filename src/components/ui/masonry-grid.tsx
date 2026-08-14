@@ -55,6 +55,13 @@ const GridItem = ({
   const reduceMotion = useReducedMotion();
   const enabled = finePointer && !reduceMotion && tilt > 0;
 
+  // Only the card under the pointer gets a transform. Binding the motion
+  // values unconditionally left every card carrying a 3D transform and its own
+  // rendering context for the whole session — on a page with thirty-odd cards
+  // that is thirty-odd composited layers, and sweeping the pointer across them
+  // quickly churns the lot. Idle cards now hold no transform at all.
+  const [active, setActive] = React.useState(false);
+
   const x = useMotionValue(0);
   const y = useMotionValue(0);
 
@@ -73,24 +80,37 @@ const GridItem = ({
     y.set((e.clientY - top) / height - 0.5);
   };
 
+  const handleMouseEnter = () => {
+    if (enabled) setActive(true);
+  };
+
+  // Always resets, even if a fast exit means no final mousemove ever lands, so
+  // a card cannot be stranded mid-tilt.
   const handleMouseLeave = () => {
     x.set(0);
     y.set(0);
+    setActive(false);
   };
+
+  const tilting = enabled && active;
 
   return (
     <motion.div
       ref={ref}
       onMouseMove={handleMouseMove}
+      onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
       onClick={onClick}
       // A deeper perspective flattens the same rotation, reinforcing the
-      // subtler feel without changing the numbers.
-      style={{ perspective: '1600px' }}
+      // subtler feel without changing the numbers. Applied only while tilting
+      // so an idle card establishes no 3D context.
+      style={tilting ? { perspective: '1600px' } : undefined}
       className="relative"
     >
       <motion.div
-        style={enabled ? { rotateX, rotateY, transformStyle: 'preserve-3d' } : undefined}
+        // No preserve-3d: nothing inside the card is positioned in 3D, so it
+        // only added a rendering context per card for no visual gain.
+        style={tilting ? { rotateX, rotateY, willChange: 'transform' } : undefined}
         whileTap={reduceMotion ? undefined : { scale: 0.985 }}
         className="w-full h-full"
       >

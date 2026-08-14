@@ -104,6 +104,9 @@ var translations = {
         optionOther: 'Other',
         otherEventPlaceholder: 'Please specify the event',
         scheduledEvents: 'Scheduled Events:',
+        photoCamera: 'Camera',
+        photoLens: 'Lens',
+        photoLocation: 'Location',
         sheetFrames: 'Frames',
         sheetFilms: 'Films',
         sheetShotOn: 'Shot on',
@@ -243,6 +246,9 @@ var translations = {
         optionOther: 'Друго',
         otherEventPlaceholder: 'Ве молиме наведете го настанот',
         scheduledEvents: 'Резервирани настани:',
+        photoCamera: 'Фотоапарат',
+        photoLens: 'Објектив',
+        photoLocation: 'Локација',
         sheetFrames: 'Фотографии',
         sheetFilms: 'Видеа',
         sheetShotOn: 'Снимано со',
@@ -1208,6 +1214,66 @@ window.addEventListener('pageshow', (event) => {
         updateLanguage(savedLang);
     }
 });
+
+
+// --- PHOTO CARD VALUE TRANSLATIONS ---
+// The gallery markup is authored in English and is the single source of truth;
+// these map those exact strings to Macedonian at render time. People's names
+// and band names are proper nouns and are deliberately absent — only the
+// descriptive titles appear here.
+var photoLocationsMk = {
+    'Ohrid, Macedonia - Beach': 'Охрид, Македонија - Плажа',
+    'Ohrid, Macedonia - Lake': 'Охрид, Македонија - Езеро',
+    'Ohrid, Macedonia - Old Pier': 'Охрид, Македонија - Стариот кеј',
+    'Ohrid, Macedonia - Old Town': 'Охрид, Македонија - Стар град',
+    'Ohrid, Macedonia - Ostrovche': 'Охрид, Македонија - Островче',
+    'Ohrid, Macedonia - Pier': 'Охрид, Македонија - Кеј',
+    'Skopje, Macedonia - "Old School" Bar': 'Скопје, Македонија - Бар „Old School“',
+    'Skopje, Macedonia - GTC': 'Скопје, Македонија - ГТЦ',
+    'Skopje, Macedonia - GTC Stairs': 'Скопје, Македонија - Скалите кај ГТЦ',
+    'Skopje, Macedonia - Garage': 'Скопје, Македонија - Гаража',
+    'Skopje, Macedonia - In front of MKC': 'Скопје, Македонија - Пред МКЦ',
+    'Skopje, Macedonia - Kotur': 'Скопје, Македонија - Котур',
+    'Skopje, Macedonia - Laboratorium': 'Скопје, Македонија - Лабораториум',
+    'Skopje, Macedonia - MKC': 'Скопје, Македонија - МКЦ',
+    'Skopje, Macedonia - Vodno': 'Скопје, Македонија - Водно',
+    'Skopje, Macedonia - Zhelezara': 'Скопје, Македонија - Железара'
+};
+
+var photoTitlesMk = {
+    'Another Flying Bird': 'Уште една птица во лет',
+    'Bridge to Ostrovche': 'Мостот кон Островче',
+    'Flying Bird': 'Птица во лет',
+    'Old Pier': 'Стариот кеј',
+    'Old Town': 'Стар град',
+    'Old Town Buildings': 'Згради во стариот град',
+    'Standing Bird': 'Птица во мирување',
+    'Sunset': 'Зајдисонце',
+    'Swan': 'Лебед',
+    'Swan in Water': 'Лебед во вода',
+    'Swan with Old Town': 'Лебед пред стариот град'
+};
+
+// Consumed by the masonry gallery, which re-renders the cards from the DOM.
+window.photoI18n = {
+    label: function (kind) {
+        var t = (typeof translations !== 'undefined' && translations[currentLang]) || {};
+        if (kind === 'Camera') return t.photoCamera || 'Camera';
+        if (kind === 'Lens') return t.photoLens || 'Lens';
+        if (kind === 'Location') return t.photoLocation || 'Location';
+        return kind;
+    },
+    value: function (kind, value) {
+        if (currentLang !== 'mk') return value;
+        if (kind === 'Location') return photoLocationsMk[value] || value;
+        return value;
+    },
+    title: function (value) {
+        if (currentLang !== 'mk') return value;
+        return photoTitlesMk[value] || value;
+    },
+    lang: function () { return currentLang; }
+};
 
 // --- CATEGORY SHEET HEADER META ---
 // Fills the caption under a category title from what is actually on the page:
