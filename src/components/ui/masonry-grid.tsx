@@ -23,6 +23,8 @@ interface MasonryGridProps<T> {
   /** Peak tilt in degrees. Kept low on purpose — see GridItem. */
   tilt?: number;
   onItemClick?: (index: number) => void;
+  /** Ascending `min` widths; the last one that fits wins. */
+  breakpoints?: { min: number; columns: number }[];
 }
 
 // Tracks whether the device actually has a hovering pointer. On a phone the
@@ -98,6 +100,49 @@ const GridItem = ({
   );
 };
 
+/**
+ * Number of columns for the current viewport.
+ *
+ * The layout is built from real flex columns rather than CSS `columns`.
+ * Multi-column fragments its content, and cards here carry transforms, their
+ * own stacking contexts and an info panel that deliberately overflows the card
+ * box — a combination that leaves Chrome repainting incorrectly, with cards
+ * blanking out as neighbours are hovered. Explicit columns keep every card in
+ * one piece and make stacking predictable.
+ */
+function useColumnCount(breakpoints: { min: number; columns: number }[]) {
+  const get = React.useCallback(() => {
+    if (typeof window === 'undefined') return 1;
+    let cols = 1;
+    for (const bp of breakpoints) if (window.innerWidth >= bp.min) cols = bp.columns;
+    return cols;
+  }, [breakpoints]);
+
+  const [columns, setColumns] = React.useState(get);
+
+  React.useEffect(() => {
+    let frame = 0;
+    const onResize = () => {
+      cancelAnimationFrame(frame);
+      frame = requestAnimationFrame(() => setColumns(get()));
+    };
+    window.addEventListener('resize', onResize);
+    return () => {
+      cancelAnimationFrame(frame);
+      window.removeEventListener('resize', onResize);
+    };
+  }, [get]);
+
+  return columns;
+}
+
+const DEFAULT_BREAKPOINTS = [
+  { min: 0, columns: 1 },
+  { min: 620, columns: 2 },
+  { min: 1000, columns: 3 },
+  { min: 1500, columns: 4 },
+];
+
 const MasonryGrid = <T,>({
   items,
   renderItem,
@@ -106,10 +151,20 @@ const MasonryGrid = <T,>({
   staggerDelay = 0.05,
   tilt = 3,
   onItemClick,
+  breakpoints = DEFAULT_BREAKPOINTS,
 }: MasonryGridProps<T>) => {
   const containerRef = React.useRef(null);
   const isInView = useInView(containerRef, { once: true, amount: 0.05 });
   const reduceMotion = useReducedMotion();
+  const columnCount = useColumnCount(breakpoints);
+
+  // Round-robin keeps the original order readable down each column and, unlike
+  // height-balancing, needs no measurement pass so nothing reflows on load.
+  const columns = React.useMemo(() => {
+    const buckets: { item: T; index: number }[][] = Array.from({ length: columnCount }, () => []);
+    items.forEach((item, index) => buckets[index % columnCount].push({ item, index }));
+    return buckets;
+  }, [items, columnCount]);
 
   const containerVariants = {
     hidden: {},
@@ -135,25 +190,28 @@ const MasonryGrid = <T,>({
   return (
     <motion.div
       ref={containerRef}
-      className={cn('w-full', className)}
-      style={{ columnGap: gap }}
+      className={cn('masonry-grid', className)}
+      style={{ gap }}
       initial="hidden"
       animate={isInView ? 'visible' : 'hidden'}
       variants={containerVariants}
       role="list"
     >
-      {items.map((item, index) => (
-        <motion.div
-          key={index}
-          className="mb-4 break-inside-avoid"
-          style={{ marginBottom: gap }}
-          variants={itemVariants}
-          role="listitem"
-        >
-          <GridItem tilt={tilt} onClick={onItemClick ? () => onItemClick(index) : undefined}>
-            {renderItem(item, index)}
-          </GridItem>
-        </motion.div>
+      {columns.map((column, columnIndex) => (
+        <div className="masonry-grid__column" style={{ gap }} key={columnIndex} role="presentation">
+          {column.map(({ item, index }) => (
+            <motion.div
+              key={index}
+              className="masonry-grid__item"
+              variants={itemVariants}
+              role="listitem"
+            >
+              <GridItem tilt={tilt} onClick={onItemClick ? () => onItemClick(index) : undefined}>
+                {renderItem(item, index)}
+              </GridItem>
+            </motion.div>
+          ))}
+        </div>
       ))}
     </motion.div>
   );

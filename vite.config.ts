@@ -15,6 +15,7 @@ export default defineConfig({
       input: {
         main: path.resolve(__dirname, 'index.html'),
         about: path.resolve(__dirname, 'about.html'),
+        webdev: path.resolve(__dirname, 'webdev.html'),
         collaborations: path.resolve(__dirname, 'collaborations.html'),
         concerts: path.resolve(__dirname, 'concerts.html'),
         gallery: path.resolve(__dirname, 'gallery.html'),

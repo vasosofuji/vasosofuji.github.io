@@ -7,6 +7,8 @@ import SocialCards from '@/components/ui/card-fan-carousel'
 import HoverHeading from '@/components/ui/hover-heading'
 import { ParallaxScroll } from '@/components/ui/parallax-scroll'
 import SterlingGateKineticNavigation from '@/components/ui/sterling-gate-kinetic-navigation'
+import ParallaxLaptopBuilder from '@/components/ui/parallax-laptop-builder'
+import WebdevEstimator from '@/components/ui/webdev-estimator'
 
 // --- React Navbar ---
 const navbarElement = document.getElementById('react-navbar')
@@ -164,3 +166,23 @@ if (parallaxGalleryElement) {
     </StrictMode>,
   )
 }
+
+// --- Web Development Page Components ---
+const laptopHeroElement = document.getElementById('react-laptop-hero')
+if (laptopHeroElement) {
+  createRoot(laptopHeroElement).render(
+    <StrictMode>
+      <ParallaxLaptopBuilder />
+    </StrictMode>,
+  )
+}
+
+const estimatorElement = document.getElementById('react-webdev-estimator')
+if (estimatorElement) {
+  createRoot(estimatorElement).render(
+    <StrictMode>
+      <WebdevEstimator />
+    </StrictMode>,
+  )
+}
+

@@ -123,7 +123,26 @@ var translations = {
         october: 'October',
         november: 'November',
         december: 'December',
-        footerText: '&copy; 2026 Mateja Vasojevikj (vasosofuji). All rights reserved.'
+        footerText: '&copy; 2026 Mateja Vasojevikj (vasosofuji). All rights reserved.',
+
+        // Web Development Page Translations (EN)
+        webDev: 'Web Dev',
+        webDevHeroTitle: 'Bespoke Web Development & Motion Engineering',
+        webDevHeroSub: 'Cybersecurity rigor meets cinematographic aesthetics. Building lightning-fast, high-converting digital platforms with React 19, TypeScript, and 60fps GSAP motion.',
+        webDevHeroBtnProjects: 'Architecture & Case Study',
+        webDevHeroBtnEstimate: 'Scope & Timeline Calculator',
+        webDevHeroBtnContact: 'Start a Project',
+        webDevStatusAvailable: 'Available for Freelance & Contract Projects',
+        webDevFeaturedTitle: 'Architectural Case Study',
+        webDevFeaturedSub: 'Deep dive into the design and performance engineering of vasosofuji.github.io',
+        webDevPillarsTitle: 'Engineering Principles',
+        webDevStackTitle: 'Core Technologies & Tooling',
+        webDevEstimatorTitle: 'Interactive Scope & Timeline Estimator',
+        webDevEstimatorSub: 'Calculate realistic production turnaround tailored to your project archetype.',
+        webDevFaqTitle: 'Frequently Asked Questions',
+        webDevCtaTitle: 'Let’s Build Something Unforgettable',
+        webDevCtaSub: 'Whether you need a bespoke portfolio, a high-converting business site, or an interactive web application, get in touch to discuss your project.',
+        webDevBackToMain: 'Back to Home'
     },
     mk: {
         aboutMe: 'За Мене',
@@ -243,7 +262,26 @@ var translations = {
         october: 'Октомври',
         november: 'Ноември',
         december: 'Декември',
-        footerText: '&copy; 2026 Матеја Васојевиќ (vasosofuji). Сите права се задржани.'
+        footerText: '&copy; 2026 Матеја Васојевиќ (vasosofuji). Сите права се задржани.',
+
+        // Web Development Page Translations (MK)
+        webDev: 'Веб Развој',
+        webDevHeroTitle: 'Креативен Веб Развој & Модерно Инженерство',
+        webDevHeroSub: 'Сајбер безбедносна прецизност споена со кинематографска естетика. Изработка на брзи веб платформи со React 19, TypeScript и 60fps GSAP анимации.',
+        webDevHeroBtnProjects: 'Архитектура & Студија на Случај',
+        webDevHeroBtnEstimate: 'Калкулатор за Проект',
+        webDevHeroBtnContact: 'Започни Проект',
+        webDevStatusAvailable: 'Достапен за Проекти & Соработка',
+        webDevFeaturedTitle: 'Студија на Случај',
+        webDevFeaturedSub: 'Детален преглед на архитектурата и перформансите на vasosofuji.github.io',
+        webDevPillarsTitle: 'Инженерски Принципи',
+        webDevStackTitle: 'Технологии & Алатки',
+        webDevEstimatorTitle: 'Интерактивен Калкулатор за Изработка',
+        webDevEstimatorSub: 'Пресметајте реални рокови за изработка прилагодени на вашите потреби.',
+        webDevFaqTitle: 'Често Поставувани Прашања',
+        webDevCtaTitle: 'Подготвени за вашиот нов веб проект?',
+        webDevCtaSub: 'Без разлика дали ви е потребно уникатно портфолио или интерактивна веб апликација, контактирајте ме за соработка.',
+        webDevBackToMain: 'Назад кон Почетна'
     }
 };
 

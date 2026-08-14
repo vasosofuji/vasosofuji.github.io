@@ -2509,33 +2509,36 @@ section {
     gap: 0;
 }
 
-.masonry-columns {
-    columns: 1;
+/* Real flex columns, not CSS `columns`. Multi-column fragments its contents,
+   and these cards carry transforms, their own stacking contexts and an info
+   panel that overflows the card box on purpose — together that had Chrome
+   repainting wrongly, blanking cards out as neighbours were hovered. The
+   column count is chosen in JS and the items distributed across these tracks. */
+.masonry-grid {
+    display: flex;
+    align-items: flex-start;
+    width: 100%;
 }
 
-@media (min-width: 620px) {
-    .masonry-columns { columns: 2; }
+.masonry-grid__column {
+    display: flex;
+    flex-direction: column;
+    /* Equal tracks that may shrink; without min-width:0 a wide image would
+       force its column past its share. */
+    flex: 1 1 0;
+    min-width: 0;
 }
 
-@media (min-width: 1000px) {
-    .masonry-columns { columns: 3; }
-}
-
-@media (min-width: 1500px) {
-    .masonry-columns { columns: 4; }
-}
-
-/* Each item wraps the card in a `perspective` layer for the tilt, and that
+/* Each item wraps its card in a `perspective` layer for the tilt, and that
    creates a stacking context — so `.photo-card:hover { z-index: 100 }` could
-   only ever raise the card *within its own item*, leaving the info panel
-   painted under whichever card follows it in the column. Raising the item
-   itself puts the panel over its neighbours. */
-.masonry-columns > [role="listitem"] {
+   only raise the card *within its own item*, leaving the info panel painted
+   under whichever card follows it. Raising the item lifts the whole thing. */
+.masonry-grid__item {
     position: relative;
 }
 
-.masonry-columns > [role="listitem"]:hover,
-.masonry-columns > [role="listitem"]:focus-within {
+.masonry-grid__item:hover,
+.masonry-grid__item:focus-within {
     z-index: 100;
 }
 
@@ -2550,6 +2553,22 @@ section {
        skips them so it cannot write an inline transform over the hover lift. */
     opacity: 1;
     transform: none;
+}
+
+/* The shared card rule lifts 10px and scales 3%. Sitting in a column with a
+   1.5rem gutter that pushed each card into the one beside it, so the masonry
+   cards get a restrained version — the shadow and the info panel already carry
+   the hover, the geometry does not need to shout. */
+/* Doubled class on purpose: `.photo-card:hover` is declared later in this file
+   with the same specificity, so a single-class rule here would lose to it. */
+.photo-card.photo-card--masonry:hover,
+.photo-card.photo-card--masonry.mobile-active {
+    transform: translateY(-4px) scale(1.008);
+}
+
+.photo-card.photo-card--masonry:hover img,
+.photo-card.photo-card--masonry.mobile-active img {
+    transform: scale(1.02);
 }
 
 /* Let the image keep its natural proportions — the whole point of masonry. */

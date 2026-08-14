@@ -45,7 +45,7 @@ function PhotoGallery({ photos }: { photos: Photo[] }) {
     <>
       <MasonryGrid
         items={photos}
-        className="masonry-columns"
+        className="masonry-grid--gallery"
         gap="1.5rem"
         staggerDelay={0.035}
         tilt={3}

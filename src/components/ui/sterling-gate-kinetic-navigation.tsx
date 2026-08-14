@@ -236,6 +236,7 @@ export function SterlingGateKineticNavigation() {
   const isMk = lang === "mk";
   const labels = {
     home: isMk ? "Почетна" : "Home",
+    webDev: isMk ? "Веб Развој" : "Web Dev",
     aboutMe: isMk ? "За Мене" : "About Me",
     gallery: isMk ? "Галерија" : "Gallery",
     videos: isMk ? "Видеа" : "Videos",
@@ -288,10 +289,14 @@ export function SterlingGateKineticNavigation() {
                   <circle className="shape-element" cx="220" cy="280" r="90" fill="rgba(255,133,51,0.18)" />
                 </svg>
                 <svg className="bg-shape bg-shape-2" viewBox="0 0 400 400" fill="none">
+                  <path className="shape-element" d="M50 200 L150 100 L250 200 L350 100" stroke="rgba(235,125,0,0.35)" strokeWidth="24" strokeLinecap="round" fill="none" />
+                  <rect className="shape-element" x="120" y="240" width="160" height="60" rx="16" fill="rgba(44,87,69,0.35)" />
+                </svg>
+                <svg className="bg-shape bg-shape-3" viewBox="0 0 400 400" fill="none">
                   <path className="shape-element" d="M0 180 Q100 80, 200 180 T 400 180" stroke="rgba(255,133,51,0.3)" strokeWidth="40" fill="none" />
                   <path className="shape-element" d="M0 260 Q100 160, 200 260 T 400 260" stroke="rgba(255,107,0,0.22)" strokeWidth="30" fill="none" />
                 </svg>
-                <svg className="bg-shape bg-shape-3" viewBox="0 0 400 400" fill="none">
+                <svg className="bg-shape bg-shape-4" viewBox="0 0 400 400" fill="none">
                   <circle className="shape-element" cx="60" cy="60" r="8" fill="rgba(255,133,51,0.35)" />
                   <circle className="shape-element" cx="180" cy="60" r="8" fill="rgba(255,133,51,0.35)" />
                   <circle className="shape-element" cx="300" cy="60" r="8" fill="rgba(255,133,51,0.35)" />
@@ -301,11 +306,11 @@ export function SterlingGateKineticNavigation() {
                   <circle className="shape-element" cx="180" cy="300" r="10" fill="rgba(255,133,51,0.35)" />
                   <circle className="shape-element" cx="300" cy="300" r="10" fill="rgba(255,133,51,0.35)" />
                 </svg>
-                <svg className="bg-shape bg-shape-4" viewBox="0 0 400 400" fill="none">
+                <svg className="bg-shape bg-shape-5" viewBox="0 0 400 400" fill="none">
                   <path className="shape-element" d="M100 100 Q150 50, 200 100 Q250 150, 200 200 Q150 250, 100 200 Q50 150, 100 100" fill="rgba(255,133,51,0.25)" />
                   <path className="shape-element" d="M240 220 Q290 170, 340 220 Q390 270, 340 320 Q290 270, 240 220" fill="rgba(255,107,0,0.2)" />
                 </svg>
-                <svg className="bg-shape bg-shape-5" viewBox="0 0 400 400" fill="none">
+                <svg className="bg-shape bg-shape-6" viewBox="0 0 400 400" fill="none">
                   <line className="shape-element" x1="0" y1="100" x2="300" y2="400" stroke="rgba(255,133,51,0.3)" strokeWidth="30" />
                   <line className="shape-element" x1="100" y1="0" x2="400" y2="300" stroke="rgba(255,107,0,0.22)" strokeWidth="25" />
                 </svg>
@@ -321,24 +326,30 @@ export function SterlingGateKineticNavigation() {
                   </a>
                 </li>
                 <li className="menu-list-item" data-shape="2">
+                  <a href="webdev.html" className="nav-link" onClick={closeMenu}>
+                    <p className="nav-link-text">{labels.webDev}</p>
+                    <div className="nav-link-hover-bg"></div>
+                  </a>
+                </li>
+                <li className="menu-list-item" data-shape="3">
                   <a href="about.html" className="nav-link" onClick={closeMenu}>
                     <p className="nav-link-text">{labels.aboutMe}</p>
                     <div className="nav-link-hover-bg"></div>
                   </a>
                 </li>
-                <li className="menu-list-item" data-shape="3">
+                <li className="menu-list-item" data-shape="4">
                   <a href="gallery.html" className="nav-link" onClick={closeMenu}>
                     <p className="nav-link-text">{labels.gallery}</p>
                     <div className="nav-link-hover-bg"></div>
                   </a>
                 </li>
-                <li className="menu-list-item" data-shape="4">
+                <li className="menu-list-item" data-shape="5">
                   <a href="videos.html" className="nav-link" onClick={closeMenu}>
                     <p className="nav-link-text">{labels.videos}</p>
                     <div className="nav-link-hover-bg"></div>
                   </a>
                 </li>
-                <li className="menu-list-item" data-shape="5">
+                <li className="menu-list-item" data-shape="6">
                   <a href="#contact" className="nav-link" onClick={handleContactClick}>
                     <p className="nav-link-text">{labels.contact}</p>
                     <div className="nav-link-hover-bg"></div>
