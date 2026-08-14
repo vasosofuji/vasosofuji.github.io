@@ -281,7 +281,7 @@ const observer = new IntersectionObserver((entries) => {
 // Observer is started AFTER the preloader hides so that cards which are
 // already in the viewport still get their slide-up animation (gallery page).
 function startScrollReveal() {
-    document.querySelectorAll('.photo-card, .section-title, .t-stagger, .cinematic-bg-video').forEach(el => {
+    document.querySelectorAll('.photo-card:not(.photo-card--masonry), .section-title, .t-stagger, .cinematic-bg-video').forEach(el => {
         observer.observe(el);
     });
 }

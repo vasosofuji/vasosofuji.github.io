@@ -1,0 +1,162 @@
+// components/ui/masonry-grid.tsx
+import * as React from 'react';
+import {
+  motion,
+  useInView,
+  useMotionValue,
+  useTransform,
+  useSpring,
+  useReducedMotion,
+} from 'framer-motion';
+import { cn } from '@/lib/utils';
+
+/**
+ * Props for the MasonryGrid component.
+ * @template T - The type of the items in the grid.
+ */
+interface MasonryGridProps<T> {
+  items: T[];
+  renderItem: (item: T, index: number) => React.ReactNode;
+  className?: string;
+  gap?: string;
+  staggerDelay?: number;
+  /** Peak tilt in degrees. Kept low on purpose — see GridItem. */
+  tilt?: number;
+  onItemClick?: (index: number) => void;
+}
+
+// Tracks whether the device actually has a hovering pointer. On a phone the
+// tilt has nothing to respond to, and running the springs there is wasted work.
+function useFinePointer() {
+  const [fine, setFine] = React.useState(false);
+  React.useEffect(() => {
+    const mq = window.matchMedia('(hover: hover) and (pointer: fine)');
+    const update = () => setFine(mq.matches);
+    update();
+    mq.addEventListener('change', update);
+    return () => mq.removeEventListener('change', update);
+  }, []);
+  return fine;
+}
+
+const GridItem = ({
+  children,
+  tilt,
+  onClick,
+}: {
+  children: React.ReactNode;
+  tilt: number;
+  onClick?: () => void;
+}) => {
+  const ref = React.useRef<HTMLDivElement>(null);
+  const finePointer = useFinePointer();
+  const reduceMotion = useReducedMotion();
+  const enabled = finePointer && !reduceMotion && tilt > 0;
+
+  const x = useMotionValue(0);
+  const y = useMotionValue(0);
+
+  // Softer than the stock component (was stiffness 300 / damping 20): this
+  // settles rather than snapping, which reads as a drift instead of a flick.
+  const mouseXSpring = useSpring(x, { stiffness: 140, damping: 26, mass: 0.6 });
+  const mouseYSpring = useSpring(y, { stiffness: 140, damping: 26, mass: 0.6 });
+
+  const rotateX = useTransform(mouseYSpring, [-0.5, 0.5], [`${tilt}deg`, `-${tilt}deg`]);
+  const rotateY = useTransform(mouseXSpring, [-0.5, 0.5], [`-${tilt}deg`, `${tilt}deg`]);
+
+  const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
+    if (!enabled || !ref.current) return;
+    const { left, top, width, height } = ref.current.getBoundingClientRect();
+    x.set((e.clientX - left) / width - 0.5);
+    y.set((e.clientY - top) / height - 0.5);
+  };
+
+  const handleMouseLeave = () => {
+    x.set(0);
+    y.set(0);
+  };
+
+  return (
+    <motion.div
+      ref={ref}
+      onMouseMove={handleMouseMove}
+      onMouseLeave={handleMouseLeave}
+      onClick={onClick}
+      // A deeper perspective flattens the same rotation, reinforcing the
+      // subtler feel without changing the numbers.
+      style={{ perspective: '1600px' }}
+      className="relative"
+    >
+      <motion.div
+        style={enabled ? { rotateX, rotateY, transformStyle: 'preserve-3d' } : undefined}
+        whileTap={reduceMotion ? undefined : { scale: 0.985 }}
+        className="w-full h-full"
+      >
+        {children}
+      </motion.div>
+    </motion.div>
+  );
+};
+
+const MasonryGrid = <T,>({
+  items,
+  renderItem,
+  className,
+  gap = '1rem',
+  staggerDelay = 0.05,
+  tilt = 3,
+  onItemClick,
+}: MasonryGridProps<T>) => {
+  const containerRef = React.useRef(null);
+  const isInView = useInView(containerRef, { once: true, amount: 0.05 });
+  const reduceMotion = useReducedMotion();
+
+  const containerVariants = {
+    hidden: {},
+    visible: {
+      transition: {
+        staggerChildren: reduceMotion ? 0 : staggerDelay,
+      },
+    },
+  };
+
+  const itemVariants = reduceMotion
+    ? { hidden: { opacity: 1 }, visible: { opacity: 1 } }
+    : {
+        hidden: { opacity: 0, y: 24, scale: 0.97 },
+        visible: {
+          opacity: 1,
+          y: 0,
+          scale: 1,
+          transition: { duration: 0.5, ease: 'easeOut' as const },
+        },
+      };
+
+  return (
+    <motion.div
+      ref={containerRef}
+      className={cn('w-full', className)}
+      style={{ columnGap: gap }}
+      initial="hidden"
+      animate={isInView ? 'visible' : 'hidden'}
+      variants={containerVariants}
+      role="list"
+    >
+      {items.map((item, index) => (
+        <motion.div
+          key={index}
+          className="mb-4 break-inside-avoid"
+          style={{ marginBottom: gap }}
+          variants={itemVariants}
+          role="listitem"
+        >
+          <GridItem tilt={tilt} onClick={onItemClick ? () => onItemClick(index) : undefined}>
+            {renderItem(item, index)}
+          </GridItem>
+        </motion.div>
+      ))}
+    </motion.div>
+  );
+};
+
+export default MasonryGrid;
