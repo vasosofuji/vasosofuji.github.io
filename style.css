@@ -2571,6 +2571,14 @@ section {
     transform: scale(1.02);
 }
 
+/* Long single words in a caption (a filename-ish title, a lens model) were
+   overflowing the narrow mobile column and widening the document. */
+.photo-card--masonry .photo-info h4,
+.photo-card--masonry .photo-info p {
+    overflow-wrap: anywhere;
+    word-break: break-word;
+}
+
 /* Let the image keep its natural proportions — the whole point of masonry. */
 .photo-card--masonry img {
     height: auto;
@@ -2605,6 +2613,8 @@ section {
     justify-content: center;
     padding: clamp(1rem, 4vw, 3rem);
     overscroll-behavior: contain;
+    overflow-x: hidden;
+    max-width: 100vw;
 }
 
 .pl-figure {
@@ -2721,10 +2731,75 @@ section {
 
 .pl-nav:hover { transform: translateY(-50%) scale(1.06); }
 
+/* On a phone the side arrows sat on top of the photo and were an awkward
+   reach. They become a control row under the caption instead, in the thumb
+   zone, with the counter between them. */
 @media (max-width: 640px) {
-    .pl-image { max-height: 62vh; }
-    .pl-nav { width: 40px; height: 40px; }
-    .pl-detail { font-size: 0.78rem; }
+    .pl-overlay {
+        padding: 0.75rem;
+        /* Nothing may scroll sideways in here. */
+        overflow-x: hidden;
+    }
+
+    .pl-figure {
+        gap: 0.6rem;
+        width: 100%;
+        max-width: 100%;
+    }
+
+    .pl-image {
+        max-height: 58vh;
+    }
+
+    .pl-detail { font-size: 0.76rem; }
+
+    .pl-nav {
+        position: static;
+        transform: none;
+        width: 46px;
+        height: 46px;
+        font-size: 1.15rem;
+    }
+
+    .pl-nav:hover {
+        transform: none;
+    }
+
+    .pl-nav--prev,
+    .pl-nav--next {
+        left: auto;
+        right: auto;
+    }
+
+    /* Reorders the figure so the buttons sit under the caption. */
+    .pl-controls {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 1.25rem;
+        width: 100%;
+        padding-bottom: env(safe-area-inset-bottom, 0px);
+    }
+
+    .pl-counter {
+        margin-top: 0;
+        min-width: 4.5ch;
+    }
+
+    .pl-close {
+        top: 0.5rem;
+        right: 0.5rem;
+        width: 40px;
+        height: 40px;
+    }
+}
+
+/* Above the phone breakpoint the arrows stay pinned to the edges and the
+   control row is just a passthrough for the counter. */
+@media (min-width: 641px) {
+    .pl-controls {
+        display: contents;
+    }
 }
 
 /* Gallery Hub Card - Special styling for gallery page cards with text overlays */
@@ -3223,7 +3298,20 @@ footer {
 
     /* Transparent so the light leak behind the page shows through. */
     background: transparent;
-    overflow: hidden;
+
+    /* The bare `header` rule further up sets overflow:hidden for the home
+       hero's floating collage, and this is a <header> too. The glow is centred
+       and the body already clips the x axis, so let it bleed. */
+    overflow: visible;
+}
+
+/* `header::after` lays a gradient down the bottom 30% of every <header>, fading
+   to solid black. That exists to sink the home hero's floating collage into the
+   page. Here it had nothing to blend — it just painted a dark band that stopped
+   dead at the header's edge, which is the hard line that showed between the
+   title and the first row of photos. */
+.sub-header::after {
+    content: none;
 }
 
 /* The signature: the same warm bloom as the home hero, sitting behind the
@@ -3275,6 +3363,40 @@ footer {
 
 .sheet-meta:empty {
     display: none;
+}
+
+/* The title animates in but the caption underneath used to just appear. Short
+   and shallow on purpose — it trails the title rather than competing with it. */
+@keyframes sheetMetaIn {
+    from {
+        opacity: 0;
+        transform: translateY(8px);
+        letter-spacing: 0.32em;
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+        letter-spacing: 0.22em;
+    }
+}
+
+.sheet-meta {
+    opacity: 0;
+    animation: sheetMetaIn 0.45s cubic-bezier(0.22, 1, 0.36, 1) 0.18s forwards;
+}
+
+@media (max-width: 768px) {
+    @keyframes sheetMetaIn {
+        from { opacity: 0; transform: translateY(8px); letter-spacing: 0.24em; }
+        to   { opacity: 1; transform: translateY(0);   letter-spacing: 0.16em; }
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .sheet-meta {
+        animation: none;
+        opacity: 1;
+    }
 }
 
 @media (max-width: 768px) {

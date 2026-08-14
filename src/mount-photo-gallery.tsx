@@ -1,7 +1,13 @@
-import { StrictMode, useCallback, useState } from 'react';
+import { StrictMode, useCallback, useEffect, useState } from 'react';
 import { createRoot } from 'react-dom/client';
 import MasonryGrid from '@/components/ui/masonry-grid';
 import PhotoLightbox, { type LightboxPhoto } from '@/components/ui/photo-lightbox';
+
+declare global {
+  interface Window {
+    updateSheetMeta?: () => void;
+  }
+}
 
 /**
  * Turns the photo grid already present in the page into a masonry layout.
@@ -41,6 +47,14 @@ function PhotoGallery({ photos }: { photos: Photo[] }) {
   const [openIndex, setOpenIndex] = useState<number | null>(null);
   const close = useCallback(() => setOpenIndex(null), []);
 
+  // The header caption counts the cards in the grid, but script.js computes it
+  // on DOMContentLoaded — by which point this module has already emptied the
+  // grid and React has not committed yet, so it would count zero and hide
+  // itself. Recount once the cards are actually in the DOM.
+  useEffect(() => {
+    window.updateSheetMeta?.();
+  }, []);
+
   return (
     <>
       <MasonryGrid
@@ -49,12 +63,24 @@ function PhotoGallery({ photos }: { photos: Photo[] }) {
         gap="1.5rem"
         staggerDelay={0.035}
         tilt={3}
+        // Two columns on a phone: smaller frames, but far more of the set
+        // visible at once, and tapping any of them opens it full screen.
+        breakpoints={[
+          { min: 0, columns: 2 },
+          { min: 1000, columns: 3 },
+          { min: 1500, columns: 4 },
+        ]}
         onItemClick={setOpenIndex}
-        renderItem={(photo, i) => (
+        renderItem={(photo) => (
           // Same classes as the original markup so the existing hover
           // treatment — lift, image zoom, and the info panel sliding in
           // underneath — keeps working untouched.
-          <div className="photo-card photo-card--masonry">
+          <div
+            className="photo-card photo-card--masonry"
+            role="button"
+            tabIndex={0}
+            aria-label={photo.title ? `${photo.title} — open full screen` : 'Open photo full screen'}
+          >
             <img
               src={photo.src}
               alt={photo.alt}
@@ -62,15 +88,18 @@ function PhotoGallery({ photos }: { photos: Photo[] }) {
               decoding="async"
               draggable={false}
             />
-            <div className="photo-info">
-              {photo.title && <h4>{photo.title}</h4>}
-              {photo.details.map((d) => (
-                <p key={d.label}>
-                  <span>{d.label}:</span> {d.value}
-                </p>
-              ))}
-            </div>
-            <span className="sr-only">Open photo {i + 1} full screen</span>
+            {/* Omitted entirely when a photo has no caption yet, so hovering
+                it cannot reveal an empty panel. */}
+            {(photo.title || photo.details.length > 0) && (
+              <div className="photo-info">
+                {photo.title && <h4>{photo.title}</h4>}
+                {photo.details.map((d) => (
+                  <p key={d.label}>
+                    <span>{d.label}:</span> {d.value}
+                  </p>
+                ))}
+              </div>
+            )}
           </div>
         )}
       />

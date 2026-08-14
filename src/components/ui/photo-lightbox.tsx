@@ -91,27 +91,6 @@ export default function PhotoLightbox({ photos, index, onClose, onNavigate }: Ph
             &times;
           </button>
 
-          {photos.length > 1 && (
-            <>
-              <button
-                type="button"
-                className="pl-nav pl-nav--prev"
-                aria-label="Previous photo"
-                onClick={(e) => { e.stopPropagation(); go(-1); }}
-              >
-                &#8592;
-              </button>
-              <button
-                type="button"
-                className="pl-nav pl-nav--next"
-                aria-label="Next photo"
-                onClick={(e) => { e.stopPropagation(); go(1); }}
-              >
-                &#8594;
-              </button>
-            </>
-          )}
-
           <motion.figure
             className="pl-figure"
             // Click inside the frame must not fall through to the backdrop.
@@ -136,10 +115,32 @@ export default function PhotoLightbox({ photos, index, onClose, onNavigate }: Ph
                     ))}
                   </dl>
                 )}
-                {photos.length > 1 && (
-                  <p className="pl-counter">{index + 1} / {photos.length}</p>
-                )}
               </figcaption>
+            )}
+
+            {/* On a phone these render as a row beneath the caption; from 641px
+                up the wrapper is display:contents and the buttons return to
+                their pinned positions at the screen edges. */}
+            {photos.length > 1 && (
+              <div className="pl-controls">
+                <button
+                  type="button"
+                  className="pl-nav pl-nav--prev"
+                  aria-label="Previous photo"
+                  onClick={(e) => { e.stopPropagation(); go(-1); }}
+                >
+                  &#8592;
+                </button>
+                <p className="pl-counter">{index + 1} / {photos.length}</p>
+                <button
+                  type="button"
+                  className="pl-nav pl-nav--next"
+                  aria-label="Next photo"
+                  onClick={(e) => { e.stopPropagation(); go(1); }}
+                >
+                  &#8594;
+                </button>
+              </div>
             )}
           </motion.figure>
         </motion.div>

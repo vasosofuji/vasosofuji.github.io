@@ -1251,6 +1251,10 @@ function updateSheetMeta() {
 
 document.addEventListener('DOMContentLoaded', updateSheetMeta);
 window.addEventListener('languagechange', updateSheetMeta);
+// The masonry mount replaces the grid's contents, and it does so before
+// DOMContentLoaded fires — so the count above would read an empty grid. It
+// calls this again once React has committed.
+window.updateSheetMeta = updateSheetMeta;
 
 // --- HERO PARALLAX FLOATING LOGIC ---
 document.addEventListener('DOMContentLoaded', () => {
