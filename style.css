@@ -273,34 +273,14 @@ html.not-first-visit .loader-sequence {
 
 /* --- NAVIGATION (GLASSMORPHISM) --- */
 /* Scoped to exclude the new React kinetic navigation elements */
-nav:not(.nav-row):not(.menu-content) {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    /* Clean fluid padding - extends full width on all screen sizes */
-    padding: 20px 5%;
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0; /* Pin exactly to both edges of viewport instead of using width: 100% */
-    z-index: 1000;
+/* The legacy pre-React navbar rules that lived here have been removed.
+   Their markup (a bare <nav> with .nav-links and #menuToggle) no longer exists
+   on any page — the React navigation replaced it — but the selectors stayed
+   behind as `nav:not(.nav-row):not(.menu-content)` and kept capturing any new
+   <nav> element that appeared. That mis-styled the mobile bar, knocked the menu
+   drawer out of position on the gallery page, and pinned the 404 page's link
+   list to the top of the viewport. */
 
-    /* Glass Effect (Optimized: Removed expensive blur over WebGL background) */
-    background: rgba(11, 11, 11, 0.98);
-    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-    transition: padding 0.3s ease, opacity 0.6s cubic-bezier(0.22, 1, 0.36, 1), transform 0.6s cubic-bezier(0.22, 1, 0.36, 1);
-
-    /* Hide initially to prevent flashing on load */
-    opacity: 0;
-    transform: translateY(-20px);
-    pointer-events: none;
-}
-
-body.loaded nav:not(.nav-row):not(.menu-content) {
-    opacity: 1;
-    transform: translateY(0);
-    pointer-events: auto;
-}
 
 .logo {
     font-family: 'Montserrat', sans-serif;
@@ -2598,6 +2578,111 @@ section {
     border: 0;
 }
 
+/* Off-screen for sighted users, still read by crawlers and screen readers.
+   Uses clip-path plus a 1px box so it contributes no layout width — the reason
+   the previous .sr-only helper had to go. */
+.visually-hidden {
+    position: absolute !important;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+    clip-path: inset(50%);
+    white-space: nowrap;
+    border: 0;
+}
+
+/* =========================================
+   404
+   Reuses the category sheet header so a missing page still looks like part of
+   the site rather than a server default.
+   ========================================= */
+.notfound-header {
+    padding-bottom: 1rem;
+    gap: 0;
+}
+
+/* The shared h1 rule carries the hero's big fluid clamp and a heavy drop
+   shadow; at this size on an error page it just left a hole in the layout. */
+.notfound-header h1 {
+    padding-bottom: 0;
+    margin-bottom: 0;
+    filter: none;
+}
+
+/* The number is set in the wordmark face at display size and knocked back, so
+   it reads as a watermark behind the message rather than shouting. */
+.notfound-code {
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 900;
+    font-size: clamp(5rem, 22vw, 13rem);
+    line-height: 0.82;
+    letter-spacing: -0.05em;
+    color: transparent;
+    -webkit-text-stroke: 2px rgba(255, 133, 51, 0.42);
+    margin-bottom: 0.15em;
+    user-select: none;
+}
+
+.notfound-header h1 {
+    font-size: clamp(1.6rem, 6vw, 3rem);
+    line-height: 1.05;
+}
+
+.notfound-meta {
+    margin-top: 0.85rem;
+}
+
+.notfound-section {
+    max-width: 640px;
+    margin: 0 auto;
+    padding: 0 5% 5rem;
+    text-align: center;
+}
+
+.notfound-body {
+    color: var(--text-muted);
+    font-size: 1rem;
+    line-height: 1.7;
+    margin-bottom: 1.75rem;
+}
+
+.notfound-links {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 10px;
+}
+
+.notfound-links a {
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 900;
+    font-size: 0.72rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--text-main);
+    border: 1px solid rgba(255, 255, 255, 0.14);
+    border-radius: 4px;
+    padding: 10px 16px;
+    transition: color 0.25s ease, border-color 0.25s ease, background-color 0.25s ease;
+}
+
+.notfound-links a:hover,
+.notfound-links a:focus-visible {
+    color: #000;
+    background: var(--accent);
+    border-color: var(--accent);
+}
+
+@media (max-width: 640px) {
+    .notfound-links a {
+        font-size: 0.66rem;
+        padding: 9px 12px;
+    }
+}
+
 /* =========================================
    FULLSCREEN PHOTO VIEW
    ========================================= */
@@ -3041,14 +3126,6 @@ footer {
 }
 
 @media (max-width: 768px) {
-    /* Scoped to exclude the React kinetic navigation, which would otherwise
-       inherit an opaque inset background + extra padding (black bar bug). */
-    nav:not(.nav-row):not(.menu-content) {
-        flex-direction: row;
-        align-items: center;
-        padding: 15px 5%;
-        background: rgba(11, 11, 11, 0.95);
-    }
 
     .menu-toggle {
         display: block;
@@ -3693,10 +3770,6 @@ body.gallery-page {
 
 /* Scoped away from the React navigation — unscoped, this also hit .nav-row and
    the .menu-content drawer, forcing the drawer out of position:absolute. */
-body.gallery-page nav:not(.nav-row):not(.menu-content) {
-    position: relative; /* Remove fixed position so it takes up layout space */
-    z-index: 1000;
-}
 
 body.gallery-page .split-screen-hub {
     flex: 1;

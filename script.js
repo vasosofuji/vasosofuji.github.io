@@ -104,6 +104,13 @@ var translations = {
         optionOther: 'Other',
         otherEventPlaceholder: 'Please specify the event',
         scheduledEvents: 'Scheduled Events:',
+        galleryH1: 'Photo gallery — portraits, concerts and landscapes by vasosofuji',
+        collabsH1: 'Collaborations — bands, venues and festivals photographed by Mateja Vasojevikj',
+        notFoundTitle: 'Nothing developed here',
+        notFoundMeta: 'This frame came back blank',
+        notFoundBody: 'The page you were after has moved or never existed. The work is all still here:',
+        notFoundHome: 'Home',
+        notFoundGallery: 'Gallery',
         photoCamera: 'Camera',
         photoLens: 'Lens',
         photoLocation: 'Location',
@@ -246,6 +253,13 @@ var translations = {
         optionOther: 'Друго',
         otherEventPlaceholder: 'Ве молиме наведете го настанот',
         scheduledEvents: 'Резервирани настани:',
+        galleryH1: 'Галерија — портрети, концерти и пејзажи од vasosofuji',
+        collabsH1: 'Соработки — бендови, локали и фестивали фотографирани од Матеја Васојевиќ',
+        notFoundTitle: 'Тука нема ништо развиено',
+        notFoundMeta: 'Оваа снимка се врати празна',
+        notFoundBody: 'Страницата што ја баравте е преместена или никогаш не постоела. Сите фотографии се сè уште тука:',
+        notFoundHome: 'Почетна',
+        notFoundGallery: 'Галерија',
         photoCamera: 'Фотоапарат',
         photoLens: 'Објектив',
         photoLocation: 'Локација',
@@ -437,6 +451,13 @@ const heroHeader = document.getElementById('parallax-header') || document.queryS
 
 if (!preloader) {
     document.body.classList.add('loaded');
+    // The base h1 rule starts at opacity 0 and waits for `hero-active`, which
+    // until now was only ever added on the far side of the preloader. A page
+    // without a curtain (the 404) therefore rendered its heading invisible.
+    if (heroHeader) {
+        heroHeader.classList.add('hero-active');
+        markHeroEnteredWhenSettled(heroHeader);
+    }
     // No curtain to wait on, so wire the deferred work up straight away.
     startScrollReveal();
     startDeferredVideos();

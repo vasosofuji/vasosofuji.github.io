@@ -1,0 +1,49 @@
+# vasosofuji — Mateja Vasojevikj
+
+> Photographer and cinematographer based in Skopje, North Macedonia. Concert
+> and live music coverage, portrait sessions, landscape work, short-form video,
+> and bespoke web development. Also known as Mateja Vasojevich and Матеја
+> Васојевиќ.
+
+Contact: vasosofuji@gmail.com
+Location: Skopje, North Macedonia — also shooting regularly in Ohrid.
+Languages: English, Macedonian (the site has a language toggle; both render
+from the same URL, so there is one canonical address per page).
+
+Bookings are made through the calendar on the home page: available dates are
+selectable, booked dates are marked, and submitting the form sends an enquiry
+by email.
+
+## Pages
+
+- [Home](https://vasosofuji.github.io/): Hero collage, featured work from each
+  category, showreel, and the availability calendar used for booking.
+- [Gallery](https://vasosofuji.github.io/gallery.html): Entry point to the
+  three photo categories.
+- [Portraits](https://vasosofuji.github.io/portraits.html): Portrait sessions
+  shot in Skopje and Ohrid. Each frame lists camera, lens and location.
+- [Concerts](https://vasosofuji.github.io/concerts.html): Live music
+  photography from Skopje venues including MKC, Laboratorium and Kotur.
+- [Landscapes](https://vasosofuji.github.io/landscapes.html): Landscape work
+  from Lake Ohrid, Vodno and around North Macedonia.
+- [Videos](https://vasosofuji.github.io/videos.html): Short films, music
+  videos and brand advertisements.
+- [About](https://vasosofuji.github.io/about.html): Background, gear, and
+  recent projects.
+- [Collaborations](https://vasosofuji.github.io/collaborations.html): Artists,
+  venues, festivals and organisations worked with.
+- [Web development](https://vasosofuji.github.io/webdev.html): Web development
+  and motion engineering services.
+
+## Equipment
+
+- Fujifilm X-T2 with Fujinon 35mm f/2 and Fujinon 16-50mm f/3.5-5.6
+- Canon 2000D with Canon 50mm f/1.8
+
+## Notes for machine readers
+
+- Photo captions on the gallery pages carry the camera, lens and location for
+  each frame, and are the authoritative source for that metadata.
+- Structured data (schema.org Person and ProfessionalService) is embedded as
+  JSON-LD on the home page.
+- The site is a static build; there is no API and no user accounts.

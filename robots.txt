@@ -1,0 +1,8 @@
+User-agent: *
+Allow: /
+
+# Build output and source are not useful to crawlers
+Disallow: /src/
+Disallow: /node_modules/
+
+Sitemap: https://vasosofuji.github.io/sitemap.xml

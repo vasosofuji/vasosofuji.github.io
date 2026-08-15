@@ -13,7 +13,7 @@ import { fileURLToPath } from 'node:url';
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const dist = join(root, 'dist');
 
-const entries = ['photos', 'misc', 'favicon.ico'];
+const entries = ['photos', 'misc', 'favicon.ico', 'robots.txt', 'sitemap.xml', 'llms.txt'];
 
 const exists = async (p) => {
   try {
