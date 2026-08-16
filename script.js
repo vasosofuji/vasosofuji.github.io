@@ -106,6 +106,19 @@ var translations = {
         scheduledEvents: 'Scheduled Events:',
         galleryH1: 'Photo gallery — portraits, concerts and landscapes by vasosofuji',
         collabsH1: 'Collaborations — bands, venues and festivals photographed by Mateja Vasojevikj',
+        stepWho: 'Your name',
+        stepWhoHint: 'Optional — it just helps me address you properly.',
+        stepEmail: 'Your email',
+        stepShoot: 'What kind of shoot?',
+        stepNotes: 'Anything else?',
+        stepNotesHint: 'Location, timings, references — whatever helps.',
+        stepNext: 'Continue',
+        stepBack: 'Back',
+        namePlaceholder: 'Name and last name (optional)',
+        consentLabel: "If I don't finish this form, you may contact me about it.",
+        consentHint: 'Your email is used only to reply to this enquiry. Nothing is shared with anyone else.',
+        privacyLink: 'Privacy',
+        privacyTitle: 'Privacy',
         wipTitle: 'Still in the darkroom',
         wipMeta: 'Web development · coming soon',
         wipBody: 'This page is being built. In the meantime, the photography and video work is all live:',
@@ -258,6 +271,19 @@ var translations = {
         scheduledEvents: 'Резервирани настани:',
         galleryH1: 'Галерија — портрети, концерти и пејзажи од vasosofuji',
         collabsH1: 'Соработки — бендови, локали и фестивали фотографирани од Матеја Васојевиќ',
+        stepWho: 'Вашето име',
+        stepWhoHint: 'Опционално — само за да знам како да ви се обратам.',
+        stepEmail: 'Вашата е-пошта',
+        stepShoot: 'Каков вид снимање?',
+        stepNotes: 'Уште нешто?',
+        stepNotesHint: 'Локација, термини, референци — што било што помага.',
+        stepNext: 'Продолжи',
+        stepBack: 'Назад',
+        namePlaceholder: 'Име и презиме (опционално)',
+        consentLabel: 'Ако не го довршам ова барање, смеете да ме контактирате во врска со него.',
+        consentHint: 'Вашата е-пошта се користи само за одговор на ова барање. Не се споделува со никого.',
+        privacyLink: 'Приватност',
+        privacyTitle: 'Приватност',
         wipTitle: 'Сè уште во темната комора',
         wipMeta: 'Веб развој · наскоро',
         wipBody: 'Оваа страница е во изработка. Во меѓувреме, фотографиите и видеата се достапни:',
@@ -745,29 +771,78 @@ function injectBookingModals() {
         </div>
 
         <div id="bookingModal" class="modal-overlay">
-            <div class="modal-content">
+            <div class="modal-content booking-modal-content">
                 <span class="close-modal" id="closeModal">&times;</span>
                 <h3 class="modal-heading" data-translate="bookingTitle">Book a Date</h3>
                 <p id="modalDateDisplay" class="modal-subheading"></p>
-                <form id="contact-form" action="https://formspree.io/f/mbdaobka" method="post" autocomplete="off">
+
+                <ol class="booking-progress" aria-label="Booking steps">
+                    <li data-step-dot="1" class="is-current"></li>
+                    <li data-step-dot="2"></li>
+                    <li data-step-dot="3"></li>
+                    <li data-step-dot="4"></li>
+                </ol>
+
+                <form id="contact-form" action="https://formspree.io/f/mbdaobka" method="post" autocomplete="off" novalidate>
                     <input type="hidden" name="_subject" id="formspreeSubject" value="New Booking Request">
                     <input type="hidden" name="date" id="dateInput">
-                    <input type="email" name="email" placeholder="Email" required>
-                    <select name="event_type" id="eventTypeSelect" required>
-                        <option value="" disabled selected data-translate="selectEventType">Select Event Type</option>
-                        <option value="Concert" data-translate="optionConcert">Concert</option>
-                        <option value="Wedding" data-translate="optionWedding">Wedding</option>
-                        <option value="Birthday" data-translate="optionBirthday">Birthday</option>
-                        <option value="Portrait Shoot" data-translate="optionPortrait">Portrait Shoot</option>
-                        <option value="Commercial" data-translate="optionCommercial">Commercial / Brand</option>
-                        <option value="Other" data-translate="optionOther">Other</option>
-                    </select>
-                    <input type="text" name="other_event_type" id="otherEventInput"
-                        placeholder="Please specify the event" style="display: none;">
-                    <textarea name="message" rows="4" placeholder="Additional Notes" id="contactMessage"></textarea>
-                    <p id="my-form-status"></p>
-                    <button type="submit" class="btn" data-translate="sendMessage"
-                        style="width: 100%; opacity: 1; transform: none; box-shadow: none;">Send Message</button>
+
+                    <!-- 1 · who -->
+                    <fieldset class="booking-step is-active" data-step="1">
+                        <legend class="booking-step-label" data-translate="stepWho">Your name</legend>
+                        <input type="text" name="name" id="bookingName" autocomplete="name"
+                            placeholder="Name and last name (optional)" data-placeholder="namePlaceholder">
+                        <p class="booking-hint" data-translate="stepWhoHint">Optional — it just helps me address you properly.</p>
+                    </fieldset>
+
+                    <!-- 2 · email + consent. The timer starts here. -->
+                    <fieldset class="booking-step" data-step="2">
+                        <legend class="booking-step-label" data-translate="stepEmail">Your email</legend>
+                        <input type="email" name="email" id="bookingEmail" required autocomplete="email"
+                            placeholder="Email" data-placeholder="emailPlaceholder">
+                        <label class="booking-consent">
+                            <input type="checkbox" id="bookingConsent" name="follow_up_consent" value="yes">
+                            <span data-translate="consentLabel">If I don't finish this form, you may contact me about it.</span>
+                        </label>
+                        <p class="booking-hint" data-translate="consentHint">
+                            Your email is used only to reply to this enquiry. Nothing is shared with anyone else.
+                            <a href="privacy.html" target="_blank" rel="noopener" data-translate="privacyLink">Privacy</a>
+                        </p>
+                    </fieldset>
+
+                    <!-- 3 · what -->
+                    <fieldset class="booking-step" data-step="3">
+                        <legend class="booking-step-label" data-translate="stepShoot">What kind of shoot?</legend>
+                        <select name="event_type" id="eventTypeSelect" required>
+                            <option value="" disabled selected data-translate="selectEventType">Select Event Type</option>
+                            <option value="Concert" data-translate="optionConcert">Concert</option>
+                            <option value="Wedding" data-translate="optionWedding">Wedding</option>
+                            <option value="Birthday" data-translate="optionBirthday">Birthday</option>
+                            <option value="Portrait Shoot" data-translate="optionPortrait">Portrait Shoot</option>
+                            <option value="Commercial" data-translate="optionCommercial">Commercial / Brand</option>
+                            <option value="Other" data-translate="optionOther">Other</option>
+                        </select>
+                        <input type="text" name="other_event_type" id="otherEventInput"
+                            placeholder="Please specify the event" data-placeholder="otherEventPlaceholder" style="display: none;">
+                        <textarea name="message" rows="3" id="bookingMessage"
+                            placeholder="Tell me about it" data-placeholder="messagePlaceholder"></textarea>
+                    </fieldset>
+
+                    <!-- 4 · anything else -->
+                    <fieldset class="booking-step" data-step="4">
+                        <legend class="booking-step-label" data-translate="stepNotes">Anything else?</legend>
+                        <textarea name="notes" rows="4" id="contactMessage"
+                            placeholder="Additional Notes" data-placeholder="messagePlaceholder"></textarea>
+                        <p class="booking-hint" data-translate="stepNotesHint">Location, timings, references — whatever helps.</p>
+                    </fieldset>
+
+                    <p id="my-form-status" role="status" aria-live="polite"></p>
+
+                    <div class="booking-nav">
+                        <button type="button" class="booking-back" id="bookingBack" data-translate="stepBack">Back</button>
+                        <button type="button" class="btn booking-next" id="bookingNext" data-translate="stepNext">Continue</button>
+                        <button type="submit" class="btn booking-submit" id="bookingSubmit" data-translate="sendMessage">Send Message</button>
+                    </div>
                 </form>
             </div>
         </div>`;
@@ -775,6 +850,173 @@ function injectBookingModals() {
     host.insertAdjacentHTML('beforeend', markup);
 }
 injectBookingModals();
+
+// --- MULTI-STEP BOOKING FORM + TELEGRAM NOTIFICATIONS ---
+//
+// Four steps: name -> email -> shoot type -> notes. The abandonment timer
+// starts the moment a valid email is entered, and only if the visitor ticked
+// the consent box. Formspree still receives the completed booking exactly as
+// before; the Telegram message is additional and goes through /api/notify so
+// the bot token stays on the server.
+(function bookingFlow() {
+    const ABANDON_AFTER_MS = 5 * 60 * 1000;
+    const ENDPOINT = '/api/notify';
+
+    const form = () => document.getElementById('contact-form');
+    if (!form()) return;
+
+    const steps = () => Array.from(document.querySelectorAll('.booking-step'));
+    const dots = () => Array.from(document.querySelectorAll('[data-step-dot]'));
+    const el = (id) => document.getElementById(id);
+
+    let current = 1;
+    let abandonTimer;
+    let alreadyReported = false; // never notify twice for one enquiry
+    let submitted = false;
+
+    const stepName = (n) => ({ 1: 'name', 2: 'email', 3: 'shoot type', 4: 'notes' })[n] || String(n);
+
+    const validEmail = (v) => /^[^@\s]+@[^@\s]+\.[^@\s]+$/.test((v || '').trim());
+
+    function snapshot() {
+        const sel = el('eventTypeSelect');
+        return {
+            name: el('bookingName') ? el('bookingName').value : '',
+            email: el('bookingEmail') ? el('bookingEmail').value : '',
+            date: el('dateInput') ? el('dateInput').value : '',
+            eventType: sel && sel.value === 'Other'
+                ? (el('otherEventInput') ? el('otherEventInput').value : 'Other')
+                : (sel ? sel.value : ''),
+            message: el('bookingMessage') ? el('bookingMessage').value : '',
+            notes: el('contactMessage') ? el('contactMessage').value : '',
+            consent: !!(el('bookingConsent') && el('bookingConsent').checked),
+            reachedStep: stepName(current),
+        };
+    }
+
+    function notify(kind, options) {
+        const beacon = options && options.beacon;
+        const data = snapshot();
+        if (!validEmail(data.email)) return;
+        if (kind === 'abandoned') {
+            if (!data.consent || alreadyReported || submitted) return;
+            alreadyReported = true;
+        }
+
+        const payload = JSON.stringify(Object.assign({ kind: kind }, data));
+        // sendBeacon survives the page being closed, which is the usual way a
+        // booking gets abandoned; a fetch would be cancelled mid-flight.
+        if (beacon && navigator.sendBeacon) {
+            navigator.sendBeacon(ENDPOINT, new Blob([payload], { type: 'application/json' }));
+            return;
+        }
+        fetch(ENDPOINT, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: payload,
+            keepalive: true,
+        }).catch(() => { /* Formspree remains the system of record */ });
+    }
+
+    function startAbandonTimer() {
+        clearTimeout(abandonTimer);
+        if (!(el('bookingConsent') && el('bookingConsent').checked)) return;
+        if (!validEmail(el('bookingEmail') ? el('bookingEmail').value : '')) return;
+        abandonTimer = setTimeout(() => notify('abandoned'), ABANDON_AFTER_MS);
+    }
+
+    function show(n) {
+        const all = steps();
+        current = Math.min(Math.max(n, 1), all.length);
+        all.forEach((f) => f.classList.toggle('is-active', Number(f.dataset.step) === current));
+        dots().forEach((d) => {
+            const i = Number(d.dataset.stepDot);
+            d.classList.toggle('is-current', i === current);
+            d.classList.toggle('is-done', i < current);
+        });
+        if (el('bookingBack')) el('bookingBack').hidden = current === 1;
+        if (el('bookingNext')) el('bookingNext').hidden = current === all.length;
+        if (el('bookingSubmit')) el('bookingSubmit').hidden = current !== all.length;
+        if (el('my-form-status')) el('my-form-status').textContent = '';
+        const active = all.find((f) => f.classList.contains('is-active'));
+        const first = active && active.querySelector('input, select, textarea');
+        if (first) setTimeout(() => first.focus({ preventScroll: true }), 60);
+    }
+
+    function stepIsValid() {
+        const status = el('my-form-status');
+        const t = (typeof translations !== 'undefined' && translations[currentLang]) || {};
+        if (current === 2 && !validEmail(el('bookingEmail') ? el('bookingEmail').value : '')) {
+            if (status) status.textContent = t.emailReq || 'Please enter a valid email address.';
+            if (el('bookingEmail')) el('bookingEmail').focus();
+            return false;
+        }
+        if (current === 3 && !(el('eventTypeSelect') && el('eventTypeSelect').value)) {
+            if (status) status.textContent = t.selectEventType || 'Select Event Type';
+            if (el('eventTypeSelect')) el('eventTypeSelect').focus();
+            return false;
+        }
+        return true;
+    }
+
+    document.addEventListener('click', (e) => {
+        if (e.target.closest('#bookingNext')) {
+            if (!stepIsValid()) return;
+            if (current === 2) startAbandonTimer();
+            show(current + 1);
+        } else if (e.target.closest('#bookingBack')) {
+            show(current - 1);
+        }
+    });
+
+    // Enter advances instead of submitting early, except on the last step.
+    document.addEventListener('keydown', (e) => {
+        if (e.key !== 'Enter') return;
+        const f = form();
+        if (!f || !f.contains(e.target) || e.target.tagName === 'TEXTAREA') return;
+        if (current < steps().length) {
+            e.preventDefault();
+            if (el('bookingNext')) el('bookingNext').click();
+        }
+    });
+
+    document.addEventListener('change', (e) => {
+        if (e.target.id === 'bookingConsent' || e.target.id === 'bookingEmail') startAbandonTimer();
+    });
+
+    // Leaving with the form unfinished is itself the signal — report then,
+    // rather than waiting out a timer that will never fire.
+    document.addEventListener('visibilitychange', () => {
+        if (document.visibilityState === 'hidden' && current >= 2 && !submitted) {
+            notify('abandoned', { beacon: true });
+        }
+    });
+    window.addEventListener('pagehide', () => {
+        if (current >= 2 && !submitted) notify('abandoned', { beacon: true });
+    });
+
+    const bookingModal = document.getElementById('bookingModal');
+    if (bookingModal) {
+        new MutationObserver(() => {
+            if (bookingModal.classList.contains('active')) {
+                submitted = false;
+                alreadyReported = false;
+                clearTimeout(abandonTimer);
+                show(1);
+            } else {
+                clearTimeout(abandonTimer);
+            }
+        }).observe(bookingModal, { attributes: true, attributeFilter: ['class'] });
+    }
+
+    form().addEventListener('submit', () => {
+        submitted = true;
+        clearTimeout(abandonTimer);
+        notify('booking');
+    });
+
+    show(1);
+})();
 
 function openPopupCalendar() {
     const popupCalendarModal = document.getElementById('popupCalendarModal');

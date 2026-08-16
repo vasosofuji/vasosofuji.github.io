@@ -218,79 +218,9 @@
             </div>
         </section>
 
-        <!-- Pop-up Calendar Modal -->
-        <div id="popupCalendarModal" class="modal-overlay">
-            <div class="modal-content calendar-modal-content">
-                <span class="close-modal" id="closePopupCalendarModal">&times;</span>
-                <h3 class="modal-heading" data-translate="bookSession" style="font-size: 1.3rem; margin-bottom: 0.6rem; padding-bottom: 0;">Book a Session</h3>
-
-                <div class="calendar-container popup-calendar-container">
-                    <div class="calendar-header">
-                        <span class="month-year" id="popupMonthYearDisplay"></span>
-                        <div class="nav-arrows">
-                            <span class="arrow left" id="popupPrevMonth">←</span>
-                            <span class="arrow right" id="popupNextMonth">→</span>
-                        </div>
-                    </div>
-
-                    <div class="weekdays">
-                        <div data-translate="weekdaySun">Sun</div>
-                        <div data-translate="weekdayMon">Mon</div>
-                        <div data-translate="weekdayTue">Tue</div>
-                        <div data-translate="weekdayWed">Wed</div>
-                        <div data-translate="weekdayThu">Thu</div>
-                        <div data-translate="weekdayFri">Fri</div>
-                        <div data-translate="weekdaySat">Sat</div>
-                    </div>
-
-                    <div class="calendar-grid" id="popupCalendarGrid"></div>
-
-                    <p class="calendar-legend" data-translate="bookedDay" data-html
-                        style="display: flex; align-items: center; justify-content: center; gap: 8px;"><img
-                            src="misc/loading/Sequence%200150.gif" alt="Booked"
-                            style="width: 24px; height: auto; filter: drop-shadow(0 0 2px rgba(255, 133, 51, 0.6));"> =
-                        Booked Day</p>
-                    <div id="popupBookingDetails" class="booking-details-container"></div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Pop-up Booking Modal -->
-        <div id="bookingModal" class="modal-overlay">
-            <div class="modal-content">
-                <span class="close-modal" id="closeModal">&times;</span>
-                <h3 class="modal-heading" data-translate="bookingTitle">Book a Date</h3>
-                <p id="modalDateDisplay" class="modal-subheading"></p>
-
-                <form id="contact-form" action="https://formspree.io/f/mbdaobka" method="post" autocomplete="off">
-                    <!-- Formspree Subject (dynamically populated) -->
-                    <input type="hidden" name="_subject" id="formspreeSubject" value="New Booking Request">
-                    <input type="hidden" name="date" id="dateInput">
-
-                    <input type="email" name="email" placeholder="Email" required>
-
-                    <select name="event_type" id="eventTypeSelect" required>
-                        <option value="" disabled selected data-translate="selectEventType">Select Event Type</option>
-                        <option value="Concert" data-translate="optionConcert">Concert</option>
-                        <option value="Wedding" data-translate="optionWedding">Wedding</option>
-                        <option value="Birthday" data-translate="optionBirthday">Birthday</option>
-                        <option value="Portrait Shoot" data-translate="optionPortrait">Portrait Shoot</option>
-                        <option value="Commercial" data-translate="optionCommercial">Commercial / Brand</option>
-                        <option value="Other" data-translate="optionOther">Other</option>
-                    </select>
-
-                    <input type="text" name="other_event_type" id="otherEventInput"
-                        placeholder="Please specify the event" style="display: none;">
-
-                    <textarea name="message" rows="4" placeholder="Additional Notes" id="contactMessage"></textarea>
-
-                    <p id="my-form-status"></p>
-
-                    <button type="submit" class="btn" data-translate="sendMessage"
-                        style="width: 100%; opacity: 1; transform: none; box-shadow: none;">Send Message</button>
-                </form>
-            </div>
-        </div>
+        <!-- The booking calendar and enquiry form are injected by script.js so a
+             single copy serves every page. They used to be duplicated here, which
+             meant this page kept an older version of the form. -->
 
         <footer>
             <p data-translate="footerText" data-html>&copy; 2026 Mateja Vasojevikj (vasosofuji). All rights reserved.</p>

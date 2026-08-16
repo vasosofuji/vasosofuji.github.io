@@ -108,6 +108,14 @@ export const PAGES = [
     noindex: true,
   },
   {
+    file: 'privacy.html',
+    path: '/privacy.html',
+    title: 'Privacy | vasosofuji',
+    description:
+      'How Mateja Vasojevikj handles details submitted through the booking form: what is collected, why, how long it is kept and how to have it removed.',
+    priority: '0.3',
+  },
+  {
     file: '404.html',
     path: '/404.html',
     title: 'Page not found | vasosofuji',
