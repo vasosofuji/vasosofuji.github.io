@@ -106,6 +106,9 @@ var translations = {
         scheduledEvents: 'Scheduled Events:',
         galleryH1: 'Photo gallery — portraits, concerts and landscapes by vasosofuji',
         collabsH1: 'Collaborations — bands, venues and festivals photographed by Mateja Vasojevikj',
+        wipTitle: 'Still in the darkroom',
+        wipMeta: 'Web development · coming soon',
+        wipBody: 'This page is being built. In the meantime, the photography and video work is all live:',
         notFoundTitle: 'Nothing here',
         notFoundMeta: 'This frame came back blank',
         notFoundBody: 'The page you were after has moved or never existed. The work is all still here:',
@@ -255,6 +258,9 @@ var translations = {
         scheduledEvents: 'Резервирани настани:',
         galleryH1: 'Галерија — портрети, концерти и пејзажи од vasosofuji',
         collabsH1: 'Соработки — бендови, локали и фестивали фотографирани од Матеја Васојевиќ',
+        wipTitle: 'Сè уште во темната комора',
+        wipMeta: 'Веб развој · наскоро',
+        wipBody: 'Оваа страница е во изработка. Во меѓувреме, фотографиите и видеата се достапни:',
         notFoundTitle: 'Нема ништо тука',
         notFoundMeta: 'Оваа снимка се врати празна',
         notFoundBody: 'Страницата што ја баравте е преместена или никогаш не постоела. Сите фотографии се сè уште тука:',
@@ -1302,6 +1308,27 @@ window.photoI18n = {
     },
     lang: function () { return currentLang; }
 };
+
+// --- SCROLLBAR ONLY WHILE SCROLLING ---
+// The bar is painted transparent by CSS until <html> carries .is-scrolling.
+// Width is never touched, so showing and hiding it cannot reflow the page.
+(function scrollbarAutoHide() {
+    const root = document.documentElement;
+    let idleTimer;
+
+    const show = () => {
+        root.classList.add('is-scrolling');
+        clearTimeout(idleTimer);
+        idleTimer = setTimeout(() => root.classList.remove('is-scrolling'), 900);
+    };
+
+    window.addEventListener('scroll', show, { passive: true });
+    // Dragging the bar itself does not always emit scroll events at the ends of
+    // the track, and a pointer near the edge is usually reaching for it.
+    window.addEventListener('pointerdown', (e) => {
+        if (e.clientX > root.clientWidth - 24) show();
+    }, { passive: true });
+})();
 
 // --- CATEGORY SHEET HEADER META ---
 // Fills the caption under a category title from what is actually on the page:

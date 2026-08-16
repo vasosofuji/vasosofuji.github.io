@@ -105,6 +105,44 @@ body {
         repeating-linear-gradient(180deg, #ff9955, #ff9955 6px, rgba(0,0,0,0.8) 6px, rgba(0,0,0,0.8) 12px);
 }
 
+/* --- SCROLLBAR ONLY WHILE SCROLLING ---
+   The bar keeps its width at all times so nothing reflows when it appears;
+   only its paint is toggled. script.js adds .is-scrolling to <html> on scroll
+   and removes it after a short idle. Pointer-over-the-bar keeps it visible so
+   it can still be grabbed and dragged. */
+::-webkit-scrollbar-track,
+::-webkit-scrollbar-thumb {
+    transition: opacity 0.35s ease, background-color 0.35s ease;
+}
+
+html:not(.is-scrolling) ::-webkit-scrollbar-track {
+    background: transparent;
+    border-left-color: transparent;
+}
+
+html:not(.is-scrolling) ::-webkit-scrollbar-thumb {
+    background-color: transparent;
+    background-image: none;
+    border-left-color: transparent;
+}
+
+/* Firefox has no pseudo-elements for this; the colour pair is the only knob. */
+html:not(.is-scrolling) {
+    scrollbar-color: transparent transparent;
+}
+
+/* Someone reaching for the bar should always find it. */
+html:hover::-webkit-scrollbar-thumb:hover {
+    background-color: #ff9955;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    ::-webkit-scrollbar-track,
+    ::-webkit-scrollbar-thumb {
+        transition: none;
+    }
+}
+
 /* --- TYPOGRAPHY & UTILS --- */
 a {
     text-decoration: none;
@@ -153,10 +191,13 @@ h1, h2, h3, h4, h5, h6, .section-title {
     inset: 0;
     background-image: linear-gradient(135deg, transparent 35%, #000 35.1%, #000 64.9%, transparent 65%);
     background-size: 500% 500%;
-    /* Start fully transparent */
-    background-position: 100% 100%;
-    /* First visit animation: wipe down to cover */
-    animation: wipeCover 0.7s cubic-bezier(0.7, 0, 0.3, 1) forwards;
+    /* Covered from the first painted frame. This used to start transparent and
+       run wipeCover to close over 0.7s, which meant the hero was visible and
+       then got wiped over before being revealed again — the flash on first
+       load. There is nothing to wipe over on arrival; the cover animation
+       belongs to leaving a page, which the transition code triggers itself. */
+    background-position: 50% 50%;
+    animation: none;
 }
 
 /* Base covering animation (Transparent to Black) */
@@ -188,8 +229,8 @@ html.not-first-visit .preloader-curtain {
     z-index: 10;
     pointer-events: none;
     opacity: 0;
-    /* Fades in after the wipeCover finishes on first load */
-    animation: fadeInSequence 0.4s ease 0.7s forwards;
+    /* No longer waiting on a 0.7s cover animation that no longer runs. */
+    animation: fadeInSequence 0.35s ease 0.1s forwards;
 }
 
 /* Text Logo in Preloader */
@@ -1780,7 +1821,9 @@ section {
     #react-heading-videos-outline .section-title,
     #react-heading-videos h2,
     #react-heading-videos-outline h2 {
-        font-size: min(13vw, 3.2rem) !important;
+        /* 13vw put "Videos" at 350px against 342px of room. */
+        font-size: min(11vw, 3.2rem) !important;
+        white-space: nowrap !important;
         transform: translateY(-0.1rem) !important;
     }
 
@@ -3967,11 +4010,15 @@ body.gallery-page footer {
     }
 }
 
-/* Override global mobile typography safety net for standard section titles on mobile and tablet screens */
+/* This block is what actually sets the mobile section-title size — it is the
+   last .section-title rule in the file and carries !important. The 1.8rem floor
+   stopped it scaling on narrow screens, which is why "Landscapes" broke onto a
+   second line at 344px and 390px. */
 @media (max-width: 768px) {
     .section-title {
-        font-size: clamp(1.8rem, 6vw, 3rem) !important;
+        font-size: clamp(1.4rem, 6.8vw, 3rem) !important;
         white-space: normal !important;
+        text-wrap: balance;
     }
 }
 

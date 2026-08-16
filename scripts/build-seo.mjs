@@ -103,6 +103,9 @@ export const PAGES = [
     description:
       'Bespoke web development and motion engineering by Mateja Vasojevikj — React, TypeScript and 60fps GSAP interaction, built in Skopje.',
     priority: '0.6',
+    // Temporary holding page — kept out of the index and the sitemap until the
+    // real page ships. Drop this line to put it back.
+    noindex: true,
   },
   {
     file: '404.html',
