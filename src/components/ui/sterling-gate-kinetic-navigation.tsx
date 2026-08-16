@@ -210,6 +210,10 @@ export function SterlingGateKineticNavigation() {
     if (!isMenuOpen) return;
     const handleOutside = (e: PointerEvent) => {
       if (!containerRef.current) return;
+      // A modal sits above the drawer, so a press outside it belongs to the
+      // modal — the booking calendar must close on the first press, not have
+      // that press consumed by closing the menu underneath it.
+      if (document.querySelector('.modal-overlay.active')) return;
       const menuContent = containerRef.current.querySelector(".menu-content");
       const toggleBtn = containerRef.current.querySelector(".nav-close-btn");
       if (menuContent && !menuContent.contains(e.target as Node) && toggleBtn && !toggleBtn.contains(e.target as Node)) {

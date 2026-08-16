@@ -14,7 +14,7 @@ import { fileURLToPath } from 'node:url';
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
 
 // ── Change this one line if the site moves to a custom domain ───────────────
-export const ORIGIN = 'https://vasosofuji.github.io';
+export const ORIGIN = 'https://vasojevich.com';
 
 const AUTHOR = 'Mateja Vasojevikj';
 // 1200x630 is the size link previews actually crop to. display.png is square
@@ -34,9 +34,9 @@ export const PAGES = [
   {
     file: 'index.html',
     path: '/',
-    title: 'Mateja Vasojevikj (vasosofuji) — Photographer in Skopje',
+    title: 'Mateja Vasojevikj — Photographer in Skopje | vasosofuji',
     description:
-      'Concert, portrait and landscape photography by Mateja Vasojevikj — vasosofuji — based in Skopje, North Macedonia. Available for bookings.',
+      'Concert, portrait and landscape photography by Mateja Vasojevikj (Vasojevich), known as vasosofuji, based in Skopje, North Macedonia. Open for bookings.',
     priority: '1.0',
     type: 'website',
   },
@@ -85,7 +85,7 @@ export const PAGES = [
     path: '/about.html',
     title: 'About Mateja Vasojevikj — Photographer & Filmmaker, Skopje',
     description:
-      'Mateja Vasojevikj (vasosofuji) is a photographer, cinematographer and cybersecurity student in Skopje, North Macedonia. Gear, story and recent work.',
+      'Mateja Vasojevikj — also written Vasojevich — is a photographer and cinematographer in Skopje, North Macedonia, working as vasosofuji. Gear, story and recent work.',
     priority: '0.6',
   },
   {
@@ -166,6 +166,20 @@ const businessLd = {
   sameAs: personLd.sameAs,
 };
 
+// The domain is vasojevich.com, so that spelling is a name in its own right.
+// A WebSite entity lets search engines and answer engines resolve all of
+// "vasosofuji", "Vasojevich" and "Vasojevikj" to the same site.
+const siteLd = {
+  '@context': 'https://schema.org',
+  '@type': 'WebSite',
+  '@id': `${ORIGIN}/#website`,
+  name: 'vasosofuji — Mateja Vasojevikj',
+  alternateName: ['vasosofuji', 'Vasojevich', 'Mateja Vasojevich', 'Матеја Васојевиќ'],
+  url: `${ORIGIN}/`,
+  inLanguage: ['en', 'mk'],
+  publisher: { '@id': `${ORIGIN}/#person` },
+};
+
 function galleryLd(page) {
   return {
     '@context': 'https://schema.org',
@@ -181,7 +195,7 @@ function galleryLd(page) {
 function headBlock(page) {
   const url = `${ORIGIN}${page.path === '/' ? '/' : page.path}`;
   const ld = [];
-  if (page.file === 'index.html') ld.push(personLd, businessLd);
+  if (page.file === 'index.html') ld.push(siteLd, personLd, businessLd);
   if (['gallery.html', 'portraits.html', 'concerts.html', 'landscapes.html'].includes(page.file)) {
     ld.push(galleryLd(page));
   }

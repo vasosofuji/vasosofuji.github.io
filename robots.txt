@@ -5,4 +5,4 @@ Allow: /
 Disallow: /src/
 Disallow: /node_modules/
 
-Sitemap: https://vasosofuji.github.io/sitemap.xml
+Sitemap: https://vasojevich.com/sitemap.xml

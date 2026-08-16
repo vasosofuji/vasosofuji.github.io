@@ -16,23 +16,23 @@ by email.
 
 ## Pages
 
-- [Home](https://vasosofuji.github.io/): Hero collage, featured work from each
+- [Home](https://vasojevich.com/): Hero collage, featured work from each
   category, showreel, and the availability calendar used for booking.
-- [Gallery](https://vasosofuji.github.io/gallery.html): Entry point to the
+- [Gallery](https://vasojevich.com/gallery.html): Entry point to the
   three photo categories.
-- [Portraits](https://vasosofuji.github.io/portraits.html): Portrait sessions
+- [Portraits](https://vasojevich.com/portraits.html): Portrait sessions
   shot in Skopje and Ohrid. Each frame lists camera, lens and location.
-- [Concerts](https://vasosofuji.github.io/concerts.html): Live music
+- [Concerts](https://vasojevich.com/concerts.html): Live music
   photography from Skopje venues including MKC, Laboratorium and Kotur.
-- [Landscapes](https://vasosofuji.github.io/landscapes.html): Landscape work
+- [Landscapes](https://vasojevich.com/landscapes.html): Landscape work
   from Lake Ohrid, Vodno and around North Macedonia.
-- [Videos](https://vasosofuji.github.io/videos.html): Short films, music
+- [Videos](https://vasojevich.com/videos.html): Short films, music
   videos and brand advertisements.
-- [About](https://vasosofuji.github.io/about.html): Background, gear, and
+- [About](https://vasojevich.com/about.html): Background, gear, and
   recent projects.
-- [Collaborations](https://vasosofuji.github.io/collaborations.html): Artists,
+- [Collaborations](https://vasojevich.com/collaborations.html): Artists,
   venues, festivals and organisations worked with.
-- [Web development](https://vasosofuji.github.io/webdev.html): Web development
+- [Web development](https://vasojevich.com/webdev.html): Web development
   and motion engineering services.
 
 ## Equipment

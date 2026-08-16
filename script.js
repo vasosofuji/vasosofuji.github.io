@@ -106,7 +106,7 @@ var translations = {
         scheduledEvents: 'Scheduled Events:',
         galleryH1: 'Photo gallery — portraits, concerts and landscapes by vasosofuji',
         collabsH1: 'Collaborations — bands, venues and festivals photographed by Mateja Vasojevikj',
-        notFoundTitle: 'Nothing developed here',
+        notFoundTitle: 'Nothing here',
         notFoundMeta: 'This frame came back blank',
         notFoundBody: 'The page you were after has moved or never existed. The work is all still here:',
         notFoundHome: 'Home',
@@ -144,7 +144,7 @@ var translations = {
         webDevHeroBtnContact: 'Start a Project',
         webDevStatusAvailable: 'Available for Freelance & Contract Projects',
         webDevFeaturedTitle: 'Architectural Case Study',
-        webDevFeaturedSub: 'Deep dive into the design and performance engineering of vasosofuji.github.io',
+        webDevFeaturedSub: 'Deep dive into the design and performance engineering of vasojevich.com',
         webDevPillarsTitle: 'Engineering Principles',
         webDevStackTitle: 'Core Technologies & Tooling',
         webDevEstimatorTitle: 'Interactive Scope & Timeline Estimator',
@@ -255,7 +255,7 @@ var translations = {
         scheduledEvents: 'Резервирани настани:',
         galleryH1: 'Галерија — портрети, концерти и пејзажи од vasosofuji',
         collabsH1: 'Соработки — бендови, локали и фестивали фотографирани од Матеја Васојевиќ',
-        notFoundTitle: 'Тука нема ништо развиено',
+        notFoundTitle: 'Нема ништо тука',
         notFoundMeta: 'Оваа снимка се врати празна',
         notFoundBody: 'Страницата што ја баравте е преместена или никогаш не постоела. Сите фотографии се сè уште тука:',
         notFoundHome: 'Почетна',
@@ -293,7 +293,7 @@ var translations = {
         webDevHeroBtnContact: 'Започни Проект',
         webDevStatusAvailable: 'Достапен за Проекти & Соработка',
         webDevFeaturedTitle: 'Студија на Случај',
-        webDevFeaturedSub: 'Детален преглед на архитектурата и перформансите на vasosofuji.github.io',
+        webDevFeaturedSub: 'Детален преглед на архитектурата и перформансите на vasojevich.com',
         webDevPillarsTitle: 'Инженерски Принципи',
         webDevStackTitle: 'Технологии & Алатки',
         webDevEstimatorTitle: 'Интерактивен Калкулатор за Изработка',
@@ -864,6 +864,13 @@ document.addEventListener('DOMContentLoaded', () => {
     function setupContactTriggers() {
         const selector = 'a[href="#contact"], a[href="index.html#contact"], a[href="#contact-form"], [data-translate="contact"], [data-translate="getInTouch"], [data-translate="contactMe"]';
         document.querySelectorAll(selector).forEach(element => {
+            // The menu drawer's own Contact link is React's to handle — its
+            // handler closes the drawer before opening the calendar. This
+            // listener calls stopPropagation, so if it ever bound to that link
+            // (a race: React mounting before DOMContentLoaded) React's handler
+            // never ran, the drawer stayed open behind the calendar, and the
+            // first tap outside closed the drawer instead of the calendar.
+            if (element.closest('.menu-content')) return;
             element.addEventListener('click', (e) => {
                 const targetModal = document.getElementById('popupCalendarModal');
                 if (targetModal) {
