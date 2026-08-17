@@ -924,113 +924,286 @@ header:not(.hero-entered) .btn:hover::before {
    VIDEO PAGE STYLES
    ========================================= */
 
-/* Custom styling for video grid */
+/* Video index.
+   Every thumbnail is a vertical reel frame (the sources run 0.57 to 0.94), so
+   the card is one fixed 4:5 poster with the caption laid over it rather than a
+   picture sitting above a panel of text. That keeps the row edges straight no
+   matter how long a description runs, and drops the grey slab that used to
+   float unattached under each image. */
 .video-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(min(100%, 350px), 1fr)); /* Adaptive grid for foldables */
-    gap: 3rem;
+    grid-template-columns: repeat(auto-fill, minmax(min(100%, 270px), 1fr));
+    gap: 1.75rem;
     max-width: 1400px;
     margin: 0 auto;
-    padding: 0.5rem 2rem 2rem 2rem;
+    padding: 0.5rem 2rem 3rem 2rem;
 }
 
 .video-card {
-    background: var(--card-bg);
-    border-radius: 12px;
-    overflow: hidden;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
     position: relative;
-    max-width: 100%; /* Changed from 350px to fill the new grid space */
-    width: 100%;
-    margin: 0 auto;
+    display: block;
+    aspect-ratio: 4 / 5;
+    border-radius: 14px;
+    overflow: hidden;
+    background: var(--card-bg);
+    isolation: isolate;
+    box-shadow: 0 6px 22px rgba(0, 0, 0, 0.42);
+    transition: transform 0.45s cubic-bezier(0.22, 1, 0.36, 1),
+                box-shadow 0.45s cubic-bezier(0.22, 1, 0.36, 1);
 }
 
-.video-card:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.5);
+.video-card:hover,
+.video-card:focus-visible {
+    transform: translateY(-6px);
+    box-shadow: 0 18px 42px rgba(0, 0, 0, 0.55);
+}
+
+.video-card:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 3px;
 }
 
 .video-thumbnail {
-    position: relative;
-    width: 100%;
-    aspect-ratio: 4/5; /* Shorter than full reel ratio */
+    position: absolute;
+    inset: 0;
     overflow: hidden;
-    cursor: pointer;
 }
 
 .video-thumbnail img {
     width: 100%;
     height: 100%;
     object-fit: cover;
-    transition: transform 0.3s ease;
+    /* Slightly oversized at rest so the zoom has somewhere to go without
+       exposing an edge. */
+    transform: scale(1.01);
+    transition: transform 0.7s cubic-bezier(0.22, 1, 0.36, 1),
+                filter 0.45s ease;
+    filter: brightness(0.92);
 }
 
-.video-card:hover .video-thumbnail img {
-    transform: scale(1.05);
+.video-card:hover .video-thumbnail img,
+.video-card:focus-visible .video-thumbnail img {
+    transform: scale(1.07);
+    filter: brightness(0.95);
+}
+
+/* The scrim carries the caption. It is part of the thumbnail rather than the
+   card so the image zoom happens underneath it. */
+.video-thumbnail::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    /* Only as dark as the caption needs, and only where the caption sits: the
+       earlier ramp reached halfway up the frame and buried the picture. */
+    /* Held dark across the caption band, then dropped off quickly. Some of
+       these frames carry burned-in titles of their own, so the text needs a
+       solid bed without the ramp climbing into the picture. */
+    background: linear-gradient(to top,
+        rgba(0, 0, 0, 0.93) 0%,
+        rgba(0, 0, 0, 0.86) 13%,
+        rgba(0, 0, 0, 0.52) 23%,
+        rgba(0, 0, 0, 0.16) 35%,
+        rgba(0, 0, 0, 0) 47%,
+        rgba(0, 0, 0, 0) 82%,
+        rgba(0, 0, 0, 0.3) 100%);
+    transition: opacity 0.45s ease;
+}
+
+/* Running index, pulled from the markup so the numbering lives with the
+   content it belongs to. */
+.video-card::before {
+    content: attr(data-index);
+    position: absolute;
+    top: 1rem;
+    left: 1.15rem;
+    z-index: 3;
+    font-family: 'Montserrat', sans-serif;
+    font-size: 0.68rem;
+    font-weight: 600;
+    letter-spacing: 0.18em;
+    color: rgba(255, 255, 255, 0.55);
+    transition: color 0.35s ease;
+}
+
+.video-card:hover::before {
+    color: var(--accent);
 }
 
 .play-overlay {
     position: absolute;
-    top: 50%;
+    top: 42%;
     left: 50%;
     transform: translate(-50%, -50%);
-    width: 80px;
-    height: 80px;
-    background: rgba(0, 0, 0, 0.7);
+    z-index: 3;
+    width: 58px;
+    height: 58px;
+    border: 1px solid rgba(255, 255, 255, 0.7);
     border-radius: 50%;
+    background: rgba(0, 0, 0, 0.22);
+    backdrop-filter: blur(2px);
+    -webkit-backdrop-filter: blur(2px);
     display: flex;
     align-items: center;
     justify-content: center;
-    transition: background 0.3s ease;
+    transition: background 0.35s ease, border-color 0.35s ease,
+                transform 0.45s cubic-bezier(0.22, 1, 0.36, 1);
 }
 
-.video-card:hover .play-overlay {
+.video-card:hover .play-overlay,
+.video-card:focus-visible .play-overlay {
     background: var(--accent);
+    border-color: var(--accent);
+    transform: translate(-50%, -50%) scale(1.08);
 }
 
 .play-overlay::after {
     content: '';
     width: 0;
     height: 0;
-    border-left: 25px solid white;
-    border-top: 15px solid transparent;
-    border-bottom: 15px solid transparent;
-    margin-left: 5px;
+    border-left: 13px solid #fff;
+    border-top: 8px solid transparent;
+    border-bottom: 8px solid transparent;
+    margin-left: 4px;
 }
 
 .video-info {
-    padding: 1rem;
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 3;
+    padding: 1.15rem 1.15rem 1.25rem;
 }
 
 .video-info h4 {
-    color: var(--text-main);
-    margin: 0 0 0.5rem 0;
-    font-size: 1.1rem;
+    font-family: 'Playfair Display', serif;
+    color: #fff;
+    margin: 0 0 0.3rem 0;
+    font-size: 1.12rem;
+    font-weight: 600;
+    line-height: 1.25;
+    /* Backstop for the frames that already have bright lettering of their own
+       sitting where the caption lands. */
+    text-shadow: 0 1px 10px rgba(0, 0, 0, 0.85);
 }
 
 .video-info p {
-    color: var(--text-muted);
+    color: rgba(255, 255, 255, 0.72);
     margin: 0;
-    font-size: 0.9rem;
+    font-size: 0.82rem;
+    line-height: 1.4;
+    text-shadow: 0 1px 8px rgba(0, 0, 0, 0.8);
 }
 
 .instagram-link {
     display: inline-flex;
     align-items: center;
-    gap: 0.5rem;
+    gap: 0.4rem;
     color: var(--accent);
     text-decoration: none;
-    margin-top: 0.5rem;
-    font-size: 0.9rem;
-    transition: opacity 0.3s ease;
+    font-size: 0.78rem;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+    margin-top: 0.55rem;
 }
 
-.instagram-link:hover {
-    opacity: 0.8;
+/* On a pointer device the call to action stays out of the way until the card
+   is actually addressed. Touch devices get it outright, since nothing there
+   will ever produce a hover. */
+@media (hover: hover) and (pointer: fine) {
+    .instagram-link {
+        opacity: 0;
+        transform: translateY(6px);
+        transition: opacity 0.35s ease, transform 0.35s cubic-bezier(0.22, 1, 0.36, 1);
+    }
+
+    .video-card:hover .instagram-link,
+    .video-card:focus-visible .instagram-link {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
 
-/* Deslop: Fluid grid automatically collapses to 1fr on mobile. Padding is handled globally. */
+@media (prefers-reduced-motion: reduce) {
+    .video-card,
+    .video-thumbnail img,
+    .play-overlay,
+    .instagram-link {
+        transition-duration: 0.01ms;
+    }
+
+    .video-card:hover,
+    .video-card:focus-visible {
+        transform: none;
+    }
+
+    .video-card:hover .video-thumbnail img,
+    .video-card:focus-visible .video-thumbnail img {
+        transform: scale(1.01);
+    }
+}
+
+@media (max-width: 600px) {
+    .video-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 0.85rem;
+        padding: 0.5rem 1rem 2.5rem;
+    }
+
+    .video-info {
+        padding: 0.7rem 0.7rem 0.8rem;
+    }
+
+    .video-info h4 { font-size: 0.86rem; }
+    .video-info p  { font-size: 0.68rem; }
+
+    /* The card is itself the link, so spelling it out again costs two lines of
+       a caption that has to fit in roughly a third of a 170px wide frame. */
+    .instagram-link { display: none; }
+
+    /* Long titles and descriptions are held to two lines each, otherwise the
+       caption grows past the scrim and ends up on bare picture. */
+    .video-info h4,
+    .video-info p {
+        display: -webkit-box;
+        -webkit-box-orient: vertical;
+        -webkit-line-clamp: 2;
+        line-clamp: 2;
+        overflow: hidden;
+    }
+
+    /* The caption band takes a larger share of a small card, so the dark part
+       of the scrim has to reach correspondingly higher. */
+    .video-thumbnail::after {
+        background: linear-gradient(to top,
+            rgba(0, 0, 0, 0.93) 0%,
+            rgba(0, 0, 0, 0.88) 22%,
+            rgba(0, 0, 0, 0.55) 34%,
+            rgba(0, 0, 0, 0.18) 46%,
+            rgba(0, 0, 0, 0) 58%,
+            rgba(0, 0, 0, 0) 82%,
+            rgba(0, 0, 0, 0.3) 100%);
+    }
+
+    /* Lifted clear of the taller caption. */
+    .play-overlay {
+        top: 34%;
+        width: 42px;
+        height: 42px;
+    }
+
+    .play-overlay::after {
+        border-left-width: 10px;
+        border-top-width: 6px;
+        border-bottom-width: 6px;
+    }
+
+    .video-card::before {
+        top: 0.6rem;
+        left: 0.7rem;
+        font-size: 0.6rem;
+    }
+}
 
 /* =========================================
    GALLERY PAGE LAYOUT FIX
