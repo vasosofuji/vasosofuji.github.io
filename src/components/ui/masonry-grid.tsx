@@ -20,7 +20,7 @@ interface MasonryGridProps<T> {
   className?: string;
   gap?: string;
   staggerDelay?: number;
-  /** Peak tilt in degrees. Kept low on purpose — see GridItem. */
+  /** Peak tilt in degrees. Kept low on purpose - see GridItem. */
   tilt?: number;
   onItemClick?: (index: number) => void;
   /** Ascending `min` widths; the last one that fits wins. */
@@ -57,7 +57,7 @@ const GridItem = ({
 
   // Only the card under the pointer gets a transform. Binding the motion
   // values unconditionally left every card carrying a 3D transform and its own
-  // rendering context for the whole session — on a page with thirty-odd cards
+  // rendering context for the whole session - on a page with thirty-odd cards
   // that is thirty-odd composited layers, and sweeping the pointer across them
   // quickly churns the lot. Idle cards now hold no transform at all.
   const [active, setActive] = React.useState(false);
@@ -126,7 +126,7 @@ const GridItem = ({
  * The layout is built from real flex columns rather than CSS `columns`.
  * Multi-column fragments its content, and cards here carry transforms, their
  * own stacking contexts and an info panel that deliberately overflows the card
- * box — a combination that leaves Chrome repainting incorrectly, with cards
+ * box - a combination that leaves Chrome repainting incorrectly, with cards
  * blanking out as neighbours are hovered. Explicit columns keep every card in
  * one piece and make stacking predictable.
  */

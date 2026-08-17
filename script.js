@@ -69,7 +69,7 @@ var translations = {
         CurrentProjects: 'Latest shoot: LoveRave Festival',
         bookingTitle: 'Booking',
         ProjectDesc: "Festival where I got invited to photograph a bunch of the local bands I love.<br>Great energy, great atmosphere and amazing performances!<br>There were also countless DJ's were doing their thing on another stage absolutely killing it.",
-        JobFairTitle: 'Job Fair 2026 — BEST Skopje',
+        JobFairTitle: 'Job Fair 2026, BEST Skopje',
         JobFairDesc: "As PR&amp;SM Responsible for Job Fair 2026, I led the full promotional campaign for the event: Video advertisements, LinkedIn Posts, Instagram Posts and I was even on TV! (3 Times)<br><br>The event itself is hosted by BEST Skopje, but the Job Fair Team are the ones that make it their own event. It was a great experience working with my team, as well as a great learning experience in terms of writing scripts, scenes, shooting and putting it all together.<br><br>Best part were the videos promoting the event as well as the advertisements I made for the sponsors who helped fund the whole project.",
         CollabsCTATitle: '<b>All Collaborations</b>',
         CollabsCTADesc: "Artists, venues, festivals & organisations I've worked with",
@@ -104,14 +104,19 @@ var translations = {
         optionOther: 'Other',
         otherEventPlaceholder: 'Please specify the event',
         scheduledEvents: 'Scheduled Events:',
-        galleryH1: 'Photo gallery — portraits, concerts and landscapes by vasosofuji',
-        collabsH1: 'Collaborations — bands, venues and festivals photographed by Mateja Vasojevikj',
+        galleryH1: 'Photo gallery: portraits, concerts and landscapes by vasosofuji',
+        collabsH1: 'Collaborations: bands, venues and festivals photographed by Mateja Vasojevikj',
+        thanksTitle: 'Request sent',
+        thanksBody: 'Thank you for getting in touch. I will contact you as soon as possible.',
+        thanksClose: 'Close',
+        sending: 'Sending...',
+        sendFailed: 'That did not send. Please try again, or email vasosofuji@gmail.com.',
         stepWho: 'Your name',
-        stepWhoHint: 'Optional — it just helps me address you properly.',
+        stepWhoHint: 'Optional. It just helps me address you properly.',
         stepEmail: 'Your email',
         stepShoot: 'What kind of shoot?',
         stepNotes: 'Anything else?',
-        stepNotesHint: 'Location, timings, references — whatever helps.',
+        stepNotesHint: 'Location, timings, references, whatever helps.',
         stepNext: 'Continue',
         stepBack: 'Back',
         namePlaceholder: 'Name and last name (optional)',
@@ -234,7 +239,7 @@ var translations = {
         CurrentProjects: 'Последно сликање: LoveRave Фестивал',
         bookingTitle: 'Резервација',
         ProjectDesc: "Фестивал каде бев поканет да фотографирам голем број локални бендови.<br>Предобра енергија, уште подобра атмосфера и неверојатни настапи!<br>Исто така имаше и голем репертоар на DJ-ови коишто беа предобри.",
-        JobFairTitle: 'Job Fair 2026 — BEST Скопје',
+        JobFairTitle: 'Job Fair 2026, BEST Скопје',
         JobFairDesc: "Како PR&SM Одговорен за Job Fair 2026, ја водев целата промотивна кампања: Видео реклами, LinkedIn постови, Инстаграм постови и бев на телевизија! (3 пати)<br><br>Самиот настан е организиран од БЕСТ Скопје, но тимот за Џоб Фер се тие што го прават настанот да е нивен. Искуството беше многу забавно, но исто така ме научи доста работи во однос на пишување скрипти, сцени, снимање и монтирање на сето тоа.<br><br>Најинтересни беа видеата што ги направивме за рекламирање на настанот како и видеата за спонзорите што помогнаа да се реализира сето ова.",
         CollabsCTATitle: '<b>Сите Соработки</b>',
         CollabsCTADesc: "Артисти, места, фестивали и организации со кои сум работел",
@@ -269,14 +274,19 @@ var translations = {
         optionOther: 'Друго',
         otherEventPlaceholder: 'Ве молиме наведете го настанот',
         scheduledEvents: 'Резервирани настани:',
-        galleryH1: 'Галерија — портрети, концерти и пејзажи од vasosofuji',
-        collabsH1: 'Соработки — бендови, локали и фестивали фотографирани од Матеја Васојевиќ',
+        galleryH1: 'Галерија: портрети, концерти и пејзажи од vasosofuji',
+        collabsH1: 'Соработки: бендови, локали и фестивали фотографирани од Матеја Васојевиќ',
+        thanksTitle: 'Барањето е испратено',
+        thanksBody: 'Ви благодарам што се јавивте. Ќе ве контактирам во најкус можен рок.',
+        thanksClose: 'Затвори',
+        sending: 'Се испраќа...',
+        sendFailed: 'Не успеа испраќањето. Обидете се повторно или пишете на vasosofuji@gmail.com.',
         stepWho: 'Вашето име',
-        stepWhoHint: 'Опционално — само за да знам како да ви се обратам.',
+        stepWhoHint: 'Опционално, само за да знам како да ви се обратам.',
         stepEmail: 'Вашата е-пошта',
         stepShoot: 'Каков вид снимање?',
         stepNotes: 'Уште нешто?',
-        stepNotesHint: 'Локација, термини, референци — што било што помага.',
+        stepNotesHint: 'Локација, термини, референци, што било што помага.',
         stepNext: 'Продолжи',
         stepBack: 'Назад',
         namePlaceholder: 'Име и презиме (опционално)',
@@ -401,7 +411,7 @@ function startDeferredVideos() {
             if (entry.isIntersecting) {
                 attach(video);
                 // Autoplay is muted-only, so a rejected promise just means the
-                // browser declined — nothing to recover from.
+                // browser declined - nothing to recover from.
                 const played = video.play();
                 if (played && typeof played.catch === 'function') played.catch(() => {});
             } else if (video.dataset.loaded === 'true') {
@@ -422,15 +432,35 @@ let framesPreloaded = false;
 let currentSequenceFrame = 0;
 let sequenceAnimationFrameId = null;
 
+// The sequence is 96 frames totalling ~6 MB. Requesting all of them up front
+// saturated the connection on arrival and delayed everything the visitor
+// actually came for. The curtain is only up for a fraction of a second now, so
+// only the opening frames are needed immediately; the rest arrive during idle
+// time and are there long before the loop wraps round to them.
+const EAGER_FRAMES = 24;
+
+function loadFrame(i) {
+    if (preloaderFrames[i]) return;
+    const img = new Image();
+    img.decoding = 'async';
+    const num = String(100 + i).padStart(4, '0');
+    img.src = `misc/loading/Sequence ${num}.gif`;
+    preloaderFrames[i] = img;
+}
+
 function preloadSequenceFrames() {
     if (framesPreloaded) return;
     framesPreloaded = true;
-    for (let i = 0; i < TOTAL_FRAMES; i++) {
-        const img = new Image();
-        const num = String(100 + i).padStart(4, '0');
-        // Preload frames from misc/loading folder
-        img.src = `misc/loading/Sequence ${num}.gif`;
-        preloaderFrames.push(img);
+
+    for (let i = 0; i < Math.min(EAGER_FRAMES, TOTAL_FRAMES); i++) loadFrame(i);
+
+    const rest = () => {
+        for (let i = EAGER_FRAMES; i < TOTAL_FRAMES; i++) loadFrame(i);
+    };
+    if ('requestIdleCallback' in window) {
+        requestIdleCallback(rest, { timeout: 3000 });
+    } else {
+        setTimeout(rest, 1200);
     }
 }
 // Start preloading immediately so frames are ready
@@ -534,7 +564,8 @@ function markHeroEnteredWhenSettled(heroHeader) {
 }
 
 const isFirstVisit = !sessionStorage.getItem('hasVisited');
-const preloaderDuration = isFirstVisit ? 2500 : 1500;
+// Long enough to read as intentional, short enough not to be a wait.
+const preloaderDuration = isFirstVisit ? 900 : 320;
 
 if (isFirstVisit) {
     sessionStorage.setItem('hasVisited', 'true');
@@ -569,7 +600,7 @@ setTimeout(() => {
                 curtain.style.transition = 'none';
                 curtain.style.animation = 'none';
                 void curtain.offsetWidth;
-                curtain.style.animation = 'wipeReveal 1.0s cubic-bezier(0.7, 0, 0.3, 1) forwards';
+                curtain.style.animation = 'wipeReveal 0.55s cubic-bezier(0.7, 0, 0.3, 1) forwards';
                 document.body.classList.add('loaded');
                 
                 // After the curtain finishes sliding out, remove the preloader from the DOM
@@ -589,8 +620,8 @@ setTimeout(() => {
                     }
                     startScrollReveal();
                     startDeferredVideos();
-                }, 1000);
-            }, 100); // Fast 0.1s load delay so the fade starts immediately
+                }, 320);
+            }, 40);
         }
     }
 }, preloaderDuration);
@@ -598,7 +629,7 @@ setTimeout(() => {
 // --- SMOOTH PAGE TRANSITIONS ---
 // Delegated from the document rather than bound per-link at load time. The
 // navigation is rendered by React after this script runs, so the menu's links
-// did not exist yet and never got a listener — clicking Home/About/Gallery
+// did not exist yet and never got a listener - clicking Home/About/Gallery
 // navigated bare, which is why the cover wipe only played from in-page links.
 document.addEventListener('click', (e) => {
     // Let modified clicks (new tab, download, save) behave natively
@@ -612,8 +643,17 @@ document.addEventListener('click', (e) => {
     if (link.hostname === window.location.hostname && link.target !== '_blank' && !link.hasAttribute('download')) {
         {
             const isSamePage = (link.pathname === window.location.pathname && link.search === window.location.search);
-            // Don't intercept anchor links on the same page
-            if (isSamePage) return;
+
+            // Anchor links on the current page keep their default behaviour.
+            if (isSamePage && link.hash) return;
+
+            // Following "Home" while already home used to reload the whole
+            // page, curtain and all. Just go back to the top.
+            if (isSamePage) {
+                e.preventDefault();
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+                return;
+            }
 
             e.preventDefault();
             const targetUrl = link.href;
@@ -638,12 +678,12 @@ document.addEventListener('click', (e) => {
                     curtain.style.transition = 'none';
                     curtain.style.animation = 'none';
                     void curtain.offsetWidth;
-                    curtain.style.animation = 'wipeCover 1.0s cubic-bezier(0.7, 0, 0.3, 1) forwards';
+                    curtain.style.animation = 'wipeCover 0.45s cubic-bezier(0.7, 0, 0.3, 1) forwards';
                 }
                 // Wait for animation to finish before navigating
                 setTimeout(() => {
                     window.location.href = targetUrl;
-                }, 1200); // 1.0s wipe + 0.2s text display buffer
+                }, 480);
             } else {
                 window.location.href = targetUrl;
             }
@@ -732,7 +772,7 @@ const bookingDetailsContainer = document.getElementById('bookingDetails');
 
 // --- BOOKING MODALS ON EVERY PAGE ---
 // Only index.html carried this markup, so Contact in the menu silently did
-// nothing on the gallery and video pages — openPopupCalendar() found no modal
+// nothing on the gallery and video pages - openPopupCalendar() found no modal
 // and returned. Injecting it here keeps one copy rather than pasting seventy
 // lines into each page and letting them drift apart. This runs at module scope,
 // which for a deferred module means the DOM is parsed but DOMContentLoaded has
@@ -792,7 +832,7 @@ function injectBookingModals() {
                         <legend class="booking-step-label" data-translate="stepWho">Your name</legend>
                         <input type="text" name="name" id="bookingName" autocomplete="name"
                             placeholder="Name and last name (optional)" data-placeholder="namePlaceholder">
-                        <p class="booking-hint" data-translate="stepWhoHint">Optional — it just helps me address you properly.</p>
+                        <p class="booking-hint" data-translate="stepWhoHint">Optional. It just helps me address you properly.</p>
                     </fieldset>
 
                     <!-- 2 · email + consent. The timer starts here. -->
@@ -833,7 +873,7 @@ function injectBookingModals() {
                         <legend class="booking-step-label" data-translate="stepNotes">Anything else?</legend>
                         <textarea name="notes" rows="4" id="contactMessage"
                             placeholder="Additional Notes" data-placeholder="messagePlaceholder"></textarea>
-                        <p class="booking-hint" data-translate="stepNotesHint">Location, timings, references — whatever helps.</p>
+                        <p class="booking-hint" data-translate="stepNotesHint">Location, timings, references, whatever helps.</p>
                     </fieldset>
 
                     <p id="my-form-status" role="status" aria-live="polite"></p>
@@ -984,7 +1024,7 @@ injectBookingModals();
         if (e.target.id === 'bookingConsent' || e.target.id === 'bookingEmail') startAbandonTimer();
     });
 
-    // Leaving with the form unfinished is itself the signal — report then,
+    // Leaving with the form unfinished is itself the signal - report then,
     // rather than waiting out a timer that will never fire.
     document.addEventListener('visibilitychange', () => {
         if (document.visibilityState === 'hidden' && current >= 2 && !submitted) {
@@ -1009,10 +1049,86 @@ injectBookingModals();
         }).observe(bookingModal, { attributes: true, attributeFilter: ['class'] });
     }
 
-    form().addEventListener('submit', () => {
+    // --- KEYBOARD-AWARE MODAL ---
+    // visualViewport reports the space left once the on-screen keyboard is up.
+    // Feeding that to CSS keeps the modal inside what is actually visible, and
+    // the focused field gets scrolled into that space.
+    const vv = window.visualViewport;
+    if (vv) {
+        const syncViewport = () => {
+            document.documentElement.style.setProperty('--vvh', `${vv.height}px`);
+            // A meaningful shortfall against the window height means a keyboard.
+            document.body.classList.toggle('keyboard-open', window.innerHeight - vv.height > 150);
+        };
+        vv.addEventListener('resize', syncViewport);
+        vv.addEventListener('scroll', syncViewport);
+        syncViewport();
+    }
+
+    document.addEventListener('focusin', (e) => {
+        const field = e.target;
+        if (!field.matches('.modal-content input, .modal-content select, .modal-content textarea')) return;
+        // Wait for the keyboard animation before measuring, or the field is
+        // scrolled to a position that no longer exists once it finishes.
+        setTimeout(() => field.scrollIntoView({ block: 'center', behavior: 'smooth' }), 320);
+    });
+
+    // --- THANK YOU ---
+    // Formspree is posted normally and answers with a redirect, so without this
+    // the visitor is thrown onto a Formspree page. Sending it by fetch keeps
+    // them here and lets the confirmation replace the form in place.
+    function showThanks() {
+        const content = document.querySelector('#bookingModal .modal-content');
+        if (!content) return;
+        const t = (typeof translations !== 'undefined' && translations[currentLang]) || {};
+        const email = (el('bookingEmail') && el('bookingEmail').value) || '';
+        content.innerHTML = `
+            <span class="close-modal" id="closeModal">&times;</span>
+            <div class="thanks-panel">
+                <div class="thanks-mark" aria-hidden="true">&#10003;</div>
+                <h3 class="thanks-title">${t.thanksTitle || 'Request sent'}</h3>
+                <p class="thanks-body">${t.thanksBody || 'Thank you for getting in touch. I will contact you as soon as possible.'}</p>
+                ${email ? '<p class="thanks-detail"></p>' : ''}
+                <button type="button" class="btn" id="thanksClose">${t.thanksClose || 'Close'}</button>
+            </div>`;
+        // Set as text, never as markup: whatever was typed into the field is
+        // echoed back here, and it has no business being parsed as HTML.
+        const detail = content.querySelector('.thanks-detail');
+        if (detail) detail.textContent = email;
+        content.querySelector('#thanksClose').focus();
+    }
+
+    form().addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const f = form();
         submitted = true;
         clearTimeout(abandonTimer);
+
+        const status = el('my-form-status');
+        const t = (typeof translations !== 'undefined' && translations[currentLang]) || {};
+        const submit = el('bookingSubmit');
+        if (submit) submit.disabled = true;
+        if (status) status.textContent = t.sending || 'Sending...';
+
         notify('booking');
+
+        try {
+            const res = await fetch(f.action, {
+                method: 'POST',
+                body: new FormData(f),
+                headers: { Accept: 'application/json' },
+            });
+            if (!res.ok) throw new Error(`Formspree responded ${res.status}`);
+            showThanks();
+        } catch (err) {
+            console.error('booking: could not submit the form', err);
+            submitted = false;
+            if (submit) submit.disabled = false;
+            if (status) {
+                status.textContent = t.sendFailed
+                    || 'That did not send. Please try again, or email vasosofuji@gmail.com.';
+            }
+        }
     });
 
     show(1);
@@ -1112,7 +1228,7 @@ document.addEventListener('DOMContentLoaded', () => {
     function setupContactTriggers() {
         const selector = 'a[href="#contact"], a[href="index.html#contact"], a[href="#contact-form"], [data-translate="contact"], [data-translate="getInTouch"], [data-translate="contactMe"]';
         document.querySelectorAll(selector).forEach(element => {
-            // The menu drawer's own Contact link is React's to handle — its
+            // The menu drawer's own Contact link is React's to handle - its
             // handler closes the drawer before opening the calendar. This
             // listener calls stopPropagation, so if it ever bound to that link
             // (a race: React mounting before DOMContentLoaded) React's handler
@@ -1491,11 +1607,36 @@ window.addEventListener('pageshow', (event) => {
     }
 });
 
+// --- RETURNING VIA THE BACK BUTTON ---
+// Leaving a page runs the curtain closed and leaves it that way. When the
+// browser restores that page from its back/forward cache it restores the DOM
+// exactly as it was - curtain down, body mid-transition - so the page came
+// back stuck behind a black screen with nothing left to run and clear it.
+// Every restore clears the curtain immediately; there is nothing to cover
+// because the content is already painted underneath.
+window.addEventListener('pageshow', (event) => {
+    if (!event.persisted) return;
+
+    const curtain = document.querySelector('.preloader-curtain');
+    const shell = document.getElementById('global-preloader');
+    if (curtain) {
+        curtain.style.animation = 'none';
+        curtain.classList.remove('do-wipe-down', 'wiping-up');
+    }
+    if (shell) shell.classList.add('done');
+    document.body.classList.add('loaded');
+
+    const hero = document.getElementById('parallax-header') || document.querySelector('header');
+    if (hero) {
+        hero.classList.add('hero-active', 'hero-entered');
+    }
+});
+
 
 // --- PHOTO CARD VALUE TRANSLATIONS ---
 // The gallery markup is authored in English and is the single source of truth;
 // these map those exact strings to Macedonian at render time. People's names
-// and band names are proper nouns and are deliberately absent — only the
+// and band names are proper nouns and are deliberately absent - only the
 // descriptive titles appear here.
 var photoLocationsMk = {
     'Ohrid, Macedonia - Beach': 'Охрид, Македонија - Плажа',
@@ -1615,7 +1756,7 @@ function updateSheetMeta() {
 document.addEventListener('DOMContentLoaded', updateSheetMeta);
 window.addEventListener('languagechange', updateSheetMeta);
 // The masonry mount replaces the grid's contents, and it does so before
-// DOMContentLoaded fires — so the count above would read an empty grid. It
+// DOMContentLoaded fires - so the count above would read an empty grid. It
 // calls this again once React has committed.
 window.updateSheetMeta = updateSheetMeta;
 
@@ -1653,7 +1794,7 @@ document.addEventListener('DOMContentLoaded', () => {
         // sixteen elements every frame for the rest of the session.
         let isVisible = true;
         let animationFrameId = null;
-        const SETTLE_EPSILON = 0.05; // px — below this the movement is invisible
+        const SETTLE_EPSILON = 0.05; // px - below this the movement is invisible
 
         const renderParallax = () => {
             animationFrameId = null;

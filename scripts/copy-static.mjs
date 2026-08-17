@@ -1,6 +1,6 @@
 // Copies the asset folders that Vite cannot see into the build output.
 //
-// Most images are referenced as plain runtime strings rather than imports —
+// Most images are referenced as plain runtime strings rather than imports -
 // `photos/...` in src/main.tsx, `misc/loading/Sequence NNNN.gif` built from a
 // template literal in script.js, and the video's data-src. None of those are
 // statically analysable, so Vite leaves them out of dist/ and the built site
@@ -13,7 +13,10 @@ import { fileURLToPath } from 'node:url';
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const dist = join(root, 'dist');
 
-const entries = ['photos', 'misc', 'favicon.ico', 'robots.txt', 'sitemap.xml', 'llms.txt'];
+// The icon set and manifest live in public/ so Vite copies them to the output
+// root with their names intact; a fingerprinted favicon URL is useless to
+// search engines and to anyone bookmarking the site.
+const entries = ['photos', 'misc', 'robots.txt', 'sitemap.xml', 'llms.txt'];
 
 const exists = async (p) => {
   try {
@@ -25,7 +28,7 @@ const exists = async (p) => {
 };
 
 if (!(await exists(dist))) {
-  console.error('copy-static: dist/ does not exist — run the build first.');
+  console.error('copy-static: dist/ does not exist - run the build first.');
   process.exit(1);
 }
 

@@ -189,7 +189,7 @@ export const SmokeBackground: React.FC<SmokeBackgroundProps> = ({
         };
 
         // While the nav drawer covers the viewport on phones, this canvas is
-        // hidden behind it — no reason to keep burning GPU time on it.
+        // hidden behind it - no reason to keep burning GPU time on it.
         const coveredQuery = window.matchMedia('(max-width: 640px)');
         let isCovered = false;
         const handleMenuState = (e: Event) => {

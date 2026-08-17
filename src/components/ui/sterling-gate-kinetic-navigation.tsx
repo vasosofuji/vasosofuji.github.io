@@ -112,7 +112,7 @@ export function SterlingGateKineticNavigation() {
     const pageWrapper = document.getElementById("page-wrapper");
 
     // Closed resting state. Written through GSAP so the timeline and the
-    // resting state agree on units — mixing an inline `translateX(100%)` with
+    // resting state agree on units - mixing an inline `translateX(100%)` with
     // a pixel tween is what made the panel jump on the first frame.
     gsap.set(menu, { xPercent: 100, x: 0 });
     gsap.set(overlay, { opacity: 0 });
@@ -211,7 +211,7 @@ export function SterlingGateKineticNavigation() {
     const handleOutside = (e: PointerEvent) => {
       if (!containerRef.current) return;
       // A modal sits above the drawer, so a press outside it belongs to the
-      // modal — the booking calendar must close on the first press, not have
+      // modal - the booking calendar must close on the first press, not have
       // that press consumed by closing the menu underneath it.
       if (document.querySelector('.modal-overlay.active')) return;
       const menuContent = containerRef.current.querySelector(".menu-content");
@@ -257,7 +257,7 @@ export function SterlingGateKineticNavigation() {
         <div className="header">
           <div className="container is--full">
             <nav className="nav-row">
-              <a href="index.html" aria-label="vasosofuji home" className="logo nav-logo">vasosofuji</a>
+              <a href="/" aria-label="vasosofuji home" className="logo nav-logo">vasosofuji</a>
               <div className="nav-row__right">
                 <button type="button" aria-label="Toggle Menu" className="nav-close-btn" onClick={toggleMenu}>
                   <div className="menu-button-text">
@@ -324,31 +324,31 @@ export function SterlingGateKineticNavigation() {
             <div className="menu-content-wrapper">
               <ul className="menu-list">
                 <li className="menu-list-item" data-shape="1">
-                  <a href="index.html" className="nav-link" onClick={closeMenu}>
+                  <a href="/" className="nav-link" onClick={closeMenu}>
                     <p className="nav-link-text">{labels.home}</p>
                     <div className="nav-link-hover-bg"></div>
                   </a>
                 </li>
                 <li className="menu-list-item" data-shape="2">
-                  <a href="webdev.html" className="nav-link" onClick={closeMenu}>
+                  <a href="/webdev" className="nav-link" onClick={closeMenu}>
                     <p className="nav-link-text">{labels.webDev}</p>
                     <div className="nav-link-hover-bg"></div>
                   </a>
                 </li>
                 <li className="menu-list-item" data-shape="3">
-                  <a href="about.html" className="nav-link" onClick={closeMenu}>
+                  <a href="/about" className="nav-link" onClick={closeMenu}>
                     <p className="nav-link-text">{labels.aboutMe}</p>
                     <div className="nav-link-hover-bg"></div>
                   </a>
                 </li>
                 <li className="menu-list-item" data-shape="4">
-                  <a href="gallery.html" className="nav-link" onClick={closeMenu}>
+                  <a href="/gallery" className="nav-link" onClick={closeMenu}>
                     <p className="nav-link-text">{labels.gallery}</p>
                     <div className="nav-link-hover-bg"></div>
                   </a>
                 </li>
                 <li className="menu-list-item" data-shape="5">
-                  <a href="videos.html" className="nav-link" onClick={closeMenu}>
+                  <a href="/videos" className="nav-link" onClick={closeMenu}>
                     <p className="nav-link-text">{labels.videos}</p>
                     <div className="nav-link-hover-bg"></div>
                   </a>

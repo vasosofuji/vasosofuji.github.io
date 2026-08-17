@@ -1,7 +1,7 @@
 /* Fonts are requested from the page <head> via <link rel="preconnect"> +
    a single <link rel="stylesheet">. They used to be two @import rules here,
    which the browser can only discover after style.css has downloaded and
-   parsed — three serial round-trips before the first glyph could paint. */
+   parsed - three serial round-trips before the first glyph could paint. */
 
 /* --- VARIABLES & SETUP --- */
 :root {
@@ -47,7 +47,7 @@ body * {
     -webkit-touch-callout: none;
 }
 
-/* Form fields are the exception — typing, caret placement and editing all
+/* Form fields are the exception - typing, caret placement and editing all
    depend on selection, so the booking form would be unusable without this. */
 input,
 textarea,
@@ -64,7 +64,9 @@ select,
 html {
     background-color: var(--bg-color);
     scroll-behavior: smooth;
-    overscroll-behavior-y: none; /* Prevent bounce at top and bottom */
+    /* Not `none`: that also disables pull-to-refresh on Android. `contain`
+       still stops scroll chaining to the page behind a modal. */
+    overscroll-behavior-y: contain;
     scrollbar-width: thin; /* Firefox support */
     scrollbar-color: var(--accent) #111; /* Firefox support */
 }
@@ -75,7 +77,7 @@ body {
     font-family: var(--font-main);
     line-height: 1.6;
     overflow-x: clip; /* Modern way to prevent horizontal scroll without breaking vertical scroll */
-    overscroll-behavior-y: none; /* Prevent bounce at top and bottom */
+    overscroll-behavior-y: contain;
 }
 
 /* --- CUSTOM FILM SCROLLBAR --- */
@@ -193,7 +195,7 @@ h1, h2, h3, h4, h5, h6, .section-title {
     background-size: 500% 500%;
     /* Covered from the first painted frame. This used to start transparent and
        run wipeCover to close over 0.7s, which meant the hero was visible and
-       then got wiped over before being revealed again — the flash on first
+       then got wiped over before being revealed again - the flash on first
        load. There is nothing to wipe over on arrival; the cover animation
        belongs to leaving a page, which the transition code triggers itself. */
     background-position: 50% 50%;
@@ -316,7 +318,7 @@ html.not-first-visit .loader-sequence {
 /* Scoped to exclude the new React kinetic navigation elements */
 /* The legacy pre-React navbar rules that lived here have been removed.
    Their markup (a bare <nav> with .nav-links and #menuToggle) no longer exists
-   on any page — the React navigation replaced it — but the selectors stayed
+   on any page - the React navigation replaced it - but the selectors stayed
    behind as `nav:not(.nav-row):not(.menu-content)` and kept capturing any new
    <nav> element that appeared. That mis-styled the mobile bar, knocked the menu
    drawer out of position on the gallery page, and pinned the 404 page's link
@@ -655,7 +657,7 @@ header.hero-active .floating-el:nth-child(8) { animation-delay: 2.05s; }
 
 /* Once the entrance has finished, hand the properties back to CSS.
    The reveal keyframes run with `forwards`, and a filling animation keeps
-   ownership of everything it animates — opacity and letter-spacing, the exact
+   ownership of everything it animates - opacity and letter-spacing, the exact
    properties these hover rules need. So the hover effect could only ever fire
    *before* the reveal settled, which is precisely the stutter it caused. These
    rules restate each keyframe's end state and drop the animation, leaving hover
@@ -683,8 +685,8 @@ header.hero-active.hero-entered .btn {
 }
 
 /* Hover is gated on .hero-entered, which script.js adds once the entrance
-   animation has finished. These rules set opacity and letter-spacing — the very
-   properties the entrance keyframes animate — so a pointer already resting on
+   animation has finished. These rules set opacity and letter-spacing - the very
+   properties the entrance keyframes animate - so a pointer already resting on
    the text fought the reveal and made it stutter. */
 /* Colour only. It used to stretch the letter-spacing and lift the opacity at
    the same time, which made the line visibly reflow under the pointer. */
@@ -724,7 +726,7 @@ h1 {
     font-size: clamp(2.5rem, 12vw, 8.5rem); /* Scaled down slightly but still larger than original */
     word-break: break-word;
     /* background-clip: text paints only inside the border box, and Playfair's
-       "j" descender hangs below a 1.05 line box — which sliced the tail off the
+       "j" descender hangs below a 1.05 line box - which sliced the tail off the
        J in "vasosofuji". The padding extends the paint area; the margin is
        reduced by the same amount so vertical rhythm is unchanged. */
     padding-bottom: 0.16em;
@@ -1867,7 +1869,7 @@ section {
     /* --- MOBILE TYPOGRAPHY SAFETY NET ---
        Scoped to the cinematic display headings this was written for. It used to
        list h1-h6 as well, which meant it also captured sub-page titles, gallery
-       labels, modal headings and photo captions — forcing them all to one
+       labels, modal headings and photo captions - forcing them all to one
        non-wrapping line at min(7.5vw, 1.8rem). That produced text wider than the
        screen (which widened the document and dragged the fixed header off with
        it) and needed a growing pile of !important escape hatches to undo. Any
@@ -1892,7 +1894,7 @@ section {
     }
 
     /* Section titles keep the centring and mobile clamp, but must be free to
-       wrap — "Artist Collaborations" is 445px on one line. */
+       wrap - "Artist Collaborations" is 445px on one line. */
     .section-title {
         text-align: center !important;
         margin-left: auto !important;
@@ -1945,7 +1947,7 @@ section {
 .availability-contact-wrap {
     /* Clears the video section's mask, which bleeds ~50px past its own box.
        Was 12vw, which grew to ~173px on a 1440 display against the 64px gap
-       used between every other section — the rhythm visibly broke here. This
+       used between every other section - the rhythm visibly broke here. This
        still clears the bleed at every width. */
     margin-top: clamp(60px, 6vw, 110px);
     padding-top: 60px; /* Clean padding to position the booking heading under the navbar */
@@ -2002,7 +2004,7 @@ section {
     border-top: 1px solid rgba(255, 133, 51, 0.2);
 }
 
-/* A label introducing a list, not a display heading — small tracked-out Geist
+/* A label introducing a list, not a display heading - small tracked-out Geist
    so it sits with the data it labels instead of competing with the month. */
 .booking-details-container h3 {
     font-family: 'Montserrat', sans-serif;
@@ -2051,12 +2053,12 @@ section {
 
 /* The booking block's type system:
      Playfair Display  the calendar's own display line (the month) and the
-                       modal title — the same editorial serif as the hero,
+                       modal title - the same editorial serif as the hero,
                        so the calendar reads as part of the site's voice
      Geist             everything factual: weekday strip, day numbers, the
                        Scheduled Events label and the event rows
 
-   Syne was tried here and was far too heavy at display size — set in caps at
+   Syne was tried here and was far too heavy at display size - set in caps at
    700 the month turned into a solid orange slab. */
 .month-year {
     /* Same face as the vasosofuji wordmark in the navbar */
@@ -2230,6 +2232,119 @@ section {
         padding-top: 15px;
     }
 
+}
+
+/* --- BOOKING MODAL ON A PHONE WITH THE KEYBOARD UP ---
+   The overlay centres its content in a 100%-height box. When the on-screen
+   keyboard opens it covers the bottom half of that box, so a centred modal ends
+   up behind the keyboard with the focused field out of sight. Anchoring to the
+   top and letting the modal scroll keeps the active field reachable; script.js
+   also sets --vvh from visualViewport so the box tracks the space that is
+   actually visible. */
+@media (max-width: 768px) {
+    .modal-overlay {
+        align-items: flex-start;
+        padding: 12px 0;
+        height: var(--vvh, 100%);
+        overflow-y: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    .modal-content {
+        width: 94%;
+        padding: 26px 20px 22px;
+        margin: auto 0;
+    }
+
+    .booking-modal-content {
+        margin: 0 auto;
+    }
+
+    /* Never smaller than 16px: iOS zooms the whole page in on any focused
+       field below that, which is its own kind of broken. */
+    .modal-content input,
+    .modal-content select,
+    .modal-content textarea {
+        font-size: 16px;
+    }
+
+    /* With the keyboard up there is very little height left; the notes step
+       does not need four rows of it. */
+    body.keyboard-open .modal-content textarea {
+        max-height: 84px;
+    }
+
+    body.keyboard-open .booking-progress {
+        margin-bottom: 0.75rem;
+    }
+
+    body.keyboard-open .booking-hint {
+        display: none;
+    }
+}
+
+/* --- THANK YOU --- */
+.thanks-panel {
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.85rem;
+}
+
+.thanks-mark {
+    width: 54px;
+    height: 54px;
+    border-radius: 50%;
+    border: 2px solid var(--accent);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--accent);
+    font-size: 1.6rem;
+    line-height: 1;
+    animation: thanksPop 0.45s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+@keyframes thanksPop {
+    from { transform: scale(0.6); opacity: 0; }
+    to   { transform: scale(1); opacity: 1; }
+}
+
+.thanks-title {
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 900;
+    text-transform: uppercase;
+    letter-spacing: -0.01em;
+    font-size: 1.25rem;
+    color: var(--text-main);
+}
+
+.thanks-body {
+    color: var(--text-muted);
+    font-size: 0.92rem;
+    line-height: 1.65;
+    max-width: 34ch;
+}
+
+.thanks-detail {
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 900;
+    font-size: 0.68rem;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--accent);
+}
+
+.thanks-panel .btn {
+    margin-top: 0.5rem;
+    opacity: 1;
+    transform: none;
+    box-shadow: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .thanks-mark { animation: none; }
 }
 
 /* --- LEGAL PAGES --- */
@@ -2467,7 +2582,7 @@ section {
 
 /* Popup calendar on phones.
    This has to sit after the base modal rules rather than up with the other
-   mobile calendar tweaks — media queries add no specificity, so an equally
+   mobile calendar tweaks - media queries add no specificity, so an equally
    specific rule further down the file would simply win.
 
    The modal was spending ~60px of a 390px screen on its own padding before the
@@ -2729,7 +2844,7 @@ section {
 
 /* Real flex columns, not CSS `columns`. Multi-column fragments its contents,
    and these cards carry transforms, their own stacking contexts and an info
-   panel that overflows the card box on purpose — together that had Chrome
+   panel that overflows the card box on purpose - together that had Chrome
    repainting wrongly, blanking cards out as neighbours were hovered. The
    column count is chosen in JS and the items distributed across these tracks. */
 .masonry-grid {
@@ -2748,7 +2863,7 @@ section {
 }
 
 /* Each item wraps its card in a `perspective` layer for the tilt, and that
-   creates a stacking context — so `.photo-card:hover { z-index: 100 }` could
+   creates a stacking context - so `.photo-card:hover { z-index: 100 }` could
    only raise the card *within its own item*, leaving the info panel painted
    under whichever card follows it. Raising the item lifts the whole thing. */
 .masonry-grid__item {
@@ -2783,7 +2898,7 @@ section {
 
 /* The shared card rule lifts 10px and scales 3%. Sitting in a column with a
    1.5rem gutter that pushed each card into the one beside it, so the masonry
-   cards get a restrained version — the shadow and the info panel already carry
+   cards get a restrained version - the shadow and the info panel already carry
    the hover, the geometry does not need to shout. */
 /* Doubled class on purpose: `.photo-card:hover` is declared later in this file
    with the same specificity, so a single-class rule here would lose to it. */
@@ -2805,7 +2920,7 @@ section {
     word-break: break-word;
 }
 
-/* Let the image keep its natural proportions — the whole point of masonry. */
+/* Let the image keep its natural proportions - the whole point of masonry. */
 .photo-card.photo-card--masonry img {
     height: auto;
     aspect-ratio: auto;
@@ -2825,7 +2940,7 @@ section {
 }
 
 /* Off-screen for sighted users, still read by crawlers and screen readers.
-   Uses clip-path plus a 1px box so it contributes no layout width — the reason
+   Uses clip-path plus a 1px box so it contributes no layout width - the reason
    the previous .sr-only helper had to go. */
 .visually-hidden {
     position: absolute !important;
@@ -2854,7 +2969,7 @@ section {
     }
 }
 
-/* Very narrow phones — the Galaxy Fold's cover screen is ~344px and some
+/* Very narrow phones - the Galaxy Fold's cover screen is ~344px and some
    older handsets report 280px. Long single words in a heading have nowhere to
    break at that width, so they overhang the viewport. */
 @media (max-width: 400px) {
@@ -3713,7 +3828,7 @@ footer {
 
 /* `header::after` lays a gradient down the bottom 30% of every <header>, fading
    to solid black. That exists to sink the home hero's floating collage into the
-   page. Here it had nothing to blend — it just painted a dark band that stopped
+   page. Here it had nothing to blend - it just painted a dark band that stopped
    dead at the header's edge, which is the hard line that showed between the
    title and the first row of photos. */
 .sub-header::after {
@@ -3748,7 +3863,7 @@ footer {
     padding-bottom: 0.1em; /* Playfair descenders vs background-clip */
 }
 
-/* Frame count and camera bodies — the page's own content, in the wordmark's
+/* Frame count and camera bodies - the page's own content, in the wordmark's
    face so it ties back to the navbar. */
 .sheet-meta {
     font-family: 'Montserrat', sans-serif;
@@ -3772,7 +3887,7 @@ footer {
 }
 
 /* The title animates in but the caption underneath used to just appear. Short
-   and shallow on purpose — it trails the title rather than competing with it. */
+   and shallow on purpose - it trails the title rather than competing with it. */
 @keyframes sheetMetaIn {
     from {
         opacity: 0;
@@ -3885,7 +4000,7 @@ footer {
 /* Mobile adjustments for floating bubble.
    The three nowrap links did not fit inside the bubble on a phone. Because the
    bubble is fixed, that overflow widened the document, and a wider document
-   stretches every other fixed element — including the header, which pushed the
+   stretches every other fixed element - including the header, which pushed the
    menu button clean off the right edge. Wrapping is the safety valve: the
    labels are longer in Macedonian, so tightening alone is not enough. */
 @media (max-width: 768px) {
@@ -4090,7 +4205,7 @@ body.gallery-page {
     overflow: hidden;
 }
 
-/* Scoped away from the React navigation — unscoped, this also hit .nav-row and
+/* Scoped away from the React navigation - unscoped, this also hit .nav-row and
    the .menu-content drawer, forcing the drawer out of position:absolute. */
 
 body.gallery-page .split-screen-hub {
@@ -4189,7 +4304,7 @@ body.gallery-page footer {
     }
 }
 
-/* This block is what actually sets the mobile section-title size — it is the
+/* This block is what actually sets the mobile section-title size - it is the
    last .section-title rule in the file and carries !important. The 1.8rem floor
    stopped it scaling on narrow screens, which is why "Landscapes" broke onto a
    second line at 344px and 390px. */
@@ -4223,7 +4338,7 @@ body.gallery-page footer {
 }
 
 /* ═══════════════════════════════════════════════════════════════
-   KINETIC NAVIGATION — styles here because Tailwind v4 purges
+   KINETIC NAVIGATION - styles here because Tailwind v4 purges
    them from src/index.css
    ═══════════════════════════════════════════════════════════════ */
 
@@ -4262,7 +4377,7 @@ body.gallery-page footer {
 }
 
 /* `is--full` had no CSS behind it, so Tailwind's own `.container` utility was
-   capping the nav at its 1536px 2xl max-width — and left-aligned, which parked
+   capping the nav at its 1536px 2xl max-width - and left-aligned, which parked
    the menu button ~900px short of the right edge on a 2560px display. */
 .site-header-wrapper .container.is--full {
     width: 100%;
@@ -4310,7 +4425,7 @@ body.gallery-page footer {
     border-radius: 4px;
     padding: 8px 18px;
     color: #fff;
-    /* Buttons do not inherit the page font — without this it falls back to the
+    /* Buttons do not inherit the page font - without this it falls back to the
        UA default (Arial). */
     font-family: 'Montserrat', sans-serif;
     cursor: pointer;
@@ -4361,7 +4476,7 @@ body.gallery-page footer {
     justify-content: center;
 }
 
-/* No CSS transition here — GSAP owns this transform. A competing CSS
+/* No CSS transition here - GSAP owns this transform. A competing CSS
    transition makes every GSAP-written frame retarget, which reads as stutter. */
 .menu-button-icon {
     transform-origin: 50% 50%;
@@ -4391,7 +4506,7 @@ body.gallery-page footer {
     pointer-events: none;
     /* The closed drawer is parked at translateX(100%), one full width to the
        right. Now that it stays laid out, that parked position would widen the
-       document and push the fixed header past the viewport — which threw the
+       document and push the fixed header past the viewport - which threw the
        menu button off the right edge on every page without an overflow-hidden
        wrapper. Clip it here: the drawer only ever slides inward. */
     overflow: hidden;
@@ -4640,7 +4755,7 @@ body.gallery-page footer {
 }
 
 /* On phones the drawer covers the viewport edge to edge, so nothing behind it
-   is visible. Idle the ambient background animation while it is open — this is
+   is visible. Idle the ambient background animation while it is open - this is
    what keeps the slide at a solid frame rate on low-end devices. */
 @media (max-width: 640px) {
     html[data-menu-open="true"] #react-global-bg * {

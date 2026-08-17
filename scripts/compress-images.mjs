@@ -1,7 +1,7 @@
 // Recompresses oversized images in place.
 //
-// The gallery ships originals straight out of the camera or editor — one
-// portrait was 17 MB — which is a lot to push at a phone. This brings anything
+// The gallery ships originals straight out of the camera or editor - one
+// portrait was 17 MB - which is a lot to push at a phone. This brings anything
 // over the threshold down to a sane size without touching what is already
 // small. Originals live in git, so a bad run is recoverable with `git checkout`.
 //

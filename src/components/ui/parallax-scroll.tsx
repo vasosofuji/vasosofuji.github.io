@@ -48,7 +48,7 @@ const ParallaxScroll = () => {
 
     return () => {
       // Without this the loop outlived the component and kept calling into a
-      // destroyed Lenis instance — a second orphaned rAF on every remount.
+      // destroyed Lenis instance - a second orphaned rAF on every remount.
       cancelAnimationFrame(frameId);
       lenis.destroy();
     };

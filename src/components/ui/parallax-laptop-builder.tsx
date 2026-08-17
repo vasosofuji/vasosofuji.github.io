@@ -849,7 +849,7 @@ export function ParallaxLaptopBuilder({ initialStage = 4 }: ParallaxLaptopBuilde
                         {demoLang.toUpperCase()}
                       </button>
                       <a
-                        href="index.html"
+                        href="/"
                         className="macos-icon-btn external-link"
                         title="Open Fullscreen Site in New Tab"
                       >
@@ -862,7 +862,7 @@ export function ParallaxLaptopBuilder({ initialStage = 4 }: ParallaxLaptopBuilde
                   <div className="macos-tab-strip">
                     <div className="macos-tab active">
                       <span className="tab-favicon">⚡</span>
-                      <span className="tab-title">vasosofuji — Mateja Vasojević</span>
+                      <span className="tab-title">vasosofuji - Mateja Vasojević</span>
                       <span className="tab-close">✕</span>
                     </div>
                     <div className="macos-tab-new" onClick={() => setCurrentUrl("https://vasojevich.com/portfolio")}>

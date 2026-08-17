@@ -1,4 +1,4 @@
-# vasosofuji — Mateja Vasojevikj
+# vasosofuji, Mateja Vasojevikj
 
 > Photographer and cinematographer based in Skopje, North Macedonia. Concert
 > and live music coverage, portrait sessions, landscape work, short-form video,
@@ -6,7 +6,7 @@
 > Васојевиќ.
 
 Contact: vasosofuji@gmail.com
-Location: Skopje, North Macedonia — also shooting regularly in Ohrid.
+Location: Skopje, North Macedonia - also shooting regularly in Ohrid.
 Languages: English, Macedonian (the site has a language toggle; both render
 from the same URL, so there is one canonical address per page).
 
@@ -18,21 +18,21 @@ by email.
 
 - [Home](https://vasojevich.com/): Hero collage, featured work from each
   category, showreel, and the availability calendar used for booking.
-- [Gallery](https://vasojevich.com/gallery.html): Entry point to the
+- [Gallery](https://vasojevich.com/gallery): Entry point to the
   three photo categories.
-- [Portraits](https://vasojevich.com/portraits.html): Portrait sessions
+- [Portraits](https://vasojevich.com/portraits): Portrait sessions
   shot in Skopje and Ohrid. Each frame lists camera, lens and location.
-- [Concerts](https://vasojevich.com/concerts.html): Live music
+- [Concerts](https://vasojevich.com/concerts): Live music
   photography from Skopje venues including MKC, Laboratorium and Kotur.
-- [Landscapes](https://vasojevich.com/landscapes.html): Landscape work
+- [Landscapes](https://vasojevich.com/landscapes): Landscape work
   from Lake Ohrid, Vodno and around North Macedonia.
-- [Videos](https://vasojevich.com/videos.html): Short films, music
+- [Videos](https://vasojevich.com/videos): Short films, music
   videos and brand advertisements.
-- [About](https://vasojevich.com/about.html): Background, gear, and
+- [About](https://vasojevich.com/about): Background, gear, and
   recent projects.
-- [Collaborations](https://vasojevich.com/collaborations.html): Artists,
+- [Collaborations](https://vasojevich.com/collaborations): Artists,
   venues, festivals and organisations worked with.
-- [Web development](https://vasojevich.com/webdev.html): Web development
+- [Web development](https://vasojevich.com/webdev): Web development
   and motion engineering services.
 
 ## Equipment

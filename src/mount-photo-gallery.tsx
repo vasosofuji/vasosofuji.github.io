@@ -74,12 +74,12 @@ function PhotoGallery({ photos }: { photos: Photo[] }) {
 
         // Alt text follows the language too. Locations are all written
         // "City, Country - Venue", so the venue reads first and the city
-        // second — "Flying Bird — Ostrovche, Ohrid".
+        // second - "Flying Bird - Ostrovche, Ohrid".
         const place = details.find((d) => /^(Location|Локација)$/.test(d.label))?.value;
         const parts = place?.match(/^(.*?),\s*[^,-]+\s*-\s*(.*)$/);
         const alt = title
           ? parts
-            ? `${title} — ${parts[2].trim()}, ${parts[1].trim()}`
+            ? `${title} - ${parts[2].trim()}, ${parts[1].trim()}`
             : title
           : photo.alt;
 
@@ -90,7 +90,7 @@ function PhotoGallery({ photos }: { photos: Photo[] }) {
   );
 
   // The header caption counts the cards in the grid, but script.js computes it
-  // on DOMContentLoaded — by which point this module has already emptied the
+  // on DOMContentLoaded - by which point this module has already emptied the
   // grid and React has not committed yet, so it would count zero and hide
   // itself. Recount once the cards are actually in the DOM.
   useEffect(() => {
@@ -115,13 +115,13 @@ function PhotoGallery({ photos }: { photos: Photo[] }) {
         onItemClick={setOpenIndex}
         renderItem={(photo) => (
           // Same classes as the original markup so the existing hover
-          // treatment — lift, image zoom, and the info panel sliding in
-          // underneath — keeps working untouched.
+          // treatment - lift, image zoom, and the info panel sliding in
+          // underneath - keeps working untouched.
           <div
             className="photo-card photo-card--masonry"
             role="button"
             tabIndex={0}
-            aria-label={photo.title ? `${photo.title} — open full screen` : 'Open photo full screen'}
+            aria-label={photo.title ? `${photo.title} - open full screen` : 'Open photo full screen'}
           >
             <img
               src={photo.src}

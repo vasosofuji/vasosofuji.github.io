@@ -1,4 +1,4 @@
-// Vercel Serverless Function — sends booking notifications to Telegram.
+// Vercel Serverless Function - sends booking notifications to Telegram.
 //
 // The bot token lives here, in the environment, and never reaches the browser.
 // This site is otherwise entirely static and public: a token in client code
@@ -6,7 +6,7 @@
 //
 // Required environment variables (Vercel → Settings → Environment Variables):
 //   TELEGRAM_BOT_TOKEN   from @BotFather
-//   TELEGRAM_CHAT_ID     the chat to notify — message @userinfobot to get yours
+//   TELEGRAM_CHAT_ID     the chat to notify - message @userinfobot to get yours
 //
 // Optional:
 //   ALLOWED_ORIGIN       defaults to https://vasojevich.com
