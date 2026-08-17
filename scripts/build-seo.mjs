@@ -143,7 +143,7 @@ const personLd = {
   url: `${ORIGIN}/`,
   image: OG_IMAGE,
   jobTitle: 'Photographer and Cinematographer',
-  email: 'mailto:vasosofuji@gmail.com',
+  email: 'mailto:contact@vasojevich.com',
   address: {
     '@type': 'PostalAddress',
     addressLocality: 'Skopje',
@@ -165,7 +165,7 @@ const businessLd = {
     'Concert, portrait and landscape photography and video production in Skopje, North Macedonia.',
   url: `${ORIGIN}/`,
   image: OG_IMAGE,
-  email: 'mailto:vasosofuji@gmail.com',
+  email: 'mailto:contact@vasojevich.com',
   founder: { '@id': `${ORIGIN}/#person` },
   areaServed: [
     { '@type': 'City', name: 'Skopje' },

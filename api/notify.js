@@ -44,6 +44,7 @@ function buildMessage(kind, d) {
   const rows = [
     ['Name', d.name],
     ['Email', d.email],
+    ['Phone', d.phone],
     ['Date', d.date],
     ['Type', d.eventType],
     ['Message', d.message],
@@ -107,6 +108,7 @@ export default async function handler(req, res) {
   const text = buildMessage(kind, {
     name: body.name,
     email,
+    phone: body.phone,
     date: body.date,
     eventType: body.eventType,
     message: body.message,

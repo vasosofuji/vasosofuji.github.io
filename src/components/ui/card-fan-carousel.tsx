@@ -61,6 +61,23 @@ function getSlotConfig(totalCards: number, slot: number) {
   };
 }
 
+// Kept in step with scripts/build-fan-variants.mjs, which writes these files.
+const VARIANT_WIDTHS = [400, 800, 1200];
+
+// A card is at most 300 CSS px on a phone and 380 on a wider screen, so the
+// browser only ever needs a fraction of the 2000x3000 gallery original. Naming
+// the real widths lets it pick one; without this it takes the full file, and
+// nine of those decoded at once is what ground the fan to a halt on Android.
+const SIZES = "(min-width: 768px) 380px, (min-width: 400px) 300px, 75vw";
+
+function buildSrcSet(url: string) {
+  const dot = url.lastIndexOf(".");
+  if (dot <= 0) return undefined;
+  const stem = url.slice(0, dot);
+  const ext = url.slice(dot);
+  return VARIANT_WIDTHS.map((w) => `${stem}-${w}${ext} ${w}w`).join(", ");
+}
+
 const ARROW_CLASSES =
   "relative flex items-center justify-center rounded-full border-[1.5px] border-black/10 dark:border-white/10 bg-black/5 dark:bg-white/5 backdrop-blur-[16px] text-black/40 dark:text-white/55 cursor-pointer shrink-0 z-30 outline-none shadow-[0_4px_20px_rgba(0,0,0,0.1)] dark:shadow-[0_4px_20px_rgba(0,0,0,0.4)] hover:border-black/25 dark:hover:border-white/25 hover:text-black/70 dark:hover:text-white/80 active:opacity-70 transition-colors duration-300 before:content-[''] before:absolute before:inset-[3px] before:rounded-full before:border before:border-black/[0.04] dark:before:border-white/[0.04] before:pointer-events-none";
 
@@ -386,7 +403,15 @@ export default function SocialCards({ cards }: SocialCardsProps) {
           {cards.map((card, index) => {
             const image = (
               <div className="relative w-full h-full overflow-hidden rounded-xl shadow-[0_10px_30px_rgba(0,0,0,0.5)]">
-                <img src={card.imgUrl} loading="lazy" decoding="async" alt={card.alt || `Card ${index}`} className="absolute inset-0 w-full h-full object-cover z-10" />
+                <img
+                  src={card.imgUrl}
+                  srcSet={buildSrcSet(card.imgUrl)}
+                  sizes={SIZES}
+                  loading="lazy"
+                  decoding="async"
+                  alt={card.alt || `Card ${index}`}
+                  className="absolute inset-0 w-full h-full object-cover z-10"
+                />
               </div>
             );
             return card.linkUrl ? (

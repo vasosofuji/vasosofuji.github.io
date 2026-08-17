@@ -173,6 +173,27 @@ export function SterlingGateKineticNavigation() {
     };
   }, []);
 
+  // The drawer sits behind `visibility: hidden` until it is opened, so the very
+  // first open asks the browser to lay out, raster and composite the whole
+  // panel in the same frame the slide starts. On a phone that costs the
+  // opening frames, which is the hitch you feel once and never again. Making
+  // it visible while it is still parked off-screen moves that work into idle
+  // time; the wrapper clips it and pointer events stay off, so nothing about
+  // the closed state changes on screen.
+  useEffect(() => {
+    const wrapper = containerRef.current?.querySelector(".nav-overlay-wrapper");
+    if (!wrapper) return;
+
+    const warm = () => wrapper.setAttribute("data-warm", "true");
+
+    if ("requestIdleCallback" in window) {
+      const id = requestIdleCallback(warm, { timeout: 2500 });
+      return () => cancelIdleCallback(id);
+    }
+    const id = setTimeout(warm, 1200);
+    return () => clearTimeout(id);
+  }, []);
+
   // Play / Reverse on state change
   useEffect(() => {
     const tl = timelineRef.current;
@@ -281,7 +302,10 @@ export function SterlingGateKineticNavigation() {
       </div>
 
       <section className="fullscreen-menu-container">
-        <div data-nav="closed" className="nav-overlay-wrapper">
+        {/* Warming the drawer keeps it painted rather than hidden, so `inert`
+            has to do what `visibility: hidden` used to: keep the closed panel
+            out of the tab order and off the accessibility tree. */}
+        <div data-nav="closed" className="nav-overlay-wrapper" inert={!isMenuOpen}>
           <div className="overlay" onClick={closeMenu}></div>
           <nav className="menu-content">
             <div className="menu-bg">
@@ -366,11 +390,11 @@ export function SterlingGateKineticNavigation() {
                   <span className="extra-label">{labels.language}</span>
                   <div className="lang-buttons-row">
                     <button type="button" className={`lang-btn ${lang === "en" ? "active" : ""}`} onClick={() => handleLangToggle("en")}>
-                      <img src="misc/uk-flag.png" alt="English" className="flag-img" loading="lazy" decoding="async" width={20} height={14} />
+                      <img src="misc/uk-flag.png" alt="English" className="flag-img" decoding="async" width={20} height={14} />
                       <span>English</span>
                     </button>
                     <button type="button" className={`lang-btn ${lang === "mk" ? "active" : ""}`} onClick={() => handleLangToggle("mk")}>
-                      <img src="misc/mk-flag.png" alt="Македонски" className="flag-img" loading="lazy" decoding="async" width={20} height={14} />
+                      <img src="misc/mk-flag.png" alt="Македонски" className="flag-img" decoding="async" width={20} height={14} />
                       <span>Македонски</span>
                     </button>
                   </div>
@@ -379,13 +403,13 @@ export function SterlingGateKineticNavigation() {
                   <span className="extra-label">{labels.socials}</span>
                   <div className="socials-links-row">
                     <a href="https://instagram.com/vasosofuji" target="_blank" rel="noopener noreferrer" className="social-extra-link">
-                      <img src="misc/instalogo.png" alt="Instagram" loading="lazy" decoding="async" width={18} height={18} /><span>Instagram</span>
+                      <img src="misc/instalogo.png" alt="Instagram" decoding="async" width={18} height={18} /><span>Instagram</span>
                     </a>
                     <a href="https://www.linkedin.com/in/mateja-vasojevikj-907555290/" target="_blank" rel="noopener noreferrer" className="social-extra-link">
-                      <img src="misc/linkedin.png" alt="LinkedIn" loading="lazy" decoding="async" width={18} height={18} /><span>LinkedIn</span>
+                      <img src="misc/linkedin.png" alt="LinkedIn" decoding="async" width={18} height={18} /><span>LinkedIn</span>
                     </a>
                     <a href="https://www.flickr.com/photos/201695063@N02/" target="_blank" rel="noopener noreferrer" className="social-extra-link">
-                      <img src="misc/flickr.png" alt="Flickr" loading="lazy" decoding="async" width={18} height={18} /><span>Flickr</span>
+                      <img src="misc/flickr.png" alt="Flickr" decoding="async" width={18} height={18} /><span>Flickr</span>
                     </a>
                   </div>
                 </div>

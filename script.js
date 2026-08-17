@@ -49,6 +49,8 @@ var translations = {
         emailPlaceholder: 'Email',
         datePlaceholder: 'Date',
         messagePlaceholder: 'Message',
+        shootPlaceholder: 'Tell me about it',
+        notesPlaceholder: 'Additional notes',
         sendMessage: 'Send Message',
         portraits: 'Portraits',
         concerts: 'Concerts',
@@ -110,16 +112,16 @@ var translations = {
         thanksBody: 'Thank you for getting in touch. I will contact you as soon as possible.',
         thanksClose: 'Close',
         sending: 'Sending...',
-        sendFailed: 'That did not send. Please try again, or email vasosofuji@gmail.com.',
-        stepWho: 'Your name',
-        stepWhoHint: 'Optional. It just helps me address you properly.',
+        sendFailed: 'That did not send. Please try again, or email contact@vasojevich.com.',
+        stepWho: 'Your name (optional)',
         stepEmail: 'Your email',
         stepShoot: 'What kind of shoot?',
         stepNotes: 'Anything else?',
         stepNotesHint: 'Location, timings, references, whatever helps.',
         stepNext: 'Continue',
         stepBack: 'Back',
-        namePlaceholder: 'Name and last name (optional)',
+        namePlaceholder: 'Name',
+        phonePlaceholder: 'Phone number (optional)',
         consentLabel: "If I don't finish this form, you may contact me about it.",
         consentHint: 'Your email is used only to reply to this enquiry. Nothing is shared with anyone else.',
         privacyLink: 'Privacy',
@@ -219,6 +221,8 @@ var translations = {
         emailPlaceholder: 'Е-мејл',
         datePlaceholder: 'Дата',
         messagePlaceholder: 'Порака',
+        shootPlaceholder: 'Раскажете ми повеќе',
+        notesPlaceholder: 'Дополнителни белешки',
         sendMessage: 'Испрати Порака',
         portraits: 'Портрети',
         concerts: 'Концерти',
@@ -280,16 +284,16 @@ var translations = {
         thanksBody: 'Ви благодарам што се јавивте. Ќе ве контактирам во најкус можен рок.',
         thanksClose: 'Затвори',
         sending: 'Се испраќа...',
-        sendFailed: 'Не успеа испраќањето. Обидете се повторно или пишете на vasosofuji@gmail.com.',
-        stepWho: 'Вашето име',
-        stepWhoHint: 'Опционално, само за да знам како да ви се обратам.',
+        sendFailed: 'Не успеа испраќањето. Обидете се повторно или пишете на contact@vasojevich.com.',
+        stepWho: 'Вашето име (опционално)',
         stepEmail: 'Вашата е-пошта',
         stepShoot: 'Каков вид снимање?',
         stepNotes: 'Уште нешто?',
         stepNotesHint: 'Локација, термини, референци, што било што помага.',
         stepNext: 'Продолжи',
         stepBack: 'Назад',
-        namePlaceholder: 'Име и презиме (опционално)',
+        namePlaceholder: 'Име',
+        phonePlaceholder: 'Телефонски број (опционално)',
         consentLabel: 'Ако не го довршам ова барање, смеете да ме контактирате во врска со него.',
         consentHint: 'Вашата е-пошта се користи само за одговор на ова барање. Не се споделува со никого.',
         privacyLink: 'Приватност',
@@ -434,10 +438,11 @@ let sequenceAnimationFrameId = null;
 
 // The sequence is 96 frames totalling ~6 MB. Requesting all of them up front
 // saturated the connection on arrival and delayed everything the visitor
-// actually came for. The curtain is only up for a fraction of a second now, so
-// only the opening frames are needed immediately; the rest arrive during idle
-// time and are there long before the loop wraps round to them.
-const EAGER_FRAMES = 24;
+// actually came for. Only enough frames to cover the time the curtain is
+// actually up are needed immediately; the rest arrive during idle time and are
+// there long before the loop wraps round to them. At 30fps this is a little
+// over a second, which covers the longest curtain (first visit).
+const EAGER_FRAMES = 32;
 
 function loadFrame(i) {
     if (preloaderFrames[i]) return;
@@ -564,8 +569,14 @@ function markHeroEnteredWhenSettled(heroHeader) {
 }
 
 const isFirstVisit = !sessionStorage.getItem('hasVisited');
-// Long enough to read as intentional, short enough not to be a wait.
-const preloaderDuration = isFirstVisit ? 900 : 320;
+// Long enough for the camera to actually turn. At 320ms the shutter had barely
+// started moving before the curtain lifted, which read as a glitch rather than
+// as a loader.
+const preloaderDuration = isFirstVisit ? 1500 : 950;
+// The curtain wipe, and how long the sequence has to fade before the whole
+// preloader is pulled from the DOM. These have to agree: removing the shell
+// early is what cut the camera off mid-fade.
+const WIPE_MS = 800;
 
 if (isFirstVisit) {
     sessionStorage.setItem('hasVisited', 'true');
@@ -583,26 +594,18 @@ setTimeout(() => {
                 curtain.appendChild(canvas);
             }
             
-            // Dynamically inject the Text Logo if it's missing
-            let textLogo = curtain.querySelector('.loader-text-logo');
-            if (!textLogo) {
-                textLogo = document.createElement('div');
-                textLogo.className = 'loader-text-logo';
-                textLogo.textContent = 'vasosofuji';
-                curtain.appendChild(textLogo);
-            }
             startLoaderSequence(canvas);
 
             // Execute the diagonal reveal animation with an artificial delay
             setTimeout(() => {
                 curtain.classList.add('wiping-up'); // Triggers camera fade-out
-                
+
                 curtain.style.transition = 'none';
                 curtain.style.animation = 'none';
                 void curtain.offsetWidth;
-                curtain.style.animation = 'wipeReveal 0.55s cubic-bezier(0.7, 0, 0.3, 1) forwards';
+                curtain.style.animation = `wipeReveal ${WIPE_MS}ms cubic-bezier(0.7, 0, 0.3, 1) forwards`;
                 document.body.classList.add('loaded');
-                
+
                 // After the curtain finishes sliding out, remove the preloader from the DOM
                 setTimeout(() => {
                     preloader.classList.add('done');
@@ -620,7 +623,7 @@ setTimeout(() => {
                     }
                     startScrollReveal();
                     startDeferredVideos();
-                }, 320);
+                }, WIPE_MS);
             }, 40);
         }
     }
@@ -678,12 +681,12 @@ document.addEventListener('click', (e) => {
                     curtain.style.transition = 'none';
                     curtain.style.animation = 'none';
                     void curtain.offsetWidth;
-                    curtain.style.animation = 'wipeCover 0.45s cubic-bezier(0.7, 0, 0.3, 1) forwards';
+                    curtain.style.animation = 'wipeCover 0.65s cubic-bezier(0.7, 0, 0.3, 1) forwards';
                 }
                 // Wait for animation to finish before navigating
                 setTimeout(() => {
                     window.location.href = targetUrl;
-                }, 480);
+                }, 700);
             } else {
                 window.location.href = targetUrl;
             }
@@ -829,24 +832,29 @@ function injectBookingModals() {
 
                     <!-- 1 · who -->
                     <fieldset class="booking-step is-active" data-step="1">
-                        <legend class="booking-step-label" data-translate="stepWho">Your name</legend>
+                        <legend class="booking-step-label" data-translate="stepWho">Your name (optional)</legend>
                         <input type="text" name="name" id="bookingName" autocomplete="name"
-                            placeholder="Name and last name (optional)" data-placeholder="namePlaceholder">
-                        <p class="booking-hint" data-translate="stepWhoHint">Optional. It just helps me address you properly.</p>
+                            placeholder="Name" data-placeholder="namePlaceholder">
                     </fieldset>
 
-                    <!-- 2 · email + consent. The timer starts here. -->
+                    <!-- 2 · email + phone + consent. The timer starts here. -->
                     <fieldset class="booking-step" data-step="2">
                         <legend class="booking-step-label" data-translate="stepEmail">Your email</legend>
                         <input type="email" name="email" id="bookingEmail" required autocomplete="email"
                             placeholder="Email" data-placeholder="emailPlaceholder">
+                        <input type="tel" name="phone" id="bookingPhone" autocomplete="tel"
+                            placeholder="Phone number (optional)" data-placeholder="phonePlaceholder">
                         <label class="booking-consent">
-                            <input type="checkbox" id="bookingConsent" name="follow_up_consent" value="yes">
+                            <input type="checkbox" id="bookingConsent" name="follow_up_consent" value="yes" checked>
                             <span data-translate="consentLabel">If I don't finish this form, you may contact me about it.</span>
                         </label>
-                        <p class="booking-hint" data-translate="consentHint">
-                            Your email is used only to reply to this enquiry. Nothing is shared with anyone else.
-                            <a href="privacy.html" target="_blank" rel="noopener" data-translate="privacyLink">Privacy</a>
+                        <!-- The sentence is translated through a span of its own. With
+                             data-translate on the paragraph, switching language wrote
+                             textContent over the whole thing and took the privacy link
+                             with it. -->
+                        <p class="booking-hint">
+                            <span data-translate="consentHint">Your email is used only to reply to this enquiry. Nothing is shared with anyone else.</span>
+                            <a href="/privacy" target="_blank" rel="noopener" data-translate="privacyLink">Privacy</a>
                         </p>
                     </fieldset>
 
@@ -865,14 +873,14 @@ function injectBookingModals() {
                         <input type="text" name="other_event_type" id="otherEventInput"
                             placeholder="Please specify the event" data-placeholder="otherEventPlaceholder" style="display: none;">
                         <textarea name="message" rows="3" id="bookingMessage"
-                            placeholder="Tell me about it" data-placeholder="messagePlaceholder"></textarea>
+                            placeholder="Tell me about it" data-placeholder="shootPlaceholder"></textarea>
                     </fieldset>
 
                     <!-- 4 · anything else -->
                     <fieldset class="booking-step" data-step="4">
                         <legend class="booking-step-label" data-translate="stepNotes">Anything else?</legend>
                         <textarea name="notes" rows="4" id="contactMessage"
-                            placeholder="Additional Notes" data-placeholder="messagePlaceholder"></textarea>
+                            placeholder="Additional notes" data-placeholder="notesPlaceholder"></textarea>
                         <p class="booking-hint" data-translate="stepNotesHint">Location, timings, references, whatever helps.</p>
                     </fieldset>
 
@@ -893,13 +901,17 @@ injectBookingModals();
 
 // --- MULTI-STEP BOOKING FORM + TELEGRAM NOTIFICATIONS ---
 //
-// Four steps: name -> email -> shoot type -> notes. The abandonment timer
-// starts the moment a valid email is entered, and only if the visitor ticked
-// the consent box. Formspree still receives the completed booking exactly as
-// before; the Telegram message is additional and goes through /api/notify so
-// the bot token stays on the server.
+// Four steps: name -> email -> shoot type -> notes. Telegram only ever hears
+// about enquiries that were started and not sent; a completed booking goes to
+// Formspree and nowhere else, so the two channels never report the same thing
+// twice. The alert goes through /api/notify so the bot token stays on the
+// server.
 (function bookingFlow() {
-    const ABANDON_AFTER_MS = 5 * 60 * 1000;
+    // Counted from the last thing the visitor did, not from the moment they
+    // typed their email. A fixed countdown fires while someone is still
+    // writing out their third step, which lands an "unfinished" alert
+    // moments before the finished booking itself arrives.
+    const ABANDON_AFTER_MS = 30 * 1000;
     const ENDPOINT = '/api/notify';
 
     const form = () => document.getElementById('contact-form');
@@ -923,6 +935,7 @@ injectBookingModals();
         return {
             name: el('bookingName') ? el('bookingName').value : '',
             email: el('bookingEmail') ? el('bookingEmail').value : '',
+            phone: el('bookingPhone') ? el('bookingPhone').value : '',
             date: el('dateInput') ? el('dateInput').value : '',
             eventType: sel && sel.value === 'Other'
                 ? (el('otherEventInput') ? el('otherEventInput').value : 'Other')
@@ -958,8 +971,11 @@ injectBookingModals();
         }).catch(() => { /* Formspree remains the system of record */ });
     }
 
+    // Restarted by every keystroke and every step change, so it only ever runs
+    // out on a form nobody is touching any more.
     function startAbandonTimer() {
         clearTimeout(abandonTimer);
+        if (submitted || alreadyReported) return;
         if (!(el('bookingConsent') && el('bookingConsent').checked)) return;
         if (!validEmail(el('bookingEmail') ? el('bookingEmail').value : '')) return;
         abandonTimer = setTimeout(() => notify('abandoned'), ABANDON_AFTER_MS);
@@ -1002,10 +1018,11 @@ injectBookingModals();
     document.addEventListener('click', (e) => {
         if (e.target.closest('#bookingNext')) {
             if (!stepIsValid()) return;
-            if (current === 2) startAbandonTimer();
             show(current + 1);
+            startAbandonTimer();
         } else if (e.target.closest('#bookingBack')) {
             show(current - 1);
+            startAbandonTimer();
         }
     });
 
@@ -1020,9 +1037,15 @@ injectBookingModals();
         }
     });
 
-    document.addEventListener('change', (e) => {
-        if (e.target.id === 'bookingConsent' || e.target.id === 'bookingEmail') startAbandonTimer();
-    });
+    // Any activity inside the form pushes the countdown back out to a full
+    // thirty seconds. `input` covers typing, `change` covers the select and
+    // the consent tick.
+    const bumpTimer = (e) => {
+        const f = form();
+        if (f && f.contains(e.target)) startAbandonTimer();
+    };
+    document.addEventListener('input', bumpTimer);
+    document.addEventListener('change', bumpTimer);
 
     // Leaving with the form unfinished is itself the signal - report then,
     // rather than waiting out a timer that will never fire.
@@ -1110,7 +1133,9 @@ injectBookingModals();
         if (submit) submit.disabled = true;
         if (status) status.textContent = t.sending || 'Sending...';
 
-        notify('booking');
+        // No Telegram message here on purpose. A finished booking arrives by
+        // email through Formspree; sending it to the bot as well meant every
+        // real enquiry landed twice.
 
         try {
             const res = await fetch(f.action, {
@@ -1126,7 +1151,7 @@ injectBookingModals();
             if (submit) submit.disabled = false;
             if (status) {
                 status.textContent = t.sendFailed
-                    || 'That did not send. Please try again, or email vasosofuji@gmail.com.';
+                    || 'That did not send. Please try again, or email contact@vasojevich.com.';
             }
         }
     });
@@ -1476,41 +1501,11 @@ if (dateInputSync) {
     dateInputSync.min = `${MIN_YEAR}-${minMonthStr}-01`;
 }
 
-var form = document.getElementById("contact-form");
-async function handleSubmit(event) {
-    event.preventDefault();
-    var status = document.getElementById("my-form-status");
-    var data = new FormData(event.target);
-
-    fetch(event.target.action, {
-        method: form.method,
-        body: data,
-        headers: {
-            'Accept': 'application/json'
-        }
-    }).then(response => {
-        if (response.ok) {
-            status.textContent = "Thanks! Your message has been sent.";
-            status.style.color = "var(--accent)";
-            form.reset();
-        } else {
-            response.json().then(data => {
-                if (Object.hasOwn(data, 'errors')) {
-                    status.textContent = data["errors"].map(error => error["message"]).join(", ");
-                } else {
-                    status.textContent = "Oops! There was a problem submitting your form";
-                }
-                status.style.color = "red";
-            });
-        }
-    }).catch(error => {
-        status.textContent = "Oops! There was a problem connecting to the server.";
-        status.style.color = "red";
-    });
-}
-if (form) {
-    form.addEventListener("submit", handleSubmit);
-}
+// The submit handler that used to live here was the original single-step
+// version, and it was never removed when the multi-step flow above took over.
+// Both were bound to the same form, so every booking was posted to Formspree
+// twice and every enquiry arrived as a pair of identical emails. The flow in
+// bookingFlow() is the only one now.
 window.addEventListener('pageshow', function(event) {
     var form = document.getElementById('contact-form');
     if (form) form.reset();
@@ -1561,17 +1556,17 @@ function updateLanguage(lang) {
         }
     });
 
-    const emailInput = document.querySelector('input[name="email"]');
-    const dateInput = document.querySelector('input[name="date-available"]');
-    const messageTextarea = document.querySelector('textarea[name="message"]');
-    const submitButton = document.querySelector('#contact-form button[type="submit"]');
-    const otherEventInput = document.getElementById('otherEventInput');
+    // Every field carries the key for its own placeholder, so new ones are
+    // translated by adding the attribute rather than another line here. The
+    // name and phone fields were both missed while this was a hand-written
+    // list of selectors.
+    document.querySelectorAll('[data-placeholder]').forEach(field => {
+        const key = field.getAttribute('data-placeholder');
+        if (translations[lang][key]) field.placeholder = translations[lang][key];
+    });
 
-    if (emailInput) emailInput.placeholder = translations[lang].emailPlaceholder;
-    if (dateInput) dateInput.placeholder = translations[lang].datePlaceholder;
-    if (messageTextarea) messageTextarea.placeholder = translations[lang].messagePlaceholder;
+    const submitButton = document.querySelector('#contact-form button[type="submit"]');
     if (submitButton) submitButton.textContent = translations[lang].sendMessage;
-    if (otherEventInput) otherEventInput.placeholder = translations[lang].otherEventPlaceholder;
 
     // Update validation messages immediately
     updateFormValidationMessages(lang);

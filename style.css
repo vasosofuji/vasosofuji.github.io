@@ -64,9 +64,12 @@ select,
 html {
     background-color: var(--bg-color);
     scroll-behavior: smooth;
-    /* Not `none`: that also disables pull-to-refresh on Android. `contain`
-       still stops scroll chaining to the page behind a modal. */
-    overscroll-behavior-y: contain;
+    /* Deliberately left at the default. `contain` on the document element
+       disables Chrome Android's pull-to-refresh just as thoroughly as `none`
+       does, so swiping down at the top of the page did nothing. Scroll
+       chaining is contained on the panels that actually need it instead: the
+       modal overlays and the menu drawer each carry their own
+       `overscroll-behavior: contain`. */
     scrollbar-width: thin; /* Firefox support */
     scrollbar-color: var(--accent) #111; /* Firefox support */
 }
@@ -77,7 +80,6 @@ body {
     font-family: var(--font-main);
     line-height: 1.6;
     overflow-x: clip; /* Modern way to prevent horizontal scroll without breaking vertical scroll */
-    overscroll-behavior-y: contain;
 }
 
 /* --- CUSTOM FILM SCROLLBAR --- */
@@ -220,7 +222,11 @@ html.not-first-visit .preloader-curtain {
     animation: none;
 }
 
-/* Sequence Loader Canvas */
+/* Sequence Loader Canvas.
+   The spinning camera is the whole loader now. There used to be a wordmark
+   layered over it, which on a second visit flashed for a moment and then
+   crossfaded into a camera that barely had time to turn before the curtain
+   lifted. One element, up straight away, held long enough to read. */
 .loader-sequence {
     position: absolute;
     top: 50%;
@@ -231,63 +237,22 @@ html.not-first-visit .preloader-curtain {
     z-index: 10;
     pointer-events: none;
     opacity: 0;
-    /* No longer waiting on a 0.7s cover animation that no longer runs. */
-    animation: fadeInSequence 0.35s ease 0.1s forwards;
-}
-
-/* Text Logo in Preloader */
-.loader-text-logo {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    font-family: 'Montserrat', sans-serif;
-    font-size: 2rem;
-    font-weight: 900; /* Montserrat Black */
-    letter-spacing: -0.03em;
-    text-transform: uppercase;
-    color: #fff;
-    z-index: 11;
-    pointer-events: none;
-    opacity: 0;
+    animation: fadeInSequence 0.3s ease forwards;
 }
 
 @keyframes fadeInSequence {
     to { opacity: 1; }
 }
-@keyframes fadeInText {
-    from { opacity: 0; }
-    to { opacity: 1; }
-}
-@keyframes fadeOutText {
-    to { opacity: 0; }
-}
 
-/* Start already visible on subsequent loads -> Crossfade text out and camera in */
-html.not-first-visit .loader-text-logo {
-    opacity: 1;
-    animation: fadeOutText 0.5s ease 0.3s forwards;
-}
-
-html.not-first-visit .loader-sequence {
-    opacity: 0;
-    animation: fadeInSequence 0.5s ease 0.3s forwards;
-}
-
-/* Text Logo fading IN during Wipe Down (Click intercept) */
-.preloader-curtain.do-wipe-down .loader-text-logo {
-    animation: fadeInText 0.3s ease 0.7s both; /* "both" ensures it stays opacity: 0 during the 0.7s delay */
-}
-
-/* Sequence stays invisible during Wipe Down (Click intercept) */
+/* Fade the camera back in while the curtain closes over a page you are
+   leaving, so the wipe never lands on an empty black panel. */
 .preloader-curtain.do-wipe-down .loader-sequence {
-    opacity: 0 !important; /* Force invisible immediately upon click */
-    animation: none !important;
+    animation: fadeInSequence 0.3s ease 0.2s both !important;
 }
 
 /* Smoothly fade out the Sequence when wiping out (avoids hard cuts) */
 .preloader-curtain.wiping-up .loader-sequence {
-    animation: fadeOutSequence 0.5s ease forwards !important;
+    animation: fadeOutSequence 0.55s ease forwards !important;
 }
 
 @keyframes fadeOutSequence {
@@ -297,12 +262,34 @@ html.not-first-visit .loader-sequence {
 /* --- END GLOBAL PRELOADER STYLES --- */
 
 
-/* --- PERFORMANCE: Skip rendering off-screen sections --- */
+/* --- PERFORMANCE: Skip rendering off-screen sections ---
+   The three carousel sections are deliberately NOT skipped. They used to be,
+   with a 700px placeholder against a real height nearer 730px, and the wrong
+   guess is what left the pagination dots blank until the fan was cycled: the
+   section resized the moment it became relevant, everything below it jumped,
+   and the strip the dots sit in was left holding a stale paint. The work that
+   skipping saved is already deferred anyway - the fan holds its cards at
+   opacity 0 behind its own IntersectionObserver and every photo is
+   loading="lazy" - so there was nothing left to win and a layout jump to
+   lose. */
 #portraits, #concerts, #landscapes, .availability-contact-wrap {
-    content-visibility: auto;
-    contain-intrinsic-size: auto 700px;
     position: relative;
     z-index: 1; /* Adjacent sections sit under the fading video mask */
+}
+
+/* The booking block is a fixed six-row calendar, so unlike the carousels its
+   height is predictable and worth skipping. Measured rather than guessed:
+   750px on a phone, 977px once the calendar goes wide. An estimate that is
+   too small makes the page grow as you reach the bottom of it. */
+.availability-contact-wrap {
+    content-visibility: auto;
+    contain-intrinsic-size: auto 750px;
+}
+
+@media (min-width: 1024px) {
+    .availability-contact-wrap {
+        contain-intrinsic-size: auto 980px;
+    }
 }
 
 
@@ -525,8 +512,15 @@ header::after {
        large displays. Each nth-child rule carries its own ceiling. */
 }
 
+/* `both`, not `forwards`: the cards carry a staggered delay of up to two
+   seconds, and with `forwards` alone nothing holds them at the from-state
+   while that delay runs. On phones, where a media query below gave them a
+   resting opacity, that showed the whole collage faintly on screen and then
+   snapped it to nothing the instant each animation started. `both` applies
+   the from-state through the delay, so every card is genuinely invisible
+   until its own moment to appear. */
 header.hero-active .floating-el {
-    animation: fadeInImage 0.8s ease forwards;
+    animation: fadeInImage 0.8s ease both;
 }
 
 /* Staggered load-in animation matching the React 'stagger' function */
@@ -844,9 +838,10 @@ header.hero-active .floating-el:nth-child(5n) { animation-delay: 1.9s; }
     .floating-el:nth-child(4n+3) { width: 25vw; min-width: 70px; }
     .floating-el:nth-child(4n+4) { width: 15vw; min-width: 40px; }
 
-    /* Make the images more transparent on mobile if they drift behind text */
+    /* Resting state stays fully transparent so the collage pops in rather than
+       sitting there half-visible waiting for its cue. */
     .floating-el {
-        opacity: 0.15;
+        opacity: 0;
         pointer-events: none; /* Prevent accidental mobile clicks */
     }
 
@@ -2451,8 +2446,18 @@ section {
         margin-bottom: 0.75rem;
     }
 
+    /* The hints stay put with the keyboard up. Hiding them reclaimed a little
+       height, but the note under a field is the one thing a visitor wants to
+       read while they are typing into it, and watching it vanish the moment
+       the keyboard appears reads as the form breaking. The overlay scrolls,
+       so tightening them is enough. */
     body.keyboard-open .booking-hint {
-        display: none;
+        font-size: 0.72rem;
+        line-height: 1.4;
+    }
+
+    body.keyboard-open .booking-step {
+        gap: 9px;
     }
 }
 
@@ -2716,6 +2721,10 @@ section {
     opacity: 0;
     visibility: hidden;
     transition: opacity 0.3s ease, visibility 0.3s ease;
+    /* Contained here rather than on the document element, which is where it
+       used to live at the cost of pull-to-refresh. A modal scrolled to its end
+       must not carry on into the page behind it. */
+    overscroll-behavior: contain;
 }
 
 .modal-overlay.active {
@@ -4510,6 +4519,20 @@ body.gallery-page footer {
     -webkit-backface-visibility: hidden;
 }
 
+/* --- CARD FAN CAROUSEL ---
+   Every card is under a GSAP tween that moves, rotates and scales it. Without
+   a promotion hint Chrome re-rasters the card's contents at each step of that
+   scale, which on Android means re-decoding a photo nine times a frame. The
+   hint buys one texture that the compositor then stretches instead. No paint
+   containment here: each card's drop shadow is drawn well outside its own box
+   and clipping it would take the shadows off the fan. Safari and iOS were
+   already fast enough that none of this was noticed there. */
+.fan-card {
+    will-change: transform;
+    backface-visibility: hidden;
+    -webkit-backface-visibility: hidden;
+}
+
 /* ═══════════════════════════════════════════════════════════════
    KINETIC NAVIGATION - styles here because Tailwind v4 purges
    them from src/index.css
@@ -4683,6 +4706,15 @@ body.gallery-page footer {
        menu button off the right edge on every page without an overflow-hidden
        wrapper. Clip it here: the drawer only ever slides inward. */
     overflow: hidden;
+}
+
+/* Warmed once the page has gone idle. The drawer is parked a full width to the
+   right and the wrapper clips it, so painting it early shows nothing; it just
+   means the first open is a compositor-only slide instead of a first paint of
+   the entire panel in the frame the tween starts. `inert` on the wrapper keeps
+   the closed drawer out of the tab order now that visibility no longer does. */
+.nav-overlay-wrapper[data-warm="true"] {
+    visibility: visible;
 }
 
 .nav-overlay-wrapper[data-nav="open"] {

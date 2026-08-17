@@ -1046,8 +1046,8 @@ export function ParallaxLaptopBuilder({ initialStage = 4 }: ParallaxLaptopBuilde
                         <h6>{demoLang === "mk" ? "Сакате соработка?" : "Looking for custom web development?"}</h6>
                         <p>{demoLang === "mk" ? "Контактирајте ме за фотографски сесии или веб проекти." : "Get in touch for photo shoots or bespoke web engineering."}</p>
                       </div>
-                      <a href="mailto:vasosofuji@gmail.com" className="demo-contact-cta-btn">
-                        vasosofuji@gmail.com →
+                      <a href="mailto:contact@vasojevich.com" className="demo-contact-cta-btn">
+                        contact@vasojevich.com →
                       </a>
                     </div>
 

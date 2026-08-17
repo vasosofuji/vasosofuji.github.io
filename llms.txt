@@ -5,7 +5,7 @@
 > and bespoke web development. Also known as Mateja Vasojevich and Матеја
 > Васојевиќ.
 
-Contact: vasosofuji@gmail.com
+Contact: contact@vasojevich.com
 Location: Skopje, North Macedonia - also shooting regularly in Ohrid.
 Languages: English, Macedonian (the site has a language toggle; both render
 from the same URL, so there is one canonical address per page).

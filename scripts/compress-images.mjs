@@ -43,6 +43,10 @@ for (const dir of DIRS) {
   for await (const file of walk(join(ROOT, dir))) {
     const ext = extname(file).toLowerCase();
     if (!['.jpg', '.jpeg', '.png'].includes(ext)) continue;
+    // The `-400`/`-800`/`-1200` siblings belong to build-fan-variants.mjs,
+    // which already picked a size and a quality for each of them. Re-encoding
+    // one here would only add a second generation of loss.
+    if (/-\d{3,4}\.(jpg|jpeg|png)$/i.test(file)) continue;
 
     const { size } = await stat(file);
     if (size <= THRESHOLD) { skipped++; continue; }
