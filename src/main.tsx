@@ -9,13 +9,15 @@ import { ParallaxScroll } from '@/components/ui/parallax-scroll'
 import SterlingGateKineticNavigation from '@/components/ui/sterling-gate-kinetic-navigation'
 import ParallaxLaptopBuilder from '@/components/ui/parallax-laptop-builder'
 import WebdevEstimator from '@/components/ui/webdev-estimator'
+import { Analytics } from '@vercel/analytics/react'
 
-// --- React Navbar ---
+// --- React Navbar & Global Telemetry ---
 const navbarElement = document.getElementById('react-navbar')
 if (navbarElement) {
   createRoot(navbarElement).render(
     <StrictMode>
       <SterlingGateKineticNavigation />
+      <Analytics />
     </StrictMode>,
   )
 }
