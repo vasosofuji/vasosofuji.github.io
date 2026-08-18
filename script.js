@@ -1318,6 +1318,23 @@ injectBookingModals();
                 headers: { Accept: 'application/json' },
             });
             if (!res.ok) throw new Error(`Formspree responded ${res.status}`);
+
+            // Courtesy confirmation to the visitor, through Brevo. Fired after
+            // the booking is safely delivered and deliberately not awaited: if
+            // it fails the enquiry has still been received, and telling someone
+            // their booking did not send because a thank you email did not
+            // would be actively wrong.
+            fetch('/api/thank-you', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    email: (el('bookingEmail') && el('bookingEmail').value) || '',
+                    name: (el('bookingName') && el('bookingName').value) || '',
+                    date: (el('dateInput') && el('dateInput').value) || '',
+                    lang: typeof currentLang !== 'undefined' ? currentLang : 'en',
+                }),
+                keepalive: true,
+            }).catch(() => { /* the booking itself is what matters */ });
             if (alreadyReported) {
                 notify('resolved');
             } else {
@@ -1790,6 +1807,18 @@ window.addEventListener('pageshow', (event) => {
 // because the content is already painted underneath.
 window.addEventListener('pageshow', (event) => {
     if (!event.persisted) return;
+
+    // A restored page comes back exactly as it was left, including whatever the
+    // visitor had just pressed. Coming back from a gallery therefore showed the
+    // heading that was clicked still lit up and focused, as though it were
+    // selected. Nothing here should look mid-interaction on arrival.
+    if (document.activeElement && document.activeElement !== document.body) {
+        document.activeElement.blur();
+    }
+    document.querySelectorAll('.mobile-active').forEach((el) => el.classList.remove('mobile-active'));
+    document.querySelectorAll('.section-title.clickable-heading').forEach((el) => {
+        el.blur();
+    });
 
     const curtain = document.querySelector('.preloader-curtain');
     const shell = document.getElementById('global-preloader');

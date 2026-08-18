@@ -766,6 +766,26 @@ header.hero-active .floating-el:nth-child(8) { animation-delay: 2.05s; }
     text-shadow: 0 4px 20px rgba(255, 107, 0, 0.3);
 }
 
+/* On a phone these headings are sized to fill the width and are capped at it,
+   so opening the tracking has nowhere to expand except off the right edge, and
+   the whole effect appears to grow out of the left of the word rather than out
+   of its middle. A scale from the centre reads the same and moves symmetrically
+   without touching layout at all. */
+@media (max-width: 768px) {
+    .section-title.clickable-heading {
+        transform-origin: center center;
+        transition: transform 0.45s cubic-bezier(0.16, 1, 0.3, 1),
+                    opacity 0.45s cubic-bezier(0.16, 1, 0.3, 1),
+                    text-shadow 0.45s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .section-title.clickable-heading:hover,
+    .section-title.clickable-heading:active {
+        letter-spacing: inherit;
+        transform: scale(1.04);
+    }
+}
+
 /* Massive negative bottom margin ONLY for carousel sections to pull the fan up */
 #portraits .section-title,
 #concerts .section-title,
@@ -1905,6 +1925,11 @@ section {
     z-index: 3; /* Video sits on top so its mask-image fades into the opaque sections below */
     width: 100%;
     height: 70vh; /* Cinematic wide banner aspect ratio */
+    /* svh rather than vh on a phone: vh resolves against the largest viewport,
+       so with the address bar showing the banner is taller than the screen, and
+       as it retracts and returns the video slides against the section leaving
+       black along an edge. The small viewport unit is stable through that. */
+    height: 70svh;
     min-height: 500px;
     margin: 0; /* Zero margin because we now have massive physical padding in adjacent sections */
     padding: 0 !important; /* Force override generic section padding */
@@ -1932,10 +1957,12 @@ section {
 
 .cinematic-bg-video {
     position: absolute;
-    top: 0;
+    /* Bleed a little past the section on every side so a viewport that changes
+       height under the visitor cannot expose an edge. */
+    top: -2px;
     left: 0;
     width: 100%;
-    height: 100%;
+    height: calc(100% + 4px);
     object-fit: cover; /* Ensures video fills banner without distortion */
     z-index: 5; /* Changed from 1 to sit on top of the background text layer */
     opacity: 0.85; /* Slightly dim the background */
@@ -4715,7 +4742,12 @@ body.gallery-page footer {
    Previously only the filled copy animated in and the outline was simply there
    from the start, which read as the two halves being unrelated. */
 .cinematic-content-outline .t-stagger-line {
-    display: block;
+    /* A plain block here is full width and leaves the heading sitting against
+       its left edge, which put the outline and the filled copy side by side on
+       a wide screen instead of one over the other. Centring the wrapper's own
+       content puts them back on the same axis. */
+    display: flex;
+    justify-content: center;
     width: 100%;
 }
 
@@ -4759,7 +4791,48 @@ body.gallery-page footer {
        headroom the overhanging type needs is margin instead, outside the box. */
     .cinematic-video-section {
         padding-top: 0 !important;
-        margin-top: 3.5rem;
+        /* Room for type that hangs half above the top edge, plus separation
+           from the carousel above and the booking block below, which were both
+           crowding it. */
+        margin-top: 5.5rem;
+        margin-bottom: 4rem;
+    }
+
+    /* 7. The filled heading is deliberately behind the video so the footage
+       crops it, which also means it can never be pressed: a tap in the middle
+       of the word lands on the video. The outline copy is the one in front, so
+       that is the one that takes the press, and it gets a little vertical room
+       either side so the target is the word rather than the exact glyphs. */
+    .cinematic-content-outline {
+        pointer-events: none !important;
+    }
+
+    .cinematic-content-outline .section-title {
+        pointer-events: auto !important;
+        padding-top: 0.3em;
+        padding-bottom: 0.3em;
+    }
+
+    #react-heading-videos .section-title {
+        pointer-events: none !important;
+    }
+
+    .cinematic-bg-video,
+    .cinematic-overlay {
+        pointer-events: none !important;
+    }
+
+    /* 6. The booking heading sat a long way above its calendar. */
+    .availability-contact-wrap .section-title {
+        margin-bottom: 0.25rem !important;
+    }
+
+    .availability-contact-wrap .section-header {
+        margin-bottom: 0 !important;
+    }
+
+    .calendar-center-wrapper {
+        margin-top: 0.25rem;
     }
 }
 
