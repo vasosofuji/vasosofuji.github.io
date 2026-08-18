@@ -22,14 +22,14 @@ export const BlobBackground: React.FC = () => {
         style={{
           backgroundColor: '#ff6b00',
           borderRadius: '43% 57% 50% 50% / 40% 60% 40% 60%', /* Irregular shape to morph on rotation */
-          width: '45vw',
-          height: '45vw',
+          width: 'clamp(280px, 45vw, 600px)',
+          height: 'clamp(280px, 45vw, 600px)',
           maxWidth: '600px',
           maxHeight: '600px',
           top: '-10%',
           left: '-5%',
-          filter: 'blur(120px)',
-          opacity: 0.32, /* Static opacity to prevent repaints */
+          filter: 'blur(clamp(50px, 8.5vw, 120px))',
+          opacity: 0.34, /* Static opacity to prevent repaints */
           animation: 'lightLeak1 22s infinite linear', /* Linear rotation is smoother on GPU */
           willChange: 'transform', /* Promote to compositor layer */
         }}
@@ -41,14 +41,14 @@ export const BlobBackground: React.FC = () => {
         style={{
           backgroundColor: '#ff8533',
           borderRadius: '50% 50% 45% 55% / 60% 40% 60% 40%', /* Irregular shape to morph on rotation */
-          width: '50vw',
-          height: '50vw',
+          width: 'clamp(320px, 50vw, 700px)',
+          height: 'clamp(320px, 50vw, 700px)',
           maxWidth: '700px',
           maxHeight: '700px',
           bottom: '-15%',
           right: '-5%',
-          filter: 'blur(140px)',
-          opacity: 0.25, /* Static opacity to prevent repaints */
+          filter: 'blur(clamp(60px, 9.5vw, 140px))',
+          opacity: 0.28, /* Static opacity to prevent repaints */
           animation: 'lightLeak2 28s infinite linear', /* Linear rotation is smoother on GPU */
           willChange: 'transform', /* Promote to compositor layer */
         }}
