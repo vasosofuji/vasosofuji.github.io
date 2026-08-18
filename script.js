@@ -115,6 +115,7 @@ var translations = {
         sendFailed: 'That did not send. Please try again, or email contact@vasojevich.com.',
         stepWho: 'Your name (optional)',
         stepEmail: 'Your email',
+        stepPhone: 'Your number (optional)',
         stepShoot: 'What kind of shoot?',
         stepNotes: 'Anything else?',
         stepNotesHint: 'Location, timings, references, whatever helps.',
@@ -287,6 +288,7 @@ var translations = {
         sendFailed: 'Не успеа испраќањето. Обидете се повторно или пишете на contact@vasojevich.com.',
         stepWho: 'Вашето име (опционално)',
         stepEmail: 'Вашата е-пошта',
+        stepPhone: 'Вашиот број (опционално)',
         stepShoot: 'Каков вид снимање?',
         stepNotes: 'Уште нешто?',
         stepNotesHint: 'Локација, термини, референци, што било што помага.',
@@ -842,6 +844,7 @@ function injectBookingModals() {
                         <legend class="booking-step-label" data-translate="stepEmail">Your email</legend>
                         <input type="email" name="email" id="bookingEmail" required autocomplete="email"
                             placeholder="Email" data-placeholder="emailPlaceholder">
+                        <label for="bookingPhone" class="booking-step-label" data-translate="stepPhone">Your number (optional)</label>
                         <input type="tel" name="phone" id="bookingPhone" autocomplete="tel"
                             placeholder="Phone number (optional)" data-placeholder="phonePlaceholder">
                         <label class="booking-consent">
@@ -901,11 +904,11 @@ injectBookingModals();
 
 // --- MULTI-STEP BOOKING FORM + TELEGRAM NOTIFICATIONS ---
 //
-// Four steps: name -> email -> shoot type -> notes. Telegram only ever hears
-// about enquiries that were started and not sent; a completed booking goes to
-// Formspree and nowhere else, so the two channels never report the same thing
-// twice. The alert goes through /api/notify so the bot token stays on the
-// server.
+// Four steps: name -> email -> shoot type -> notes. Completed bookings are
+// delivered to Formspree, and also sent to Telegram as a booking notice (or as
+// a resolution notice if previously reported as abandoned). Abandoned enquiries
+// send an unfinished notice if consent was granted. The alert goes through
+// /api/notify so the bot token stays on the server.
 (function bookingFlow() {
     // Counted from the last thing the visitor did, not from the moment they
     // typed their email. A fixed countdown fires while someone is still
@@ -924,6 +927,8 @@ injectBookingModals();
     let current = 1;
     let abandonTimer;
     let alreadyReported = false; // never notify twice for one enquiry
+    let resolvedReported = false;
+    let bookingReported = false;
     let submitted = false;
 
     const stepName = (n) => ({ 1: 'name', 2: 'email', 3: 'shoot type', 4: 'notes' })[n] || String(n);
@@ -954,6 +959,14 @@ injectBookingModals();
         if (kind === 'abandoned') {
             if (!data.consent || alreadyReported || submitted) return;
             alreadyReported = true;
+        }
+        if (kind === 'resolved') {
+            if (!alreadyReported || resolvedReported) return;
+            resolvedReported = true;
+        }
+        if (kind === 'booking') {
+            if (alreadyReported || bookingReported) return;
+            bookingReported = true;
         }
 
         const payload = JSON.stringify(Object.assign({ kind: kind }, data));
@@ -1064,6 +1077,8 @@ injectBookingModals();
             if (bookingModal.classList.contains('active')) {
                 submitted = false;
                 alreadyReported = false;
+                resolvedReported = false;
+                bookingReported = false;
                 clearTimeout(abandonTimer);
                 show(1);
             } else {
@@ -1133,9 +1148,11 @@ injectBookingModals();
         if (submit) submit.disabled = true;
         if (status) status.textContent = t.sending || 'Sending...';
 
-        // No Telegram message here on purpose. A finished booking arrives by
-        // email through Formspree; sending it to the bot as well meant every
-        // real enquiry landed twice.
+        // Formspree is the system of record for completed bookings. When an
+        // enquiry was already reported as abandoned, a single resolution follow-up
+        // is sent to Telegram after Formspree accepts the submission to resolve
+        // the earlier alert. If it was not reported as abandoned, a standard booking
+        // alert is sent to Telegram instead.
 
         try {
             const res = await fetch(f.action, {
@@ -1144,6 +1161,11 @@ injectBookingModals();
                 headers: { Accept: 'application/json' },
             });
             if (!res.ok) throw new Error(`Formspree responded ${res.status}`);
+            if (alreadyReported) {
+                notify('resolved');
+            } else {
+                notify('booking');
+            }
             showThanks();
         } catch (err) {
             console.error('booking: could not submit the form', err);
