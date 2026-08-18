@@ -232,7 +232,7 @@ html.is-transitioning::before {
     position: absolute;
     top: 50%;
     left: 50%;
-    transform: translate(-50%, -50%) scale(0.8);
+    transform: translate(-50%, -50%) scale(0.8) translateZ(0);
     transform-origin: center center;
     width: 250px;
     height: 169px;
@@ -242,9 +242,12 @@ html.is-transitioning::before {
     z-index: 10;
     pointer-events: none;
     opacity: 0;
+    contain: strict;
+    isolation: isolate;
+    will-change: background-position;
     animation:
         fadeInSequence 0.2s ease 0.05s both,
-        loaderSpin 3200ms steps(1, start) infinite;
+        loaderSpin 3200ms steps(1, end) infinite;
 }
 
 @keyframes fadeInSequence {
@@ -357,15 +360,15 @@ html.is-transitioning::before {
 .preloader-curtain.do-wipe-down .loader-sequence {
     animation:
         fadeInSequence 0.2s ease 0.05s both,
-        loaderSpin 3200ms steps(1, start) infinite !important;
+        loaderSpin 3200ms steps(1, end) infinite !important;
 }
 
 /* Smoothly fade out the sequence when revealing the new page to avoid visual cuts.
    This settles before the wipe reveal finishes and removes the preloader from the DOM. */
 .preloader-curtain.wiping-up .loader-sequence {
     animation:
-        fadeOutSequence 0.25s ease forwards,
-        loaderSpin 3200ms steps(1, start) infinite !important;
+        fadeOutSequence 0.25s ease 0.12s forwards,
+        loaderSpin 3200ms steps(1, end) infinite !important;
 }
 
 @keyframes fadeOutSequence {
