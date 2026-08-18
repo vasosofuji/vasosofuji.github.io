@@ -5291,3 +5291,35 @@ body.gallery-page footer {
     }
 }
 
+
+/* --- PHOTO PAGES: QUICKER ENTRANCE ---
+   Portraits, Concerts and Landscapes are the pages people come to browse, and
+   they arrive already knowing what they want to look at. The shared entrance
+   timings are tuned for the home page, where the heading is the whole point of
+   the first screen; here they just delay the photographs. These land the title,
+   its caption and the first row of cards noticeably sooner without losing the
+   movement entirely. Scoped to body.photo-page so every other page, including
+   the gallery hub, keeps the original pacing. */
+body.photo-page header.hero-active h1 {
+    /* Two animations run on this element, the entrance and the slow shimmer
+       sweep, so both slots have to be restated to change only the first. */
+    animation-duration: 0.75s, 15s;
+    animation-delay: 0.12s, 1.5s;
+}
+
+body.photo-page .sheet-meta {
+    animation-duration: 0.34s;
+    animation-delay: 0.08s;
+}
+
+body.photo-page .photo-card {
+    transition-duration: 0.38s;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    body.photo-page header.hero-active h1,
+    body.photo-page .sheet-meta {
+        animation: none;
+        opacity: 1;
+    }
+}
