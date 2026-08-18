@@ -623,8 +623,8 @@ header.hero-active .floating-el:nth-child(8) { animation-delay: 2.05s; }
     #portraits .section-title,
     #concerts .section-title,
     #landscapes .section-title {
-        /* Decrease space between heading text and carousel fans on mobile */
-        margin-bottom: -4.5rem;
+        /* Overlap scales proportionally with the fluid mobile heading size */
+        margin-bottom: -0.7em;
     }
     
     #portraits,
@@ -2062,15 +2062,15 @@ section {
     }
 
     /* Section titles keep the centring and mobile clamp, but must be free to
-       wrap - "Artist Collaborations" is 445px on one line. */
+       wrap when multi-word phrases exceed screen bounds. */
     .section-title {
         text-align: center !important;
         margin-left: auto !important;
         margin-right: auto !important;
         max-width: 100%;
         box-sizing: border-box;
-        padding-left: 1rem;
-        padding-right: 1rem;
+        padding-left: 0.5rem;
+        padding-right: 0.5rem;
         overflow-wrap: break-word;
     }
 }
@@ -3109,6 +3109,37 @@ section {
     cursor: zoom-in;
 }
 
+/* Responsive mobile gallery spacing for masonry layout.
+   Tighter gaps and adjusted section gutters provide a denser photo presentation
+   and reduce empty vertical gaps between horizontal aspect ratio cards. */
+@media (max-width: 768px) {
+    .masonry-grid--gallery,
+    .masonry-grid--gallery .masonry-grid__column {
+        gap: 12px !important;
+    }
+
+    body.gallery-page section,
+    section:has(.gallery-grid),
+    section:has(.masonry-grid),
+    .sub-header + section {
+        padding: 10px 3%;
+    }
+}
+
+@media (max-width: 400px) {
+    .masonry-grid--gallery,
+    .masonry-grid--gallery .masonry-grid__column {
+        gap: 10px !important;
+    }
+
+    body.gallery-page section,
+    section:has(.gallery-grid),
+    section:has(.masonry-grid),
+    .sub-header + section {
+        padding: 8px 2.5%;
+    }
+}
+
 .sr-only {
     position: absolute;
     width: 1px;
@@ -3879,6 +3910,7 @@ footer {
     /* On mobile, all cards must span the full 6 columns to be 100% width */
     .gallery-grid {
         grid-template-columns: repeat(6, 1fr);
+        gap: 12px;
     }
 
     .photo-card, .photo-card.landscape {
@@ -4486,15 +4518,15 @@ body.gallery-page footer {
     }
 }
 
-/* This block is what actually sets the mobile section-title size - it is the
-   last .section-title rule in the file and carries !important. The 1.8rem floor
-   stopped it scaling on narrow screens, which is why "Landscapes" broke onto a
-   second line at 344px and 390px. */
+/* This block sets the mobile section-title size across viewports.
+   Fluid scaling allows single-word display headings to carry commanding visual
+   weight near screen edges while preventing accidental line breaks. */
 @media (max-width: 768px) {
     .section-title {
-        font-size: clamp(1.4rem, 6.8vw, 3rem) !important;
-        white-space: normal !important;
-        text-wrap: balance;
+        font-size: clamp(1.75rem, 10vw, 4.25rem) !important;
+        white-space: nowrap !important;
+        padding-left: 0.5rem;
+        padding-right: 0.5rem;
     }
 }
 
