@@ -363,11 +363,16 @@ html.is-transitioning::before {
         loaderSpin 3200ms steps(1, end) infinite !important;
 }
 
-/* Smoothly fade out the sequence when revealing the new page to avoid visual cuts.
-   This settles before the wipe reveal finishes and removes the preloader from the DOM. */
+/* Fade the sequence out as the new page is revealed, so it never cuts away.
+   `both` rather than `forwards`: this animation holds for 0.12s before it runs,
+   and with `forwards` alone nothing applies its from-state during that wait.
+   The fade-in animation has been dropped from the list by this point, so the
+   opacity fell back to the base 0, blanked the camera for a frame and then
+   snapped back to full when the fade finally started. That flick right at the
+   end of the wipe was the glitch. `both` holds it visible through the delay. */
 .preloader-curtain.wiping-up .loader-sequence {
     animation:
-        fadeOutSequence 0.25s ease 0.12s forwards,
+        fadeOutSequence 0.3s ease 0.16s both,
         loaderSpin 3200ms steps(1, end) infinite !important;
 }
 

@@ -465,12 +465,15 @@ function startDeferredVideos() {
 const isInternalNav = sessionStorage.getItem('isInternalNav') === 'true';
 const heroHeader = document.getElementById('parallax-header') || document.querySelector('header');
 
-// Wipe timings tuned for fast, immediate page switching while keeping the camera rotation distinct.
-// At 380ms for wipeCover and 380ms for wipeReveal, the diagonal sweep feels crisp and cinematic.
-// The location change at 400ms gives the 30 FPS sprite loader 12 distinct rotation frames.
-const WIPE_COVER_MS = 380;
-const NAV_DELAY_MS = 400;
-const WIPE_REVEAL_MS = 380;
+// Wipe timings. 380ms each way was quick but read as abrupt: the diagonal
+// sweep crossed the screen faster than the eye follows it, and the camera was
+// on screen for barely a third of a second either side, which is not long
+// enough to register as a deliberate loader rather than a flicker. 560ms is
+// still well short of where this started and gives the sweep room to be seen,
+// with roughly seventeen distinct sprite frames per crossing at 30 FPS.
+const WIPE_COVER_MS = 560;
+const NAV_DELAY_MS = 580;
+const WIPE_REVEAL_MS = 560;
 
 // Hover styling on the hero text stays disabled until its entrance animation
 // has finished. The hover rules drive opacity and letter-spacing, which the
