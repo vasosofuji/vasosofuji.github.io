@@ -36,6 +36,27 @@ const esc = (v) =>
   clamp(v, 1500).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
 
 function buildMessage(kind, d) {
+  if (kind === 'resolved') {
+    const title = '✅ <b>Resolved: Unfinished booking completed</b>';
+
+    const rows = [
+      ['Name', d.name],
+      ['Email', d.email],
+      ['Phone', d.phone],
+      ['Date', d.date],
+      ['Type', d.eventType],
+      ['Message', d.message],
+      ['Notes', d.notes],
+    ].filter(([, v]) => clamp(v, 1500).length > 0);
+
+    const body = rows.map(([k, v]) => `<b>${k}:</b> ${esc(v)}`).join('\n');
+
+    const footer =
+      '\n\n<i>This enquiry was previously reported as unfinished and has now been completed and submitted.</i>';
+
+    return `${title}\n\n${body}${footer}`;
+  }
+
   const title =
     kind === 'abandoned'
       ? '⚠️ <b>Unfinished booking</b>'
@@ -91,7 +112,11 @@ export default async function handler(req, res) {
   }
   if (!body || typeof body !== 'object') return res.status(400).json({ error: 'Invalid payload' });
 
-  const kind = body.kind === 'abandoned' ? 'abandoned' : 'booking';
+  const kind = body.kind === 'abandoned'
+    ? 'abandoned'
+    : body.kind === 'resolved'
+    ? 'resolved'
+    : 'booking';
 
   // An abandoned-booking alert is only permitted when the visitor ticked the
   // box agreeing to be contacted about an unfinished enquiry. Without that
