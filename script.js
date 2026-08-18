@@ -424,6 +424,22 @@ function fitMobileHeadings() {
         }
         el.dataset.fitted = 'true';
     });
+
+    // The videos section stacks an outlined heading over a filled one, and they
+    // sit in containers of different widths, so fitting each on its own gave
+    // them different sizes and the outline ended up noticeably larger than the
+    // text it is supposed to trace. They are one piece of type visually, so the
+    // smaller of the two fits wins for both, trimmed slightly so the outline
+    // sits just inside rather than straddling the edge of the frame.
+    const outline = document.querySelector('#react-heading-videos-outline .section-title');
+    const filled = document.querySelector('#react-heading-videos .section-title');
+    if (outline && filled) {
+        const size = Math.min(
+            parseFloat(getComputedStyle(outline).fontSize),
+            parseFloat(getComputedStyle(filled).fontSize)
+        ) * 0.94;
+        [outline, filled].forEach((el) => el.style.setProperty('font-size', size + 'px', 'important'));
+    }
 }
 
 let fitHeadingsTimer;

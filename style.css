@@ -82,6 +82,28 @@ body {
     overflow-x: clip; /* Modern way to prevent horizontal scroll without breaking vertical scroll */
 }
 
+/* The ambient background is a fixed layer sized in the markup with height 100%,
+   which resolves against the small viewport. When a phone's address bar
+   retracts the viewport grows and that layer no longer reaches the bottom,
+   leaving a black strip along the lower edge. Anchoring it to all four sides
+   makes it track whatever the viewport currently is. Also reserving the
+   scrollbar gutter, so a scrollbar appearing as a page finishes loading cannot
+   shift anything centred, which was moving the loader camera sideways. */
+#react-global-bg {
+    top: 0 !important;
+    right: 0 !important;
+    bottom: 0 !important;
+    left: 0 !important;
+    height: auto !important;
+    width: auto !important;
+}
+
+@supports (scrollbar-gutter: stable) {
+    html {
+        scrollbar-gutter: stable;
+    }
+}
+
 /* --- CUSTOM FILM SCROLLBAR --- */
 ::-webkit-scrollbar {
     width: 18px;
@@ -211,6 +233,16 @@ h1, h2, h3, h4, h5, h6, .section-title {
     100% { background-position: 0% 0%; }
 }
 
+@media (max-width: 768px) {
+    .loader-sequence {
+        transform: translate(-50%, -50%) scale(0.6) translateZ(0);
+    }
+
+    html.is-transitioning::after {
+        transform: translate(-50%, -50%) scale(0.6) translateZ(0);
+    }
+}
+
 /* Instant black curtain on page arrival when navigating internally,
    preventing any flash of unstyled or uncovered content before script.js runs. */
 html.is-transitioning::before {
@@ -239,8 +271,12 @@ html.is-transitioning::after {
     left: 50%;
     width: 250px;
     height: 169px;
-    margin: -84.5px 0 0 -125px;
-    transform: scale(0.8) translateZ(0);
+    /* Centred the same way .loader-sequence is, by transform rather than by
+       negative margins. The two are equivalent on paper but the script inserted
+       camera takes over from this one mid transition, and any difference in how
+       they arrive at the middle shows up as the camera jumping sideways at the
+       handover. Same method, same result. */
+    transform: translate(-50%, -50%) scale(0.8) translateZ(0);
     background-image: url('misc/loading-sprite.webp');
     background-size: 2000px 2028px;
     background-repeat: no-repeat;

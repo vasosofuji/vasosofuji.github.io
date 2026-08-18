@@ -23,7 +23,11 @@ declare global {
  * every photo and its camera/lens/location, and if this script never runs the
  * original grid is still on screen.
  */
-type Photo = LightboxPhoto & { loading: 'lazy' | 'eager' };
+type Photo = LightboxPhoto & {
+  loading: 'lazy' | 'eager';
+  srcSet?: string;
+  sizes?: string;
+};
 
 function readPhotosFromDom(grid: HTMLElement): Photo[] {
   return Array.from(grid.querySelectorAll<HTMLElement>('.photo-card')).map((card, i) => {
@@ -40,6 +44,13 @@ function readPhotosFromDom(grid: HTMLElement): Photo[] {
 
     return {
       src: img?.getAttribute('src') ?? '',
+      // The markup carries sized derivatives; this component rebuilds the card
+      // from scratch, so without carrying these across every photo page fell
+      // back to the full gallery original. On a phone that is a couple of
+      // hundred kB per card arriving one after another, which is exactly what
+      // it looks like on screen.
+      srcSet: img?.getAttribute('srcset') ?? undefined,
+      sizes: img?.getAttribute('sizes') ?? undefined,
       alt: img?.getAttribute('alt') ?? '',
       title: card.querySelector('.photo-info h4')?.textContent?.trim() || undefined,
       details,
@@ -125,6 +136,8 @@ function PhotoGallery({ photos }: { photos: Photo[] }) {
           >
             <img
               src={photo.src}
+              srcSet={photo.srcSet}
+              sizes={photo.sizes}
               alt={photo.alt}
               loading={photo.loading}
               decoding="async"
