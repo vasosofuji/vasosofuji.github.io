@@ -197,22 +197,6 @@ export const SmokeBackground: React.FC<SmokeBackgroundProps> = ({
             isCovered = open && coveredQuery.matches;
         };
 
-        // Pause shader rendering while actively scrolling or once the gallery enters
-        // the viewport to yield GPU cycles to high-frequency parallax animations.
-        let isScrolling = false;
-        let lastScrollY = typeof window !== 'undefined' ? window.scrollY : 0;
-        let isScrolledAway = typeof window !== 'undefined' && window.scrollY > 150;
-        let scrollEndTimer: ReturnType<typeof setTimeout> | undefined;
-
-        const markScrolling = () => {
-            isScrolling = true;
-            isScrolledAway = window.scrollY > 150;
-            clearTimeout(scrollEndTimer);
-            scrollEndTimer = setTimeout(() => {
-                isScrolling = false;
-            }, 200);
-        };
-
         try {
             renderer = new Renderer(canvas, fragmentShaderSource);
             rendererRef.current = renderer;
@@ -220,9 +204,6 @@ export const SmokeBackground: React.FC<SmokeBackgroundProps> = ({
             renderer.updateScale(resolutionScale);
             window.addEventListener('resize', handleResize);
             window.addEventListener('menustatechange', handleMenuState);
-            window.addEventListener('scroll', markScrolling, { passive: true });
-            window.addEventListener('wheel', markScrolling, { passive: true });
-            window.addEventListener('touchmove', markScrolling, { passive: true });
 
             let isVisible = true;
             let lastTime = 0;
@@ -230,19 +211,7 @@ export const SmokeBackground: React.FC<SmokeBackgroundProps> = ({
 
             const loop = (now: number) => {
                 animationFrameId = requestAnimationFrame(loop);
-
-                const currentScrollY = window.scrollY;
-                if (currentScrollY !== lastScrollY) {
-                    isScrolling = true;
-                    isScrolledAway = currentScrollY > 150;
-                    lastScrollY = currentScrollY;
-                    clearTimeout(scrollEndTimer);
-                    scrollEndTimer = setTimeout(() => {
-                        isScrolling = false;
-                    }, 200);
-                }
-
-                if (!isVisible || isCovered || isScrolling || isScrolledAway || !renderer) return;
+                if (!isVisible || isCovered || !renderer) return;
 
                 const delta = now - lastTime;
                 if (delta >= interval) {
@@ -252,13 +221,9 @@ export const SmokeBackground: React.FC<SmokeBackgroundProps> = ({
             };
             loop(0);
 
-            // The header bottom 30% is covered by a solid black CSS gradient
-            // and the canvas mask fades to black towards the edges. A top
-            // rootMargin ensures the shader stands down as soon as the visible
-            // portion of the smoke leaves the viewport.
             observer = new IntersectionObserver((entries) => {
                 isVisible = entries[0].isIntersecting;
-            }, { rootMargin: '-20% 0px 0px 0px', threshold: 0 });
+            }, { threshold: 0 });
 
             observer.observe(canvas);
         } catch (e) {
@@ -268,12 +233,8 @@ export const SmokeBackground: React.FC<SmokeBackgroundProps> = ({
 
         return () => {
             clearTimeout(resizeTimer);
-            clearTimeout(scrollEndTimer);
             window.removeEventListener('resize', handleResize);
             window.removeEventListener('menustatechange', handleMenuState);
-            window.removeEventListener('scroll', markScrolling);
-            window.removeEventListener('wheel', markScrolling);
-            window.removeEventListener('touchmove', markScrolling);
             if (animationFrameId) cancelAnimationFrame(animationFrameId);
             if (observer) observer.disconnect();
             if (renderer) renderer.reset();

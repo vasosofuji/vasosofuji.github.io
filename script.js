@@ -367,6 +367,14 @@ window.onload = function() {
 
 // --- SCROLL REVEAL LOGIC ---
 const observerOptions = { threshold: 0.1 };
+
+// The photo pages get their own observer with a generous margin. With the
+// shared one a card only reveals as it reaches the viewport, and because the
+// cards on a phone are large enough to arrive one at a time, every photograph
+// performed its own slide as you scrolled. Revealing a screen ahead means they
+// have already settled by the time they are looked at, so the page reads as
+// simply being there rather than as a sequence of separate entrances.
+const eagerRevealOptions = { threshold: 0, rootMargin: '600px 0px 600px 0px' };
 const observer = new IntersectionObserver((entries) => {
     entries.forEach(entry => {
         if (entry.isIntersecting) {
@@ -388,10 +396,23 @@ const observer = new IntersectionObserver((entries) => {
 // Using a WeakSet ensures startScrollReveal is idempotent when re-run after dynamic mounts.
 const observedScrollRevealElements = new WeakSet();
 
+const eagerObserver = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+        if (entry.isIntersecting) {
+            entry.target.style.cssText += "opacity: 1; transform: none;";
+            eagerObserver.unobserve(entry.target);
+        }
+    });
+}, eagerRevealOptions);
+
 function startScrollReveal() {
+    const isPhotoPage = document.body.classList.contains('photo-page');
     document.querySelectorAll('.photo-card:not(.photo-card--masonry), .section-title, .t-stagger, .cinematic-bg-video').forEach(el => {
-        if (!observedScrollRevealElements.has(el)) {
-            observedScrollRevealElements.add(el);
+        if (observedScrollRevealElements.has(el)) return;
+        observedScrollRevealElements.add(el);
+        if (isPhotoPage && el.classList.contains('photo-card')) {
+            eagerObserver.observe(el);
+        } else {
             observer.observe(el);
         }
     });
@@ -458,6 +479,18 @@ function startDeferredVideos() {
 // stepping background-position across an 8x12 WebP sprite sheet.
 // Moving frame progression off the JavaScript main thread onto the browser compositor
 // guarantees that rotation never skips or stutters during heavy CPU hydration.
+
+
+// The camera sprite loop is a pure function of wall clock time, so seeding a
+// new element with a negative delay of however far through the loop we already
+// are makes the rotation continue across a page load instead of snapping back
+// to frame 0. Frame 0 is the straight-on pose, which is why a restart read as
+// the camera being stuck facing forward.
+const LOADER_SPIN_MS = 2400;
+function seedLoaderPhase(seq) {
+    if (!seq) return;
+    seq.style.animationDelay = `-${Date.now() % LOADER_SPIN_MS}ms`;
+}
 
 // --- SMOOTH PAGE TRANSITIONS & PRELOADER LOGIC ---
 // Fresh arrivals bypass the curtain entirely to maximize Core Web Vitals (FCP and LCP).
@@ -538,11 +571,18 @@ if (isInternalNav) {
 
         const curtain = preloader.querySelector('.preloader-curtain');
         if (curtain) {
+            seedLoaderPhase(curtain.querySelector('.loader-sequence'));
+            // The curtain is already closed here, so the camera can show at once.
+            curtain.classList.add('camera-in');
             curtain.style.transition = 'none';
             curtain.style.animation = 'none';
             void curtain.offsetWidth;
             curtain.style.animation = `wipeReveal ${WIPE_REVEAL_MS}ms cubic-bezier(0.7, 0, 0.3, 1) forwards`;
             document.body.classList.add('loaded');
+
+            // Start the camera fading with enough of the reveal left for the
+            // 0.28s transition to finish before the curtain is torn down.
+            setTimeout(() => curtain.classList.add('camera-out'), WIPE_REVEAL_MS - 300);
 
             setTimeout(() => {
                 preloader.classList.add('done');
@@ -648,10 +688,15 @@ document.addEventListener('click', (e) => {
 
         const curtain = preloader.querySelector('.preloader-curtain');
         if (curtain) {
+            curtain.classList.remove('camera-out');
+            seedLoaderPhase(curtain.querySelector('.loader-sequence'));
             curtain.style.transition = 'none';
             curtain.style.animation = 'none';
             void curtain.offsetWidth;
             curtain.style.animation = `wipeCover ${WIPE_COVER_MS}ms cubic-bezier(0.7, 0, 0.3, 1) forwards`;
+            // Hold the camera back until the sweep has covered the outgoing
+            // page, otherwise it appears over content that is still visible.
+            setTimeout(() => curtain.classList.add('camera-in'), WIPE_COVER_MS - 150);
         }
 
         // Navigate to target URL after cover wipe completes

@@ -245,14 +245,14 @@ html.is-transitioning::before {
     contain: strict;
     isolation: isolate;
     will-change: background-position;
-    animation:
-        fadeInSequence 0.2s ease 0.05s both,
-        loaderSpin 3200ms steps(1, end) infinite;
-}
-
-@keyframes fadeInSequence {
-    from { opacity: 0; }
-    to { opacity: 1; }
+    /* Declared here and nowhere else. Every state rule below changes opacity
+       only. Restating the animation shorthand in a state rule restarts the
+       spin, which dropped the camera back to frame 0, and frame 0 is the
+       straight-on pose, so the camera looked stuck facing forward every time a
+       class changed. Opacity moves by transition precisely because a
+       transition cannot disturb a running animation. */
+    animation: loaderSpin var(--loader-spin-ms, 2400ms) steps(1, end) infinite;
+    transition: opacity 0.28s ease;
 }
 
 @keyframes loaderSpin {
@@ -355,31 +355,24 @@ html.is-transitioning::before {
     100% { background-position: 0px 0px; }
 }
 
-/* Fade the camera in quickly while the curtain closes over a page you are leaving,
-   so the wipe displays active rotation without landing on an empty panel. */
-.preloader-curtain.do-wipe-down .loader-sequence {
-    animation:
-        fadeInSequence 0.2s ease 0.05s both,
-        loaderSpin 3200ms steps(1, end) infinite !important;
+/* Visibility is driven by an explicit class rather than by the wipe direction,
+   because the curtain is created with its direction class already set. There is
+   no state change on insertion for a transition to run from, so a rule keyed on
+   the direction alone simply painted the camera immediately, over a page that
+   was still on screen. The script adds this once the cover has actually
+   closed. */
+.preloader-curtain.camera-in .loader-sequence {
+    opacity: 1;
 }
 
-/* Fade the sequence out as the new page is revealed, so it never cuts away.
-   `both` rather than `forwards`: this animation holds for 0.12s before it runs,
-   and with `forwards` alone nothing applies its from-state during that wait.
-   The fade-in animation has been dropped from the list by this point, so the
-   opacity fell back to the base 0, blanked the camera for a frame and then
-   snapped back to full when the fade finally started. That flick right at the
-   end of the wipe was the glitch. `both` holds it visible through the delay. */
-.preloader-curtain.wiping-up .loader-sequence {
-    animation:
-        fadeOutSequence 0.3s ease 0.16s both,
-        loaderSpin 3200ms steps(1, end) infinite !important;
+/* Arriving: the curtain is already closed when this element is inserted, so the
+   camera is visible from its first frame. The fade out is triggered by a class
+   part way through the reveal rather than by a delayed animation, which is what
+   previously blanked it for a frame before fading. */
+.preloader-curtain.camera-out .loader-sequence {
+    opacity: 0;
 }
 
-@keyframes fadeOutSequence {
-    from { opacity: 1; }
-    to { opacity: 0; }
-}
 /* --- END GLOBAL PRELOADER STYLES --- */
 
 
@@ -4717,16 +4710,22 @@ body.gallery-page footer {
     }
 }
 
-/* Mobile section title sizing scaled fluidly across narrow viewports.
-   Allowing normal text wrapping prevents long words or multi-word headings from
-   overflowing the right edge on narrow mobile screens. */
+/* Mobile section title sizing.
+   8vw left these small enough that a single word still wrapped: "Landscapes"
+   broke onto two lines at every phone width while the type sat at barely 30px,
+   which is nothing like the weight the same heading carries on a wide screen.
+   These are single words set in Syne at weight 800, which runs about 0.62em per
+   uppercase character, so the longest of them, Landscapes at ten characters, is
+   roughly 6.2em wide. Sizing at 13.5vw puts that at about 84 percent of the
+   viewport, which fills the width the way the desktop rendering does and still
+   leaves a margin either side. Nowrap is safe at that ratio and keeps them on
+   one line; the padding is the guard rail. */
 @media (max-width: 768px) {
     .section-title {
-        font-size: clamp(1.4rem, 8vw, 3.8rem) !important;
-        white-space: normal !important;
-        text-wrap: balance;
-        padding-left: 1rem;
-        padding-right: 1rem;
+        font-size: clamp(2rem, 13.5vw, 4.5rem) !important;
+        white-space: nowrap !important;
+        padding-left: 0.5rem;
+        padding-right: 0.5rem;
     }
 }
 
@@ -5322,6 +5321,19 @@ body.photo-page .sheet-meta {
 
 body.photo-page .photo-card {
     transition-duration: 0.38s;
+}
+
+/* On a phone the gallery cards are large enough that they arrive one at a time,
+   and a 50px slide on each one turned scrolling through a set of photographs
+   into a procession of separate entrances. Dropping the movement leaves a plain
+   fade, which together with the earlier reveal reads as the photographs simply
+   being there. Desktop keeps the slide, where several cards enter together and
+   it works as one motion. */
+@media (max-width: 768px) {
+    body.photo-page .photo-card {
+        transform: none;
+        transition: opacity 0.45s ease-out;
+    }
 }
 
 @media (prefers-reduced-motion: reduce) {
