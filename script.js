@@ -503,45 +503,66 @@ if (isInternalNav) {
     // Clear flag so reloads or direct address bar entries act as fresh arrivals
     sessionStorage.removeItem('isInternalNav');
 
-    // Create preloader DOM element for the incoming reveal animation
-    let preloader = document.getElementById('global-preloader');
-    if (!preloader) {
-        preloader = document.createElement('div');
-        preloader.id = 'global-preloader';
-        preloader.innerHTML = '<div class="preloader-curtain wiping-up"><div class="loader-sequence"></div></div>';
-        document.body.appendChild(preloader);
-    }
+    const revealDestination = async () => {
+        // Ensure the sprite bitmap is decoded before starting the reveal animation
+        const spriteImg = new Image();
+        spriteImg.src = 'misc/loading-sprite.webp';
+        try {
+            await spriteImg.decode();
+        } catch (e) {}
 
-    // Remove static head-script transition cover class now that animated preloader is attached
-    document.documentElement.classList.remove('is-transitioning');
+        // Deliberately no wait for the main thread to go idle here. Deferring
+        // the reveal until the destination had finished mounting did smooth the
+        // camera, but it pushed roughly 200ms onto every page change, which is
+        // the more noticeable of the two. The sprite is decoded above before
+        // anything is shown, which was the other half of the hitch, and the
+        // animation itself runs on the compositor so it keeps moving while the
+        // rest of the page finishes mounting underneath it. One frame is enough
+        // to let the swap settle.
+        await new Promise(resolve => requestAnimationFrame(resolve));
 
-    const curtain = preloader.querySelector('.preloader-curtain');
-    if (curtain) {
-        curtain.style.transition = 'none';
-        curtain.style.animation = 'none';
-        void curtain.offsetWidth;
-        curtain.style.animation = `wipeReveal ${WIPE_REVEAL_MS}ms cubic-bezier(0.7, 0, 0.3, 1) forwards`;
-        document.body.classList.add('loaded');
+        // Create preloader DOM element for the incoming reveal animation
+        let preloader = document.getElementById('global-preloader');
+        if (!preloader) {
+            preloader = document.createElement('div');
+            preloader.id = 'global-preloader';
+            preloader.innerHTML = '<div class="preloader-curtain wiping-up"><div class="loader-sequence"></div></div>';
+            document.body.appendChild(preloader);
+        }
 
-        setTimeout(() => {
-            preloader.classList.add('done');
-            preloader.remove();
+        // Remove static head-script transition cover class now that animated preloader is attached
+        document.documentElement.classList.remove('is-transitioning');
 
-            if (heroHeader) {
-                heroHeader.classList.add('hero-active');
-                markHeroEnteredWhenSettled(heroHeader);
-            }
+        const curtain = preloader.querySelector('.preloader-curtain');
+        if (curtain) {
+            curtain.style.transition = 'none';
+            curtain.style.animation = 'none';
+            void curtain.offsetWidth;
+            curtain.style.animation = `wipeReveal ${WIPE_REVEAL_MS}ms cubic-bezier(0.7, 0, 0.3, 1) forwards`;
+            document.body.classList.add('loaded');
 
-            if (window.location.hash) {
-                const targetElement = document.querySelector(window.location.hash);
-                if (targetElement) {
-                    targetElement.scrollIntoView({ behavior: 'smooth' });
+            setTimeout(() => {
+                preloader.classList.add('done');
+                preloader.remove();
+
+                if (heroHeader) {
+                    heroHeader.classList.add('hero-active');
+                    markHeroEnteredWhenSettled(heroHeader);
                 }
-            }
-            startScrollReveal();
-            startDeferredVideos();
-        }, WIPE_REVEAL_MS);
-    }
+
+                if (window.location.hash) {
+                    const targetElement = document.querySelector(window.location.hash);
+                    if (targetElement) {
+                        targetElement.scrollIntoView({ behavior: 'smooth' });
+                    }
+                }
+                startScrollReveal();
+                startDeferredVideos();
+            }, WIPE_REVEAL_MS);
+        }
+    };
+
+    revealDestination();
 } else {
     // Fresh arrival: no curtain or preloader overhead, render real content immediately
     document.documentElement.classList.remove('is-transitioning');
@@ -594,6 +615,11 @@ document.addEventListener('click', (e) => {
 
         // Signal to the destination page that it arrived via internal navigation
         sessionStorage.setItem('isInternalNav', 'true');
+
+        // Preload and decode the sprite sheet in background so destination page has it ready in GPU cache
+        const spriteImg = new Image();
+        spriteImg.src = 'misc/loading-sprite.webp';
+        try { spriteImg.decode(); } catch (err) {}
 
         // Dynamically create or reveal the preloader curtain on the outgoing page
         let preloader = document.getElementById('global-preloader');
