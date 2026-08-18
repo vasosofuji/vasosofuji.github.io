@@ -365,6 +365,80 @@ window.onload = function() {
     updateFormValidationMessages(currentLang);
 };
 
+// --- MOBILE HEADING FIT ---
+// The section headings are single words set as large as they will go. Sizing
+// them from a vw estimate means guessing how wide the font renders, and that
+// guess is wrong whenever the metrics are not what was assumed: a fallback face
+// while Syne is still loading is wider, and the headings then run off the right
+// edge. Measuring instead of guessing removes the guess. Each heading starts at
+// the largest size worth trying and steps down only until it actually fits the
+// space it has, so it is always as large as it can be and never wider.
+function fitMobileHeadings() {
+    if (window.innerWidth > 768) {
+        document.querySelectorAll('.section-title[data-fitted]').forEach((el) => {
+            el.style.removeProperty('font-size');
+            el.removeAttribute('data-fitted');
+        });
+        return;
+    }
+
+    document.querySelectorAll('.section-title').forEach((el) => {
+        const parent = el.parentElement;
+        if (!parent) return;
+        // Whatever horizontal padding the heading carries is part of its box, so
+        // the space available is the parent's content box.
+        const style = getComputedStyle(el);
+        const pad = parseFloat(style.paddingLeft) + parseFloat(style.paddingRight);
+        // The viewport is the real ceiling. A parent can be wider than the
+        // screen, and fitting to it would let the text run off the side while
+        // still technically fitting its container.
+        const available = Math.min(parent.clientWidth, window.innerWidth - 20) - pad;
+        if (!available || available <= 0) return;
+
+        // Never larger than the widest desktop rendering, or a tablet ends up
+        // with a heading bigger than a 1440 screen gets, and never so small it
+        // stops reading as a display heading unless the space genuinely demands
+        // it.
+        const max = Math.min(Math.round(window.innerWidth * 0.18), 96);
+        const min = 14;
+        // The stylesheet sets this size with !important, so a plain inline style
+        // is ignored and the heading never actually changes. The priority has to
+        // be set explicitly for the measurement to mean anything.
+        const setSize = (px) => el.style.setProperty('font-size', px + 'px', 'important');
+
+        // Measure the text itself rather than the element box. These headings
+        // are capped at max-width 100%, so the box always looks like it fits
+        // while nowrap text spills out of it and off the screen, which is
+        // exactly the bug this is here to catch.
+        const textWidth = () => {
+            const range = document.createRange();
+            range.selectNodeContents(el);
+            return range.getBoundingClientRect().width;
+        };
+
+        let size = max;
+        setSize(size);
+        while (size > min && textWidth() > available) {
+            size -= 1;
+            setSize(size);
+        }
+        el.dataset.fitted = 'true';
+    });
+}
+
+let fitHeadingsTimer;
+function scheduleHeadingFit() {
+    clearTimeout(fitHeadingsTimer);
+    fitHeadingsTimer = setTimeout(fitMobileHeadings, 120);
+}
+
+window.addEventListener('resize', scheduleHeadingFit);
+// Web fonts land after first paint and change every measurement, so fit again
+// once they are actually in use.
+if (document.fonts && document.fonts.ready) {
+    document.fonts.ready.then(fitMobileHeadings).catch(() => {});
+}
+
 // --- SCROLL REVEAL LOGIC ---
 const observerOptions = { threshold: 0.1 };
 
@@ -406,6 +480,7 @@ const eagerObserver = new IntersectionObserver((entries) => {
 }, eagerRevealOptions);
 
 function startScrollReveal() {
+    scheduleHeadingFit();
     const isPhotoPage = document.body.classList.contains('photo-page');
     document.querySelectorAll('.photo-card:not(.photo-card--masonry), .section-title, .t-stagger, .cinematic-bg-video').forEach(el => {
         if (observedScrollRevealElements.has(el)) return;
@@ -585,9 +660,11 @@ if (isInternalNav) {
             curtain.style.animation = `wipeReveal ${WIPE_REVEAL_MS}ms cubic-bezier(0.7, 0, 0.3, 1) forwards`;
             document.body.classList.add('loaded');
 
-            // Start the camera fading with enough of the reveal left for the
-            // 0.28s transition to finish before the curtain is torn down.
-            setTimeout(() => curtain.classList.add('camera-out'), WIPE_REVEAL_MS - 300);
+            // The sweep clears the middle of the screen around halfway through
+            // the reveal, and the camera sits in the middle, so anything left of
+            // it after that point is hanging over the new page rather than over
+            // the curtain. Fade it early enough to be gone by then.
+            setTimeout(() => curtain.classList.add('camera-out'), Math.round(WIPE_REVEAL_MS * 0.1));
 
             setTimeout(() => {
                 preloader.classList.add('done');

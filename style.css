@@ -278,7 +278,7 @@ html.is-transitioning::after {
        class changed. Opacity moves by transition precisely because a
        transition cannot disturb a running animation. */
     animation: loaderSpin var(--loader-spin-ms, 2400ms) steps(1, end) infinite;
-    transition: opacity 0.28s ease;
+    transition: opacity 0.18s ease;
 }
 
 @keyframes loaderSpin {
@@ -5350,15 +5350,17 @@ body.photo-page .photo-card {
 }
 
 /* On a phone the gallery cards are large enough that they arrive one at a time,
-   and a 50px slide on each one turned scrolling through a set of photographs
-   into a procession of separate entrances. Dropping the movement leaves a plain
-   fade, which together with the earlier reveal reads as the photographs simply
-   being there. Desktop keeps the slide, where several cards enter together and
-   it works as one motion. */
+   so any entrance at all turns scrolling through a set of photographs into a
+   procession of separate performances, one per image. There is no version of
+   that which reads well, so on these pages the cards simply are there and the
+   photographs fade themselves in as they decode, which is the browser's own
+   behaviour and looks like nothing at all. Desktop keeps the slide, where
+   several cards enter together and it works as one motion. */
 @media (max-width: 768px) {
     body.photo-page .photo-card {
-        transform: none;
-        transition: opacity 0.45s ease-out;
+        opacity: 1 !important;
+        transform: none !important;
+        transition: none !important;
     }
 }
 
