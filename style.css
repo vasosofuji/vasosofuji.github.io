@@ -407,8 +407,9 @@ html.is-transitioning::before {
 
 
 /* --- INITIAL HIDE FOR SCROLL ANIMATIONS --- */
-/* Elements start hidden and translated down, waiting for IntersectionObserver to reveal them */
-.photo-card, .section-title {
+/* Elements start hidden and translated down, waiting for IntersectionObserver to reveal them.
+   Section titles are rendered by React components and stay visible on first paint. */
+.photo-card {
     opacity: 0;
     transform: translateY(50px);
     transition: all 0.6s ease-out;
@@ -736,8 +737,8 @@ header.hero-active .floating-el:nth-child(8) { animation-delay: 2.05s; }
     #portraits .section-title,
     #concerts .section-title,
     #landscapes .section-title {
-        /* Overlap scales proportionally with the fluid mobile heading size */
-        margin-bottom: -0.7em;
+        /* Decrease space between heading text and carousel fans on mobile */
+        margin-bottom: -4.5rem;
     }
     
     #portraits,
@@ -2182,8 +2183,8 @@ section {
         margin-right: auto !important;
         max-width: 100%;
         box-sizing: border-box;
-        padding-left: 0.5rem;
-        padding-right: 0.5rem;
+        padding-left: 1rem;
+        padding-right: 1rem;
         overflow-wrap: break-word;
     }
 }
@@ -4708,15 +4709,16 @@ body.gallery-page footer {
     }
 }
 
-/* This block sets the mobile section-title size across viewports.
-   Fluid scaling allows single-word display headings to carry commanding visual
-   weight near screen edges while preventing accidental line breaks. */
+/* Mobile section title sizing scaled fluidly across narrow viewports.
+   Allowing normal text wrapping prevents long words or multi-word headings from
+   overflowing the right edge on narrow mobile screens. */
 @media (max-width: 768px) {
     .section-title {
-        font-size: clamp(1.75rem, 10vw, 4.25rem) !important;
-        white-space: nowrap !important;
-        padding-left: 0.5rem;
-        padding-right: 0.5rem;
+        font-size: clamp(1.4rem, 8vw, 3.8rem) !important;
+        white-space: normal !important;
+        text-wrap: balance;
+        padding-left: 1rem;
+        padding-right: 1rem;
     }
 }
 
