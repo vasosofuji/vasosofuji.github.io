@@ -384,12 +384,36 @@ const observer = new IntersectionObserver((entries) => {
     });
 }, observerOptions);
 
-// Observer is started AFTER the preloader hides so that cards which are
-// already in the viewport still get their slide-up animation (gallery page).
+// Reveal observer tracks cards, headings, and deferred sections as they enter the viewport.
+// Using a WeakSet ensures startScrollReveal is idempotent when re-run after dynamic mounts.
+const observedScrollRevealElements = new WeakSet();
+
 function startScrollReveal() {
     document.querySelectorAll('.photo-card:not(.photo-card--masonry), .section-title, .t-stagger, .cinematic-bg-video').forEach(el => {
-        observer.observe(el);
+        if (!observedScrollRevealElements.has(el)) {
+            observedScrollRevealElements.add(el);
+            observer.observe(el);
+        }
     });
+}
+
+window.startScrollReveal = startScrollReveal;
+
+// A MutationObserver watches for content mounted asynchronously by React islands,
+// ensuring late-rendered headings and gallery items are observed without relying on timers.
+if (typeof MutationObserver !== 'undefined') {
+    const scrollRevealMutationObserver = new MutationObserver(() => {
+        startScrollReveal();
+    });
+    if (document.body) {
+        scrollRevealMutationObserver.observe(document.body, { childList: true, subtree: true });
+    } else {
+        document.addEventListener('DOMContentLoaded', () => {
+            if (document.body) {
+                scrollRevealMutationObserver.observe(document.body, { childList: true, subtree: true });
+            }
+        });
+    }
 }
 
 // --- DEFERRED BACKGROUND VIDEO ---

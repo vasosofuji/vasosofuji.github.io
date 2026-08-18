@@ -188,3 +188,9 @@ if (estimatorElement) {
   )
 }
 
+// Signal the scroll reveal observer after initial islands are mounted.
+if (typeof window !== 'undefined') {
+  (window as any).startScrollReveal?.();
+}
+
+
