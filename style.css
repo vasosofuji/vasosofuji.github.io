@@ -195,64 +195,177 @@ h1, h2, h3, h4, h5, h6, .section-title {
     inset: 0;
     background-image: linear-gradient(135deg, transparent 35%, #000 35.1%, #000 64.9%, transparent 65%);
     background-size: 500% 500%;
-    /* Covered from the first painted frame. This used to start transparent and
-       run wipeCover to close over 0.7s, which meant the hero was visible and
-       then got wiped over before being revealed again - the flash on first
-       load. There is nothing to wipe over on arrival; the cover animation
-       belongs to leaving a page, which the transition code triggers itself. */
     background-position: 50% 50%;
     animation: none;
 }
 
-/* Base covering animation (Transparent to Black) */
+/* Base covering animation from transparent to black */
 @keyframes wipeCover {
     0% { background-position: 100% 100%; }
     100% { background-position: 50% 50%; }
 }
 
-/* Base revealing animation (Black to Transparent, continuing the sweep) */
+/* Base revealing animation from black to transparent */
 @keyframes wipeReveal {
     0% { background-position: 50% 50%; }
     100% { background-position: 0% 0%; }
 }
 
-html.not-first-visit .preloader-curtain {
-    /* If navigating between pages, start already fully covered */
+/* Instant black curtain on page arrival when navigating internally,
+   preventing any flash of unstyled or uncovered content before script.js runs. */
+html.is-transitioning::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    z-index: 9999;
+    background-image: linear-gradient(135deg, transparent 35%, #000 35.1%, #000 64.9%, transparent 65%);
+    background-size: 500% 500%;
     background-position: 50% 50%;
-    animation: none;
+    pointer-events: all;
 }
 
-/* Sequence Loader Canvas.
-   The spinning camera is the whole loader now. There used to be a wordmark
-   layered over it, which on a second visit flashed for a moment and then
-   crossfaded into a camera that barely had time to turn before the curtain
-   lifted. One element, up straight away, held long enough to read. */
+/* Sequence Loader Sprite Animation.
+   The spinning camera loader is rendered as a pure CSS sprite animation stepping background-position.
+   Driving playback directly via the browser engine avoids main thread contention during page hydration,
+   ensuring the 3D rotation remains perfectly smooth at 30 FPS even when the CPU is heavily loaded. */
 .loader-sequence {
     position: absolute;
     top: 50%;
     left: 50%;
-    transform: translate(-50%, -50%);
-    width: 200px;
-    height: auto;
+    transform: translate(-50%, -50%) scale(0.8);
+    transform-origin: center center;
+    width: 250px;
+    height: 169px;
+    background-image: url('misc/loading-sprite.webp');
+    background-size: 2000px 2028px;
+    background-repeat: no-repeat;
     z-index: 10;
     pointer-events: none;
     opacity: 0;
-    animation: fadeInSequence 0.3s ease forwards;
+    animation:
+        fadeInSequence 0.2s ease 0.05s both,
+        loaderSpin 3200ms steps(1, start) infinite;
 }
 
 @keyframes fadeInSequence {
+    from { opacity: 0; }
     to { opacity: 1; }
 }
 
-/* Fade the camera back in while the curtain closes over a page you are
-   leaving, so the wipe never lands on an empty black panel. */
-.preloader-curtain.do-wipe-down .loader-sequence {
-    animation: fadeInSequence 0.3s ease 0.2s both !important;
+@keyframes loaderSpin {
+    0.0000% { background-position: 0px 0px; }
+    1.0417% { background-position: -250px 0px; }
+    2.0833% { background-position: -500px 0px; }
+    3.1250% { background-position: -750px 0px; }
+    4.1667% { background-position: -1000px 0px; }
+    5.2083% { background-position: -1250px 0px; }
+    6.2500% { background-position: -1500px 0px; }
+    7.2917% { background-position: -1750px 0px; }
+    8.3333% { background-position: 0px -169px; }
+    9.3750% { background-position: -250px -169px; }
+    10.4167% { background-position: -500px -169px; }
+    11.4583% { background-position: -750px -169px; }
+    12.5000% { background-position: -1000px -169px; }
+    13.5417% { background-position: -1250px -169px; }
+    14.5833% { background-position: -1500px -169px; }
+    15.6250% { background-position: -1750px -169px; }
+    16.6667% { background-position: 0px -338px; }
+    17.7083% { background-position: -250px -338px; }
+    18.7500% { background-position: -500px -338px; }
+    19.7917% { background-position: -750px -338px; }
+    20.8333% { background-position: -1000px -338px; }
+    21.8750% { background-position: -1250px -338px; }
+    22.9167% { background-position: -1500px -338px; }
+    23.9583% { background-position: -1750px -338px; }
+    25.0000% { background-position: 0px -507px; }
+    26.0417% { background-position: -250px -507px; }
+    27.0833% { background-position: -500px -507px; }
+    28.1250% { background-position: -750px -507px; }
+    29.1667% { background-position: -1000px -507px; }
+    30.2083% { background-position: -1250px -507px; }
+    31.2500% { background-position: -1500px -507px; }
+    32.2917% { background-position: -1750px -507px; }
+    33.3333% { background-position: 0px -676px; }
+    34.3750% { background-position: -250px -676px; }
+    35.4167% { background-position: -500px -676px; }
+    36.4583% { background-position: -750px -676px; }
+    37.5000% { background-position: -1000px -676px; }
+    38.5417% { background-position: -1250px -676px; }
+    39.5833% { background-position: -1500px -676px; }
+    40.6250% { background-position: -1750px -676px; }
+    41.6667% { background-position: 0px -845px; }
+    42.7083% { background-position: -250px -845px; }
+    43.7500% { background-position: -500px -845px; }
+    44.7917% { background-position: -750px -845px; }
+    45.8333% { background-position: -1000px -845px; }
+    46.8750% { background-position: -1250px -845px; }
+    47.9167% { background-position: -1500px -845px; }
+    48.9583% { background-position: -1750px -845px; }
+    50.0000% { background-position: 0px -1014px; }
+    51.0417% { background-position: -250px -1014px; }
+    52.0833% { background-position: -500px -1014px; }
+    53.1250% { background-position: -750px -1014px; }
+    54.1667% { background-position: -1000px -1014px; }
+    55.2083% { background-position: -1250px -1014px; }
+    56.2500% { background-position: -1500px -1014px; }
+    57.2917% { background-position: -1750px -1014px; }
+    58.3333% { background-position: 0px -1183px; }
+    59.3750% { background-position: -250px -1183px; }
+    60.4167% { background-position: -500px -1183px; }
+    61.4583% { background-position: -750px -1183px; }
+    62.5000% { background-position: -1000px -1183px; }
+    63.5417% { background-position: -1250px -1183px; }
+    64.5833% { background-position: -1500px -1183px; }
+    65.6250% { background-position: -1750px -1183px; }
+    66.6667% { background-position: 0px -1352px; }
+    67.7083% { background-position: -250px -1352px; }
+    68.7500% { background-position: -500px -1352px; }
+    69.7917% { background-position: -750px -1352px; }
+    70.8333% { background-position: -1000px -1352px; }
+    71.8750% { background-position: -1250px -1352px; }
+    72.9167% { background-position: -1500px -1352px; }
+    73.9583% { background-position: -1750px -1352px; }
+    75.0000% { background-position: 0px -1521px; }
+    76.0417% { background-position: -250px -1521px; }
+    77.0833% { background-position: -500px -1521px; }
+    78.1250% { background-position: -750px -1521px; }
+    79.1667% { background-position: -1000px -1521px; }
+    80.2083% { background-position: -1250px -1521px; }
+    81.2500% { background-position: -1500px -1521px; }
+    82.2917% { background-position: -1750px -1521px; }
+    83.3333% { background-position: 0px -1690px; }
+    84.3750% { background-position: -250px -1690px; }
+    85.4167% { background-position: -500px -1690px; }
+    86.4583% { background-position: -750px -1690px; }
+    87.5000% { background-position: -1000px -1690px; }
+    88.5417% { background-position: -1250px -1690px; }
+    89.5833% { background-position: -1500px -1690px; }
+    90.6250% { background-position: -1750px -1690px; }
+    91.6667% { background-position: 0px -1859px; }
+    92.7083% { background-position: -250px -1859px; }
+    93.7500% { background-position: -500px -1859px; }
+    94.7917% { background-position: -750px -1859px; }
+    95.8333% { background-position: -1000px -1859px; }
+    96.8750% { background-position: -1250px -1859px; }
+    97.9167% { background-position: -1500px -1859px; }
+    98.9583% { background-position: -1750px -1859px; }
+    100% { background-position: 0px 0px; }
 }
 
-/* Smoothly fade out the Sequence when wiping out (avoids hard cuts) */
+/* Fade the camera in quickly while the curtain closes over a page you are leaving,
+   so the wipe displays active rotation without landing on an empty panel. */
+.preloader-curtain.do-wipe-down .loader-sequence {
+    animation:
+        fadeInSequence 0.2s ease 0.05s both,
+        loaderSpin 3200ms steps(1, start) infinite !important;
+}
+
+/* Smoothly fade out the sequence when revealing the new page to avoid visual cuts.
+   This settles before the wipe reveal finishes and removes the preloader from the DOM. */
 .preloader-curtain.wiping-up .loader-sequence {
-    animation: fadeOutSequence 0.55s ease forwards !important;
+    animation:
+        fadeOutSequence 0.25s ease forwards,
+        loaderSpin 3200ms steps(1, start) infinite !important;
 }
 
 @keyframes fadeOutSequence {
@@ -728,7 +841,7 @@ h1 {
     line-height: 1.05;
     letter-spacing: -0.02em; /* Premium editorial tracking */
     
-    /* Organic, subtle 'camera light leak' gradient instead of AI metallic */
+    /* Organic, subtle camera light leak gradient instead of harsh metallic sheen. */
     background: linear-gradient(
         110deg, 
         #ffffff 30%, 

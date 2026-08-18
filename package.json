@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "node scripts/build-fan-variants.mjs --write && tsc -b && vite build && node scripts/copy-static.mjs",
+    "build": "node scripts/build-fan-variants.mjs --write && node scripts/build-loader-sprite.mjs --write && tsc -b && vite build && node scripts/copy-static.mjs",
     "lint": "oxlint",
     "preview": "vite preview"
   },

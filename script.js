@@ -428,118 +428,23 @@ function startDeferredVideos() {
 }
 
 // --- LOADER SEQUENCE LOGIC ---
-const TOTAL_FRAMES = 96;
-const preloaderFrames = [];
-let framesPreloaded = false;
+// The camera loader sequence is driven entirely by pure CSS keyframe animations
+// stepping background-position across an 8x12 WebP sprite sheet.
+// Moving frame progression off the JavaScript main thread onto the browser compositor
+// guarantees that rotation never skips or stutters during heavy CPU hydration.
 
-// Start fresh on every page load
-let currentSequenceFrame = 0;
-let sequenceAnimationFrameId = null;
-
-// The sequence is 96 frames totalling ~6 MB. Requesting all of them up front
-// saturated the connection on arrival and delayed everything the visitor
-// actually came for. Only enough frames to cover the time the curtain is
-// actually up are needed immediately; the rest arrive during idle time and are
-// there long before the loop wraps round to them. At 30fps this is a little
-// over a second, which covers the longest curtain (first visit).
-const EAGER_FRAMES = 32;
-
-function loadFrame(i) {
-    if (preloaderFrames[i]) return;
-    const img = new Image();
-    img.decoding = 'async';
-    const num = String(100 + i).padStart(4, '0');
-    img.src = `misc/loading/Sequence ${num}.gif`;
-    preloaderFrames[i] = img;
-}
-
-function preloadSequenceFrames() {
-    if (framesPreloaded) return;
-    framesPreloaded = true;
-
-    for (let i = 0; i < Math.min(EAGER_FRAMES, TOTAL_FRAMES); i++) loadFrame(i);
-
-    const rest = () => {
-        for (let i = EAGER_FRAMES; i < TOTAL_FRAMES; i++) loadFrame(i);
-    };
-    if ('requestIdleCallback' in window) {
-        requestIdleCallback(rest, { timeout: 3000 });
-    } else {
-        setTimeout(rest, 1200);
-    }
-}
-// Start preloading immediately so frames are ready
-preloadSequenceFrames();
-
-function startLoaderSequence(canvas) {
-    if (canvas.dataset.animating === 'true') return;
-    canvas.dataset.animating = 'true';
-    
-    const ctx = canvas.getContext('2d');
-    // Set internal resolution high enough for crisp rendering
-    canvas.width = 400; 
-    canvas.height = 400;
-    
-    let lastFrameTime = performance.now();
-    const fpsInterval = 1000 / 30; // 30 FPS for smooth animation
-    
-    function animate(currentTime) {
-        if (!canvas.isConnected) return; // Stop if canvas is removed from DOM
-        sequenceAnimationFrameId = requestAnimationFrame(animate);
-        
-        const elapsed = currentTime - lastFrameTime;
-        
-        if (elapsed > fpsInterval) {
-            lastFrameTime = currentTime - (elapsed % fpsInterval);
-            
-            const img = preloaderFrames[currentSequenceFrame];
-            if (img && img.complete && img.naturalWidth !== 0) {
-                // Sync internal resolution to the actual image to prevent squashing/stretching
-                if (canvas.width !== img.naturalWidth) {
-                    canvas.width = img.naturalWidth;
-                    canvas.height = img.naturalHeight;
-                }
-                ctx.clearRect(0, 0, canvas.width, canvas.height);
-                ctx.drawImage(img, 0, 0);
-            }
-            
-            currentSequenceFrame = (currentSequenceFrame + 1) % TOTAL_FRAMES;
-        }
-    }
-    requestAnimationFrame((time) => {
-        lastFrameTime = time;
-        animate(time);
-    });
-}
-
-// --- GLOBAL PRELOADER & HERO ANIMATION FIX ---
-const preloader = document.getElementById('global-preloader');
+// --- SMOOTH PAGE TRANSITIONS & PRELOADER LOGIC ---
+// Fresh arrivals bypass the curtain entirely to maximize Core Web Vitals (FCP and LCP).
+// Internal page navigation uses a rapid wipe transition with the spinning camera loader.
+const isInternalNav = sessionStorage.getItem('isInternalNav') === 'true';
 const heroHeader = document.getElementById('parallax-header') || document.querySelector('header');
 
-if (!preloader) {
-    document.body.classList.add('loaded');
-    // The base h1 rule starts at opacity 0 and waits for `hero-active`, which
-    // until now was only ever added on the far side of the preloader. A page
-    // without a curtain (the 404) therefore rendered its heading invisible.
-    if (heroHeader) {
-        heroHeader.classList.add('hero-active');
-        markHeroEnteredWhenSettled(heroHeader);
-    }
-    // No curtain to wait on, so wire the deferred work up straight away.
-    startScrollReveal();
-    startDeferredVideos();
-}
-
-// IMMEDIATELY start the sequence if the canvas exists so it doesn't freeze on page load!
-if (preloader) {
-    const curtain = preloader.querySelector('.preloader-curtain');
-    if (curtain) {
-        let canvas = curtain.querySelector('.loader-sequence');
-        if (canvas) {
-            startLoaderSequence(canvas);
-        }
-    }
-}
+// Wipe timings tuned for fast, immediate page switching while keeping the camera rotation distinct.
+// At 380ms for wipeCover and 380ms for wipeReveal, the diagonal sweep feels crisp and cinematic.
+// The location change at 400ms gives the 30 FPS sprite loader 12 distinct rotation frames.
+const WIPE_COVER_MS = 380;
+const NAV_DELAY_MS = 400;
+const WIPE_REVEAL_MS = 380;
 
 // Hover styling on the hero text stays disabled until its entrance animation
 // has finished. The hover rules drive opacity and letter-spacing, which the
@@ -568,72 +473,69 @@ function markHeroEnteredWhenSettled(heroHeader) {
     const fallback = setTimeout(settle, 2200);
 }
 
-const isFirstVisit = !sessionStorage.getItem('hasVisited');
-// Long enough for the camera to actually turn. At 320ms the shutter had barely
-// started moving before the curtain lifted, which read as a glitch rather than
-// as a loader.
-const preloaderDuration = isFirstVisit ? 1500 : 950;
-// The curtain wipe, and how long the sequence has to fade before the whole
-// preloader is pulled from the DOM. These have to agree: removing the shell
-// early is what cut the camera off mid-fade.
-const WIPE_MS = 800;
+if (isInternalNav) {
+    // Clear flag so reloads or direct address bar entries act as fresh arrivals
+    sessionStorage.removeItem('isInternalNav');
 
-if (isFirstVisit) {
-    sessionStorage.setItem('hasVisited', 'true');
-}
+    // Create preloader DOM element for the incoming reveal animation
+    let preloader = document.getElementById('global-preloader');
+    if (!preloader) {
+        preloader = document.createElement('div');
+        preloader.id = 'global-preloader';
+        preloader.innerHTML = '<div class="preloader-curtain wiping-up"><div class="loader-sequence"></div></div>';
+        document.body.appendChild(preloader);
+    }
 
-setTimeout(() => {
-    if (preloader) {
-        const curtain = preloader.querySelector('.preloader-curtain');
-        if (curtain) {
-            // Dynamically inject the Canvas loading sequence if it's somehow missing
-            let canvas = curtain.querySelector('.loader-sequence');
-            if (!canvas) {
-                canvas = document.createElement('canvas');
-                canvas.className = 'loader-sequence';
-                curtain.appendChild(canvas);
+    // Remove static head-script transition cover class now that animated preloader is attached
+    document.documentElement.classList.remove('is-transitioning');
+
+    const curtain = preloader.querySelector('.preloader-curtain');
+    if (curtain) {
+        curtain.style.transition = 'none';
+        curtain.style.animation = 'none';
+        void curtain.offsetWidth;
+        curtain.style.animation = `wipeReveal ${WIPE_REVEAL_MS}ms cubic-bezier(0.7, 0, 0.3, 1) forwards`;
+        document.body.classList.add('loaded');
+
+        setTimeout(() => {
+            preloader.classList.add('done');
+            preloader.remove();
+
+            if (heroHeader) {
+                heroHeader.classList.add('hero-active');
+                markHeroEnteredWhenSettled(heroHeader);
             }
-            
-            startLoaderSequence(canvas);
 
-            // Execute the diagonal reveal animation with an artificial delay
-            setTimeout(() => {
-                curtain.classList.add('wiping-up'); // Triggers camera fade-out
-
-                curtain.style.transition = 'none';
-                curtain.style.animation = 'none';
-                void curtain.offsetWidth;
-                curtain.style.animation = `wipeReveal ${WIPE_MS}ms cubic-bezier(0.7, 0, 0.3, 1) forwards`;
-                document.body.classList.add('loaded');
-
-                // After the curtain finishes sliding out, remove the preloader from the DOM
-                setTimeout(() => {
-                    preloader.classList.add('done');
-                    if (heroHeader) {
-                        heroHeader.classList.add('hero-active');
-                        markHeroEnteredWhenSettled(heroHeader);
-                    }
-                    if (sequenceAnimationFrameId) cancelAnimationFrame(sequenceAnimationFrameId);
-                    
-                    if (window.location.hash) {
-                        const targetElement = document.querySelector(window.location.hash);
-                        if (targetElement) {
-                            targetElement.scrollIntoView({ behavior: 'smooth' });
-                        }
-                    }
-                    startScrollReveal();
-                    startDeferredVideos();
-                }, WIPE_MS);
-            }, 40);
+            if (window.location.hash) {
+                const targetElement = document.querySelector(window.location.hash);
+                if (targetElement) {
+                    targetElement.scrollIntoView({ behavior: 'smooth' });
+                }
+            }
+            startScrollReveal();
+            startDeferredVideos();
+        }, WIPE_REVEAL_MS);
+    }
+} else {
+    // Fresh arrival: no curtain or preloader overhead, render real content immediately
+    document.documentElement.classList.remove('is-transitioning');
+    document.body.classList.add('loaded');
+    if (heroHeader) {
+        heroHeader.classList.add('hero-active');
+        markHeroEnteredWhenSettled(heroHeader);
+    }
+    if (window.location.hash) {
+        const targetElement = document.querySelector(window.location.hash);
+        if (targetElement) {
+            targetElement.scrollIntoView({ behavior: 'smooth' });
         }
     }
-}, preloaderDuration);
+    startScrollReveal();
+    startDeferredVideos();
+}
 
 // --- SMOOTH PAGE TRANSITIONS ---
-// Delegated from the document rather than bound per-link at load time. The
-// navigation is rendered by React after this script runs, so the menu's links
-// did not exist yet and never got a listener - clicking Home/About/Gallery
-// navigated bare, which is why the cover wipe only played from in-page links.
+// Delegated from the document so both static links and React-rendered navigation trigger transitions.
 document.addEventListener('click', (e) => {
     // Let modified clicks (new tab, download, save) behave natively
     if (e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
@@ -644,53 +546,63 @@ document.addEventListener('click', (e) => {
     if (!link) return;
 
     if (link.hostname === window.location.hostname && link.target !== '_blank' && !link.hasAttribute('download')) {
-        {
-            const isSamePage = (link.pathname === window.location.pathname && link.search === window.location.search);
+        const normalize = (p) => {
+            const clean = p.replace(/\/index\.html$/, '').replace(/\/$/, '');
+            return clean === '' ? '/' : clean;
+        };
 
-            // Anchor links on the current page keep their default behaviour.
-            if (isSamePage && link.hash) return;
+        const isSamePage = (normalize(link.pathname) === normalize(window.location.pathname) && link.search === window.location.search);
 
-            // Following "Home" while already home used to reload the whole
-            // page, curtain and all. Just go back to the top.
-            if (isSamePage) {
-                e.preventDefault();
-                window.scrollTo({ top: 0, behavior: 'smooth' });
-                return;
-            }
+        // Anchor links on the current page keep their default behaviour
+        if (isSamePage && link.hash) return;
 
+        // Following "Home" or clicking the logo while already home scrolls back to the top
+        if (isSamePage) {
             e.preventDefault();
-            const targetUrl = link.href;
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+            return;
+        }
 
-            if (preloader) {
-                // Show preloader again
-                preloader.classList.remove('done');
-                const curtain = preloader.querySelector('.preloader-curtain');
-                if (curtain) {
-                    // Dynamically inject the Canvas loading sequence just in case
-                    let canvas = curtain.querySelector('.loader-sequence');
-                    if (!canvas) {
-                        canvas = document.createElement('canvas');
-                        canvas.className = 'loader-sequence';
-                        curtain.appendChild(canvas);
-                    }
-                    startLoaderSequence(canvas);
+        e.preventDefault();
+        const targetUrl = link.href;
 
-                    // Execute the diagonal cover animation
-                    curtain.classList.remove('wiping-up'); // Ensure sequence can be visible
-                    curtain.classList.add('do-wipe-down'); // Triggers sequence fade-in
-                    curtain.style.transition = 'none';
-                    curtain.style.animation = 'none';
-                    void curtain.offsetWidth;
-                    curtain.style.animation = 'wipeCover 0.65s cubic-bezier(0.7, 0, 0.3, 1) forwards';
+        // Signal to the destination page that it arrived via internal navigation
+        sessionStorage.setItem('isInternalNav', 'true');
+
+        // Dynamically create or reveal the preloader curtain on the outgoing page
+        let preloader = document.getElementById('global-preloader');
+        if (!preloader) {
+            preloader = document.createElement('div');
+            preloader.id = 'global-preloader';
+            preloader.innerHTML = '<div class="preloader-curtain do-wipe-down"><div class="loader-sequence"></div></div>';
+            document.body.appendChild(preloader);
+        } else {
+            preloader.classList.remove('done');
+            const curtain = preloader.querySelector('.preloader-curtain');
+            if (curtain) {
+                let seq = curtain.querySelector('.loader-sequence');
+                if (!seq) {
+                    seq = document.createElement('div');
+                    seq.className = 'loader-sequence';
+                    curtain.appendChild(seq);
                 }
-                // Wait for animation to finish before navigating
-                setTimeout(() => {
-                    window.location.href = targetUrl;
-                }, 700);
-            } else {
-                window.location.href = targetUrl;
+                curtain.classList.remove('wiping-up');
+                curtain.classList.add('do-wipe-down');
             }
         }
+
+        const curtain = preloader.querySelector('.preloader-curtain');
+        if (curtain) {
+            curtain.style.transition = 'none';
+            curtain.style.animation = 'none';
+            void curtain.offsetWidth;
+            curtain.style.animation = `wipeCover ${WIPE_COVER_MS}ms cubic-bezier(0.7, 0, 0.3, 1) forwards`;
+        }
+
+        // Navigate to target URL after cover wipe completes
+        setTimeout(() => {
+            window.location.href = targetUrl;
+        }, NAV_DELAY_MS);
     }
 });
 
@@ -1605,7 +1517,7 @@ window.addEventListener('pageshow', (event) => {
 // --- RETURNING VIA THE BACK BUTTON ---
 // Leaving a page runs the curtain closed and leaves it that way. When the
 // browser restores that page from its back/forward cache it restores the DOM
-// exactly as it was - curtain down, body mid-transition - so the page came
+// exactly as it was, curtain down, body mid-transition, so the page came
 // back stuck behind a black screen with nothing left to run and clear it.
 // Every restore clears the curtain immediately; there is nothing to cover
 // because the content is already painted underneath.
@@ -1618,7 +1530,11 @@ window.addEventListener('pageshow', (event) => {
         curtain.style.animation = 'none';
         curtain.classList.remove('do-wipe-down', 'wiping-up');
     }
-    if (shell) shell.classList.add('done');
+    if (shell) {
+        shell.classList.add('done');
+        shell.remove();
+    }
+    document.documentElement.classList.remove('is-transitioning');
     document.body.classList.add('loaded');
 
     const hero = document.getElementById('parallax-header') || document.querySelector('header');

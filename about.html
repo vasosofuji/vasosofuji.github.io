@@ -40,20 +40,13 @@
     <link rel="icon" type="image/png" sizes="192x192" href="/icon-192.png">
     <link rel="apple-touch-icon" href="/apple-touch-icon.png">
     <link rel="manifest" href="/site.webmanifest">
-
     <script>
-        if (sessionStorage.getItem('hasVisited')) {
-            document.documentElement.classList.add('not-first-visit');
+        if (sessionStorage.getItem('isInternalNav')) {
+            document.documentElement.classList.add('is-transitioning');
         }
     </script>
 </head>
 <body>
-
-<div id="global-preloader">
-    <div class="preloader-curtain">
-        <canvas class="loader-sequence"></canvas>
-    </div>
-</div>
 
 <div id="react-navbar"></div>
 
