@@ -28,7 +28,8 @@
     <meta name="twitter:image" content="https://vasojevich.com/misc/og-image.jpg">
 
     <script type="application/ld+json">{"@context":"https://schema.org","@type":"ImageGallery","name":"Photo Gallery: Portraits, Concerts, Landscapes | vasosofuji","description":"Browse photography by vasosofuji: portrait sessions, live concert coverage and landscapes from Skopje, Ohrid and across North Macedonia.","url":"https://vasojevich.com/gallery","isPartOf":{"@type":"WebSite","name":"vasosofuji","url":"https://vasojevich.com/"},"author":{"@id":"https://vasojevich.com/#person"}}</script>
-<!-- SEO:END -->
+<!-- SEO:END -->
+
 
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -45,6 +46,11 @@
     <script>
         if (sessionStorage.getItem('isInternalNav')) {
             document.documentElement.classList.add('is-transitioning');
+            // Seed the camera's phase from the same clock the previous page
+            // used, so the rotation carries straight over instead of the cover
+            // sitting black until script.js has loaded and decoded the sprite.
+            document.documentElement.style.setProperty(
+                '--loader-phase', '-' + (Date.now() % 2400) + 'ms');
         }
     </script>
 </head>

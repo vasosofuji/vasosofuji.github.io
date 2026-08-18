@@ -489,7 +489,12 @@ function startDeferredVideos() {
 const LOADER_SPIN_MS = 2400;
 function seedLoaderPhase(seq) {
     if (!seq) return;
-    seq.style.animationDelay = `-${Date.now() % LOADER_SPIN_MS}ms`;
+    const phase = `-${Date.now() % LOADER_SPIN_MS}ms`;
+    seq.style.animationDelay = phase;
+    // The cover painted by CSS reads the same variable, so whichever of the two
+    // is on screen shows the same frame and the handover between them is not
+    // visible.
+    document.documentElement.style.setProperty('--loader-phase', phase);
 }
 
 // --- SMOOTH PAGE TRANSITIONS & PRELOADER LOGIC ---
@@ -694,9 +699,12 @@ document.addEventListener('click', (e) => {
             curtain.style.animation = 'none';
             void curtain.offsetWidth;
             curtain.style.animation = `wipeCover ${WIPE_COVER_MS}ms cubic-bezier(0.7, 0, 0.3, 1) forwards`;
-            // Hold the camera back until the sweep has covered the outgoing
-            // page, otherwise it appears over content that is still visible.
-            setTimeout(() => curtain.classList.add('camera-in'), WIPE_COVER_MS - 150);
+            // Hold the camera back until the sweep has covered the middle of
+            // the screen, otherwise it appears over content that is still
+            // visible. The diagonal reaches the centre around halfway through,
+            // so a little past that is the earliest it can show without the
+            // centre sitting black in between.
+            setTimeout(() => curtain.classList.add('camera-in'), Math.round(WIPE_COVER_MS * 0.55));
         }
 
         // Navigate to target URL after cover wipe completes

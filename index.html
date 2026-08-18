@@ -33,7 +33,8 @@
     <script type="application/ld+json">{"@context":"https://schema.org","@type":"Person","@id":"https://vasojevich.com/#person","name":"Mateja Vasojevikj","alternateName":["vasosofuji","Mateja Vasojevich","Матеја Васојевиќ"],"url":"https://vasojevich.com/","image":"https://vasojevich.com/misc/og-image.jpg","jobTitle":"Photographer and Cinematographer","email":"mailto:contact@vasojevich.com","address":{"@type":"PostalAddress","addressLocality":"Skopje","addressCountry":"MK"},"sameAs":["https://instagram.com/vasosofuji","https://www.linkedin.com/in/mateja-vasojevikj-907555290/","https://www.flickr.com/photos/201695063@N02/"]}</script>
 
     <script type="application/ld+json">{"@context":"https://schema.org","@type":"ProfessionalService","@id":"https://vasojevich.com/#service","name":"vasosofuji Photography & Cinematography","description":"Concert, portrait and landscape photography and video production in Skopje, North Macedonia.","url":"https://vasojevich.com/","image":"https://vasojevich.com/misc/og-image.jpg","email":"mailto:contact@vasojevich.com","founder":{"@id":"https://vasojevich.com/#person"},"areaServed":[{"@type":"City","name":"Skopje"},{"@type":"City","name":"Ohrid"},{"@type":"Country","name":"North Macedonia"}],"address":{"@type":"PostalAddress","addressLocality":"Skopje","addressCountry":"MK"},"knowsLanguage":["en","mk"],"sameAs":["https://instagram.com/vasosofuji","https://www.linkedin.com/in/mateja-vasojevikj-907555290/","https://www.flickr.com/photos/201695063@N02/"]}</script>
-<!-- SEO:END -->
+<!-- SEO:END -->
+
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -49,6 +50,11 @@
     <script>
         if (sessionStorage.getItem('isInternalNav')) {
             document.documentElement.classList.add('is-transitioning');
+            // Seed the camera's phase from the same clock the previous page
+            // used, so the rotation carries straight over instead of the cover
+            // sitting black until script.js has loaded and decoded the sprite.
+            document.documentElement.style.setProperty(
+                '--loader-phase', '-' + (Date.now() % 2400) + 'ms');
         }
     </script>
 </head>

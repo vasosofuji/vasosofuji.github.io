@@ -224,6 +224,32 @@ html.is-transitioning::before {
     pointer-events: all;
 }
 
+/* The camera on that same cover. Without it the curtain sat plain black from
+   the moment this document started parsing until script.js had loaded, run and
+   decoded the sprite, and since the page being left had a camera turning right
+   up to the moment it unloaded, that gap showed as the camera vanishing partway
+   through the transition. Painting it from CSS needs no script, so it is on
+   screen as soon as the stylesheet is. The phase comes from the inline head
+   script, seeded off the same clock the previous page used, so the rotation
+   continues rather than starting over. */
+html.is-transitioning::after {
+    content: '';
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    width: 250px;
+    height: 169px;
+    margin: -84.5px 0 0 -125px;
+    transform: scale(0.8) translateZ(0);
+    background-image: url('misc/loading-sprite.webp');
+    background-size: 2000px 2028px;
+    background-repeat: no-repeat;
+    z-index: 10000;
+    pointer-events: none;
+    animation: loaderSpin var(--loader-spin-ms, 2400ms) steps(1, end) infinite;
+    animation-delay: var(--loader-phase, 0ms);
+}
+
 /* Sequence Loader Sprite Animation.
    The spinning camera loader is rendered as a pure CSS sprite animation stepping background-position.
    Driving playback directly via the browser engine avoids main thread contention during page hydration,

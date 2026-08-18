@@ -44,6 +44,11 @@
     <script>
         if (sessionStorage.getItem('isInternalNav')) {
             document.documentElement.classList.add('is-transitioning');
+            // Seed the camera's phase from the same clock the previous page
+            // used, so the rotation carries straight over instead of the cover
+            // sitting black until script.js has loaded and decoded the sprite.
+            document.documentElement.style.setProperty(
+                '--loader-phase', '-' + (Date.now() % 2400) + 'ms');
         }
     </script>
 </head>

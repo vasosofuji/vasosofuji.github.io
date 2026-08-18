@@ -26,7 +26,8 @@
     <meta name="twitter:title" content="About Mateja Vasojevikj, Photographer &amp; Filmmaker, Skopje">
     <meta name="twitter:description" content="Mateja Vasojevikj, also written Vasojevich, is a photographer and cinematographer in Skopje, North Macedonia, working as vasosofuji. Gear, story and recent work.">
     <meta name="twitter:image" content="https://vasojevich.com/misc/og-image.jpg">
-<!-- SEO:END -->
+<!-- SEO:END -->
+
 
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -43,6 +44,11 @@
     <script>
         if (sessionStorage.getItem('isInternalNav')) {
             document.documentElement.classList.add('is-transitioning');
+            // Seed the camera's phase from the same clock the previous page
+            // used, so the rotation carries straight over instead of the cover
+            // sitting black until script.js has loaded and decoded the sprite.
+            document.documentElement.style.setProperty(
+                '--loader-phase', '-' + (Date.now() % 2400) + 'ms');
         }
     </script>
 </head>
