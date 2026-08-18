@@ -235,11 +235,11 @@ h1, h2, h3, h4, h5, h6, .section-title {
 
 @media (max-width: 768px) {
     .loader-sequence {
-        transform: translate(-50%, -50%) scale(0.6) translateZ(0);
+        transform: translate(-50%, -50%) scale(0.5) translateZ(0);
     }
 
     html.is-transitioning::after {
-        transform: translate(-50%, -50%) scale(0.6) translateZ(0);
+        transform: translate(-50%, -50%) scale(0.5) translateZ(0);
     }
 }
 
@@ -2146,21 +2146,25 @@ section {
         display: contents !important; 
     }
 
-    /* Place heading ABOVE the video but pull the video up to overlap it */
+    /* Both headings straddle the top edge of the video exactly halfway, the same
+       way they do on a wide screen. They used to be laid out completely
+       differently here, the filled one in flow above the video and the outline
+       absolutely placed 3rem down, which is why they never lined up and why the
+       mobile rendering lost the half-in half-out look entirely. Identical
+       boxes also mean the sizing pass measures them against the same width and
+       gives them the same size. */
     .cinematic-content-left {
-        position: relative !important; /* Force relative flow to participate in flexbox */
-        top: auto !important; /* Override desktop absolute coordinates */
-        left: auto !important;
-        order: 1 !important; /* First position, above the video */
+        position: absolute !important;
+        top: 0 !important;
+        left: 0 !important;
         width: 100% !important;
-        padding: 0 1.5rem !important;
+        padding: 0 0.25rem !important;
         display: flex !important;
         justify-content: center !important;
         pointer-events: auto !important;
-        margin-bottom: -1.5rem !important; /* Overlap: Settle layout overlap bounds */
-        z-index: 1 !important; /* Render BEHIND the video (which is z-index 5) */
-        margin-top: 0 !important; /* Keep container flow neutral so it doesn't drag the section */
-        transform: none !important; /* Reset desktop translateY(-50%) */
+        z-index: 1 !important; /* Behind the video, so the video crops the type */
+        margin: 0 !important;
+        transform: translateY(-50%) !important;
     }
 
     /* SPECIFICALLY MAKE THE VIDEOS HEADING LARGER AND STYLED FOR 3D CONTRAST OVERLAP */
@@ -3944,7 +3948,11 @@ button[type="submit"] {
 footer {
     text-align: center;
     padding: 80px 20px 40px 20px; /* More top padding for a gradual fade */
-    background: linear-gradient(to bottom, rgba(0, 0, 0, 0) 0%, rgba(0, 0, 0, 0.6) 50%, rgba(0, 0, 0, 0.9) 100%);
+    /* Stops short of solid: at 0.9 the last stretch of the page went flat black
+       and the ambient light behind it disappeared, which on a phone reads as a
+       black bar appearing along the bottom whenever the address bar retracts
+       and more of the footer comes into view. */
+    background: linear-gradient(to bottom, rgba(0, 0, 0, 0) 0%, rgba(0, 0, 0, 0.35) 55%, rgba(0, 0, 0, 0.5) 100%);
     color: var(--text-muted);
     font-size: 0.9rem;
     border-top: none; /* Removed harsh border */
@@ -4701,6 +4709,16 @@ body.gallery-page footer {
     box-shadow: none !important;
 }
 
+/* The outline and the filled heading are one piece of type seen twice, so they
+   share the reveal. The wrapper is what carries the stagger now, and the inner
+   line is what moves, which keeps the absolute placement of the wrapper intact.
+   Previously only the filled copy animated in and the outline was simply there
+   from the start, which read as the two halves being unrelated. */
+.cinematic-content-outline .t-stagger-line {
+    display: block;
+    width: 100%;
+}
+
 /* Outer outline wrapper for desktop placement */
 .cinematic-content-outline {
     display: flex !important; /* Flex to allow centering */
@@ -4725,14 +4743,23 @@ body.gallery-page footer {
     .cinematic-content-outline {
         display: flex !important;
         position: absolute !important;
-        top: 3rem !important;
+        top: 0 !important;
         left: 0 !important;
         width: 100% !important;
-        padding: 0 1.5rem !important;
+        padding: 0 0.25rem !important;
         justify-content: center !important;
         pointer-events: none !important;
-        z-index: 10 !important;
-        transform: none !important; /* Reset desktop translateY(-50%) on mobile viewport */
+        z-index: 10 !important; /* In front of the video, tracing the cropped half */
+        transform: translateY(-50%) !important;
+    }
+
+    /* The headings are placed against the section's top edge, so that edge has
+       to be the video's edge for the straddle to land. The section carried 48px
+       of padding above the video, which pushed the type clear of it. The
+       headroom the overhanging type needs is margin instead, outside the box. */
+    .cinematic-video-section {
+        padding-top: 0 !important;
+        margin-top: 3.5rem;
     }
 }
 

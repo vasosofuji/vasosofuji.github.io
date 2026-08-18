@@ -434,11 +434,45 @@ function fitMobileHeadings() {
     const outline = document.querySelector('#react-heading-videos-outline .section-title');
     const filled = document.querySelector('#react-heading-videos .section-title');
     if (outline && filled) {
+        // Both sit in identical boxes now, so their independent fits agree and
+        // the smaller of the two is simply the fit. No trim: the pair used to be
+        // shaved to reconcile two different sizes, and that is what was keeping
+        // this heading smaller than it needs to be.
         const size = Math.min(
             parseFloat(getComputedStyle(outline).fontSize),
             parseFloat(getComputedStyle(filled).fontSize)
-        ) * 0.94;
+        );
         [outline, filled].forEach((el) => el.style.setProperty('font-size', size + 'px', 'important'));
+
+        // The pass above only ever steps down, so this heading settled well
+        // inside the space it had. It is the one piece of type on the page that
+        // is meant to fill the frame, so grow it back out until it actually
+        // meets the edge of the room it has.
+        const wrap = outline.parentElement;
+        if (wrap) {
+            const ws = getComputedStyle(wrap);
+            const room = Math.min(wrap.clientWidth, window.innerWidth) -
+                parseFloat(ws.paddingLeft) - parseFloat(ws.paddingRight);
+            const os = getComputedStyle(outline);
+            const own = parseFloat(os.paddingLeft) + parseFloat(os.paddingRight);
+            const target = room - own - 4;
+            const measure = () => {
+                const range = document.createRange();
+                range.selectNodeContents(outline);
+                return range.getBoundingClientRect().width;
+            };
+            let grown = size;
+            const ceiling = Math.min(Math.round(window.innerWidth * 0.26), 130);
+            while (grown < ceiling && measure() < target) {
+                grown += 1;
+                [outline, filled].forEach((el) => el.style.setProperty('font-size', grown + 'px', 'important'));
+            }
+            // The last step is the one that crossed the line, so give it back.
+            if (measure() > target) {
+                grown -= 1;
+                [outline, filled].forEach((el) => el.style.setProperty('font-size', grown + 'px', 'important'));
+            }
+        }
     }
 }
 
@@ -587,6 +621,69 @@ function seedLoaderPhase(seq) {
     // visible.
     document.documentElement.style.setProperty('--loader-phase', phase);
 }
+
+// Runs the cover wipe and then navigates. Exposed on window so anything that
+// moves the visitor to another page can use it: the delegated link handler
+// below, and the React section headings, which are not anchors and were setting
+// location directly, so clicking one skipped the transition entirely.
+function startPageTransition(targetUrl) {
+    if (!targetUrl) return false;
+
+    
+    // Signal to the destination page that it arrived via internal navigation
+    sessionStorage.setItem('isInternalNav', 'true');
+
+    // Preload and decode the sprite sheet in background so destination page has it ready in GPU cache
+    const spriteImg = new Image();
+    spriteImg.src = 'misc/loading-sprite.webp';
+    try { spriteImg.decode(); } catch (err) {}
+
+    // Dynamically create or reveal the preloader curtain on the outgoing page
+    let preloader = document.getElementById('global-preloader');
+    if (!preloader) {
+        preloader = document.createElement('div');
+        preloader.id = 'global-preloader';
+        preloader.innerHTML = '<div class="preloader-curtain do-wipe-down"><div class="loader-sequence"></div></div>';
+        document.body.appendChild(preloader);
+    } else {
+        preloader.classList.remove('done');
+        const curtain = preloader.querySelector('.preloader-curtain');
+        if (curtain) {
+            let seq = curtain.querySelector('.loader-sequence');
+            if (!seq) {
+                seq = document.createElement('div');
+                seq.className = 'loader-sequence';
+                curtain.appendChild(seq);
+            }
+            curtain.classList.remove('wiping-up');
+            curtain.classList.add('do-wipe-down');
+        }
+    }
+
+    const curtain = preloader.querySelector('.preloader-curtain');
+    if (curtain) {
+        curtain.classList.remove('camera-out');
+        seedLoaderPhase(curtain.querySelector('.loader-sequence'));
+        curtain.style.transition = 'none';
+        curtain.style.animation = 'none';
+        void curtain.offsetWidth;
+        curtain.style.animation = `wipeCover ${WIPE_COVER_MS}ms cubic-bezier(0.7, 0, 0.3, 1) forwards`;
+        // Hold the camera back until the sweep has covered the middle of
+        // the screen, otherwise it appears over content that is still
+        // visible. The diagonal reaches the centre around halfway through,
+        // so a little past that is the earliest it can show without the
+        // centre sitting black in between.
+        setTimeout(() => curtain.classList.add('camera-in'), Math.round(WIPE_COVER_MS * 0.55));
+    }
+
+    // Navigate to target URL after cover wipe completes
+    setTimeout(() => {
+        window.location.href = targetUrl;
+    }, NAV_DELAY_MS);
+
+    return true;
+}
+window.startPageTransition = startPageTransition;
 
 // --- SMOOTH PAGE TRANSITIONS & PRELOADER LOGIC ---
 // Fresh arrivals bypass the curtain entirely to maximize Core Web Vitals (FCP and LCP).
@@ -752,58 +849,7 @@ document.addEventListener('click', (e) => {
         }
 
         e.preventDefault();
-        const targetUrl = link.href;
-
-        // Signal to the destination page that it arrived via internal navigation
-        sessionStorage.setItem('isInternalNav', 'true');
-
-        // Preload and decode the sprite sheet in background so destination page has it ready in GPU cache
-        const spriteImg = new Image();
-        spriteImg.src = 'misc/loading-sprite.webp';
-        try { spriteImg.decode(); } catch (err) {}
-
-        // Dynamically create or reveal the preloader curtain on the outgoing page
-        let preloader = document.getElementById('global-preloader');
-        if (!preloader) {
-            preloader = document.createElement('div');
-            preloader.id = 'global-preloader';
-            preloader.innerHTML = '<div class="preloader-curtain do-wipe-down"><div class="loader-sequence"></div></div>';
-            document.body.appendChild(preloader);
-        } else {
-            preloader.classList.remove('done');
-            const curtain = preloader.querySelector('.preloader-curtain');
-            if (curtain) {
-                let seq = curtain.querySelector('.loader-sequence');
-                if (!seq) {
-                    seq = document.createElement('div');
-                    seq.className = 'loader-sequence';
-                    curtain.appendChild(seq);
-                }
-                curtain.classList.remove('wiping-up');
-                curtain.classList.add('do-wipe-down');
-            }
-        }
-
-        const curtain = preloader.querySelector('.preloader-curtain');
-        if (curtain) {
-            curtain.classList.remove('camera-out');
-            seedLoaderPhase(curtain.querySelector('.loader-sequence'));
-            curtain.style.transition = 'none';
-            curtain.style.animation = 'none';
-            void curtain.offsetWidth;
-            curtain.style.animation = `wipeCover ${WIPE_COVER_MS}ms cubic-bezier(0.7, 0, 0.3, 1) forwards`;
-            // Hold the camera back until the sweep has covered the middle of
-            // the screen, otherwise it appears over content that is still
-            // visible. The diagonal reaches the centre around halfway through,
-            // so a little past that is the earliest it can show without the
-            // centre sitting black in between.
-            setTimeout(() => curtain.classList.add('camera-in'), Math.round(WIPE_COVER_MS * 0.55));
-        }
-
-        // Navigate to target URL after cover wipe completes
-        setTimeout(() => {
-            window.location.href = targetUrl;
-        }, NAV_DELAY_MS);
+        startPageTransition(link.href);
     }
 });
 

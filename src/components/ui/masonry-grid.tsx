@@ -195,7 +195,18 @@ const MasonryGrid = <T,>({
     },
   };
 
-  const itemVariants = reduceMotion
+  // On a phone the columns are narrow enough that cards arrive one at a time,
+  // so a per-card lift and scale turns scrolling a set of photographs into a
+  // procession of separate entrances. The stylesheet cannot switch this off,
+  // because these are inline styles written by the motion library, so the
+  // variants themselves have to be flat here. Wider screens keep it, where
+  // several cards enter together and it reads as one movement.
+  const isNarrow =
+    typeof window !== 'undefined' &&
+    typeof window.matchMedia === 'function' &&
+    window.matchMedia('(max-width: 768px)').matches;
+
+  const itemVariants = reduceMotion || isNarrow
     ? { hidden: { opacity: 1 }, visible: { opacity: 1 } }
     : {
         hidden: { opacity: 0, y: 24, scale: 0.97 },
