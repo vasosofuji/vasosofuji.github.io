@@ -19,6 +19,22 @@ const images = [
   "photos/concerts/loverave2.jpg",
 ];
 
+// Kept in step with scripts/build-parallax-variants.mjs, which writes these WebP files.
+const VARIANT_WIDTHS = [400, 800, 1200];
+
+// On desktop the gallery divides the viewport across four columns (roughly 25vw
+// or ~340 CSS px at 1440px wide). Mobile collapses down to one or two columns.
+// Declaring real display widths lets the browser request the right WebP variant
+// instead of decoding multi-megapixel originals.
+const SIZES = "(min-width: 1024px) 25vw, (min-width: 768px) 33vw, (min-width: 640px) 50vw, 100vw";
+
+function buildWebpSrcSet(url: string) {
+  const dot = url.lastIndexOf(".");
+  if (dot <= 0) return undefined;
+  const stem = url.slice(0, dot);
+  return VARIANT_WIDTHS.map((w) => `${stem}-${w}.webp ${w}w`).join(", ");
+}
+
 const ParallaxScroll = () => {
   const gallery = useRef<HTMLDivElement>(null);
 
@@ -48,7 +64,7 @@ const ParallaxScroll = () => {
 
     return () => {
       // Without this the loop outlived the component and kept calling into a
-      // destroyed Lenis instance - a second orphaned rAF on every remount.
+      // destroyed Lenis instance, creating a second orphaned rAF on every remount.
       cancelAnimationFrame(frameId);
       lenis.destroy();
     };
@@ -98,9 +114,12 @@ const Column = ({ images, y, offset, isReversed, className = "" }: ColumnProps) 
         >
           <img
             src={`${src}`}
+            srcSet={buildWebpSrcSet(src)}
+            sizes={SIZES}
             alt="gallery item"
             loading="lazy"
-            className="h-full w-full pointer-events-none object-cover transition-transform duration-700 ease-out group-hover:scale-105 filter brightness-90 hover:brightness-100"
+            decoding="async"
+            className="h-full w-full pointer-events-none object-cover transition-transform duration-700 ease-out group-hover:scale-105 filter brightness-90 group-hover:brightness-100"
           />
         </div>
       ))}

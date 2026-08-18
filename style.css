@@ -4498,13 +4498,43 @@ body.gallery-page footer {
     }
 }
 
-/* Smooth fade mask at the top and bottom of the Parallax Scroll Gallery */
+/* Top and bottom gradient overlays for the parallax gallery.
+   A CSS mask-image forces Chromium to allocate an offscreen surface for the
+   entire 90vh container and re-mask all moving columns on every frame.
+   Overlaying gradient pseudo-elements over the black background achieves the
+   exact same visual edge fade while allowing the columns to composite directly
+   on the GPU without intermediate render passes. */
 .parallax-mask-container {
-    mask-image: linear-gradient(to bottom, transparent 0%, black 12%, black 88%, transparent 100%);
-    -webkit-mask-image: linear-gradient(to bottom, transparent 0%, black 12%, black 88%, transparent 100%);
+    position: relative;
 }
 
-/* Hardware acceleration for smooth parallax scroll animation */
+.parallax-mask-container::before,
+.parallax-mask-container::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    right: 0;
+    height: 12%;
+    pointer-events: none;
+    z-index: 10;
+}
+
+.parallax-mask-container::before {
+    top: 0;
+    background: linear-gradient(to bottom, #000000 0%, transparent 100%);
+}
+
+.parallax-mask-container::after {
+    bottom: 0;
+    background: linear-gradient(to top, #000000 0%, transparent 100%);
+}
+
+/* Hardware acceleration for the parallax columns.
+   Each column is translated vertically as a single unit by framer-motion.
+   Promoting only the column containers to GPU layers keeps the layer count at
+   four instead of sixteen. The individual image items inside do not need their
+   own layer promotions, which previously triggered excessive texture allocation
+   and per-frame compositing overhead. */
 .parallax-gpu-column {
     will-change: transform;
     transform: translate3d(0, 0, 0);
@@ -4513,8 +4543,6 @@ body.gallery-page footer {
 }
 
 .parallax-gpu-item {
-    will-change: transform;
-    transform: translate3d(0, 0, 0);
     backface-visibility: hidden;
     -webkit-backface-visibility: hidden;
 }
