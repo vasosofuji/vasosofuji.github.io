@@ -3112,9 +3112,20 @@ section {
    overrides are not clobbered by earlier base declarations. */
 @media (max-width: 768px) {
     .modal-overlay {
-        align-items: flex-start;
+        /* Centred in whatever space is actually left, not pinned to the top.
+           Pinning meant that on a tall phone the form sat hard against the top
+           of the screen with a large empty gap between it and the keyboard.
+           `center` with `auto` margins on the panel centres it when it fits and
+           still lets it scroll from the top when it does not, which is the
+           behaviour that works for every keyboard height rather than for one. */
+        align-items: center;
         padding: 12px 0;
+        /* Anchored to the top of the visible area, not the top of the document,
+           so a browser that scrolls the page to reveal a focused field does not
+           drag the panel out of view with it. */
+        top: var(--vvtop, 0px);
         height: var(--vvh, 100%);
+        max-height: var(--vvh, 100%);
         overflow-y: auto;
         -webkit-overflow-scrolling: touch;
     }
@@ -3122,7 +3133,7 @@ section {
     .modal-content {
         width: 94%;
         padding: 26px 20px 22px;
-        margin: auto 0;
+        margin: auto;
     }
 
     .booking-modal-content {
@@ -3716,6 +3727,8 @@ section {
 .pl-close,
 .pl-nav {
     position: absolute;
+    padding: 0;
+    line-height: 0;
     background: rgba(255, 255, 255, 0.06);
     border: 1px solid rgba(255, 255, 255, 0.14);
     color: #fff;
@@ -3759,6 +3772,10 @@ section {
 
 .pl-nav:hover { transform: translateY(-50%) scale(1.06); }
 
+.pl-nav svg {
+    display: block;
+}
+
 /* On a phone the side arrows sat on top of the photo and were an awkward
    reach. They become a control row under the caption instead, in the thumb
    zone, with the counter between them. */
@@ -3797,6 +3814,17 @@ section {
     .pl-nav--next {
         left: auto;
         right: auto;
+        top: auto;
+        /* The pinned desktop position centres these with a translate. In the
+           mobile control row there is nothing to centre against, and that
+           leftover shift is what pushed the arrow off centre inside its
+           circle. */
+        transform: none;
+    }
+
+    .pl-nav:hover,
+    .pl-nav:focus-visible {
+        transform: none;
     }
 
     /* Reorders the figure so the buttons sit under the caption. */
@@ -4414,7 +4442,9 @@ footer {
 
 .sheet-meta {
     opacity: 0;
-    animation: sheetMetaIn 0.45s cubic-bezier(0.22, 1, 0.36, 1) 0.18s forwards;
+    /* Same curve and shape as the title above it, just trailing it, so the two
+       read as one entrance rather than as two separate effects. */
+    animation: fadeInUp 0.75s cubic-bezier(0.16, 1, 0.3, 1) 0.22s both;
 }
 
 @media (max-width: 768px) {
@@ -4506,6 +4536,29 @@ footer {
     color: var(--bg-color);
     background: var(--accent);
     font-weight: bold;
+}
+
+/* Letter spacing is added after every character including the last, so the
+   glyphs sit that much left of the middle of their own box and the filled pill
+   looks shifted to the right of its label. Pulling the text back by the same
+   amount puts the label in the centre of the pill. */
+.gallery-nav-bubble a {
+    text-indent: 0.5px;
+    padding-right: calc(15px - 0.5px);
+}
+
+@media (max-width: 768px) {
+    .gallery-nav-bubble a {
+        text-indent: 0.5px;
+        padding-right: calc(10px - 0.5px);
+    }
+}
+
+@media (max-width: 400px) {
+    .gallery-nav-bubble a {
+        text-indent: 0.3px;
+        padding-right: calc(8px - 0.3px);
+    }
 }
 
 /* Mobile adjustments for floating bubble.
@@ -5485,8 +5538,20 @@ body.photo-page header.hero-active h1 {
 }
 
 body.photo-page .sheet-meta {
-    animation-duration: 0.34s;
-    animation-delay: 0.08s;
+    animation-duration: 0.5s;
+    animation-delay: 0.16s;
+}
+
+/* On a phone these pages do not animate anything in. The cards are already
+   plain there, and a title and caption sliding up on their own read as leftover
+   movement rather than as an entrance. */
+@media (max-width: 768px) {
+    body.photo-page header.hero-active h1,
+    body.photo-page .sheet-meta {
+        animation: none !important;
+        opacity: 1 !important;
+        transform: none !important;
+    }
 }
 
 body.photo-page .photo-card {

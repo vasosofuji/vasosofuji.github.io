@@ -20,15 +20,24 @@ export default function PhotoLightbox({ photos, index, onClose, onNavigate }: Ph
   const open = index !== null;
   const reduceMotion = useReducedMotion();
   const closeRef = React.useRef<HTMLButtonElement>(null);
-  const touchStart = React.useRef<{ x: number; y: number } | null>(null);
+  // Which way the set was last moved through, so the incoming photograph enters
+  // from the side the outgoing one left towards rather than always the same
+  // side. Zero on first open, where there is nothing to come from.
+  const [direction, setDirection] = React.useState(0);
 
   const go = React.useCallback(
     (step: number) => {
       if (index === null || !photos.length) return;
+      setDirection(step > 0 ? 1 : -1);
       onNavigate((index + step + photos.length) % photos.length);
     },
     [index, photos.length, onNavigate]
   );
+
+  // A freshly opened lightbox should not slide in from anywhere.
+  React.useEffect(() => {
+    if (!open) setDirection(0);
+  }, [open]);
 
   // Keyboard: Escape closes, arrows page through the set.
   React.useEffect(() => {
@@ -73,19 +82,7 @@ export default function PhotoLightbox({ photos, index, onClose, onNavigate }: Ph
           exit={{ opacity: 0 }}
           transition={{ duration: reduceMotion ? 0 : 0.22 }}
           onClick={onClose}
-          onTouchStart={(e) => {
-            const t = e.touches[0];
-            touchStart.current = { x: t.clientX, y: t.clientY };
-          }}
-          onTouchEnd={(e) => {
-            const s = touchStart.current;
-            touchStart.current = null;
-            if (!s) return;
-            const t = e.changedTouches[0];
-            const dx = t.clientX - s.x;
-            const dy = t.clientY - s.y;
-            if (Math.abs(dx) > 55 && Math.abs(dx) > Math.abs(dy)) go(dx < 0 ? 1 : -1);
-          }}
+
         >
           <button ref={closeRef} type="button" className="pl-close" onClick={onClose} aria-label="Close">
             &times;
@@ -96,9 +93,31 @@ export default function PhotoLightbox({ photos, index, onClose, onNavigate }: Ph
             // Click inside the frame must not fall through to the backdrop.
             onClick={(e) => e.stopPropagation()}
             key={photo.src}
-            initial={reduceMotion ? false : { opacity: 0, scale: 0.97 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ duration: reduceMotion ? 0 : 0.25, ease: 'easeOut' }}
+            // The frame follows the finger and the next photograph arrives from
+            // the side it was dragged towards. Waiting for the finger to lift
+            // and then jumping to the next image gave no sense of moving
+            // through a set; this reads as pushing one card aside to get at the
+            // one behind it. Vertical drag stays free so the page underneath
+            // still scrolls the way it should.
+            drag={photos.length > 1 && !reduceMotion ? 'x' : false}
+            dragDirectionLock
+            dragConstraints={{ left: 0, right: 0 }}
+            dragElastic={0.28}
+            dragMomentum={false}
+            onDragEnd={(_, info) => {
+              const far = Math.abs(info.offset.x) > 90;
+              const fast = Math.abs(info.velocity.x) > 420;
+              if (far || fast) go(info.offset.x < 0 ? 1 : -1);
+            }}
+            initial={
+              reduceMotion
+                ? false
+                : { opacity: 0, scale: 0.97, x: direction === 0 ? 0 : direction * 90 }
+            }
+            animate={{ opacity: 1, scale: 1, x: 0 }}
+            exit={reduceMotion ? undefined : { opacity: 0, scale: 0.97 }}
+            transition={{ duration: reduceMotion ? 0 : 0.28, ease: [0.22, 1, 0.36, 1] }}
+            style={{ touchAction: 'pan-y', cursor: photos.length > 1 ? 'grab' : 'default' }}
           >
             <img className="pl-image" src={photo.src} alt={photo.alt} />
 
@@ -129,7 +148,10 @@ export default function PhotoLightbox({ photos, index, onClose, onNavigate }: Ph
                   aria-label="Previous photo"
                   onClick={(e) => { e.stopPropagation(); go(-1); }}
                 >
-                  &#8592;
+                  <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor"
+                    strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                    <polyline points="15 18 9 12 15 6" />
+                  </svg>
                 </button>
                 <p className="pl-counter">{index + 1} / {photos.length}</p>
                 <button
@@ -138,7 +160,10 @@ export default function PhotoLightbox({ photos, index, onClose, onNavigate }: Ph
                   aria-label="Next photo"
                   onClick={(e) => { e.stopPropagation(); go(1); }}
                 >
-                  &#8594;
+                  <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor"
+                    strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                    <polyline points="9 18 15 12 9 6" />
+                  </svg>
                 </button>
               </div>
             )}

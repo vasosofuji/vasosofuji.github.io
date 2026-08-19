@@ -1251,9 +1251,20 @@ injectBookingModals();
     const vv = window.visualViewport;
     if (vv) {
         const syncViewport = () => {
+            // The visual viewport is the part of the page the visitor can
+            // actually see once the keyboard is up, and it is also offset down
+            // the page when the browser scrolls to reveal a focused field. Both
+            // have to be fed to the layout or the panel is centred in a box that
+            // does not match what is on screen, which is what left a large empty
+            // stretch between the form and the keyboard.
             document.documentElement.style.setProperty('--vvh', `${vv.height}px`);
+            document.documentElement.style.setProperty('--vvtop', `${vv.offsetTop}px`);
             // A meaningful shortfall against the window height means a keyboard.
-            document.body.classList.toggle('keyboard-open', window.innerHeight - vv.height > 150);
+            // Proportional rather than a fixed 150px: phones differ enormously
+            // in how much of the screen a keyboard takes, and a fold in
+            // particular has a very different ratio to a normal handset.
+            const hidden = window.innerHeight - vv.height;
+            document.body.classList.toggle('keyboard-open', hidden > window.innerHeight * 0.15);
         };
         vv.addEventListener('resize', syncViewport);
         vv.addEventListener('scroll', syncViewport);
