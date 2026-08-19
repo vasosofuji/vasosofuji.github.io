@@ -1331,6 +1331,7 @@ injectBookingModals();
                     email: (el('bookingEmail') && el('bookingEmail').value) || '',
                     name: (el('bookingName') && el('bookingName').value) || '',
                     date: (el('dateInput') && el('dateInput').value) || '',
+                    eventType: snapshot().eventType,
                     lang: typeof currentLang !== 'undefined' ? currentLang : 'en',
                 }),
                 keepalive: true,

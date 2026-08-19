@@ -11,12 +11,20 @@
 //   BREVO_SENDER_EMAIL   defaults to contact@vasojevich.com. Must be a sender
 //                        Brevo has verified, or the send is rejected.
 //   BREVO_SENDER_NAME    defaults to Mateja Vasojevikj
-//   BREVO_LIST_ID        if set, the address is also added to this Brevo list,
-//                        which is what an automation there would listen to
+//   BREVO_LIST_ID        if set, the address is also added to this Brevo list
+//   FOLLOW_UP_DELAY_MIN  minutes before the second email, default 60
 //   ALLOWED_ORIGIN       defaults to https://vasojevich.com
+//
+// The whole sequence lives here rather than in a Brevo automation: the instant
+// thank you goes out on submit, and the follow up is handed to Brevo with a
+// scheduledAt an hour ahead, which its transactional API accepts up to 72 hours
+// out. That keeps the copy in the repository next to everything else, versioned
+// and reviewable, and means there is one place to look when a message is wrong.
 //
 // With no key configured this endpoint does nothing and reports success, so the
 // booking flow behaves exactly as it did before Brevo was introduced.
+
+import { buildFollowUp } from './_followups.js';
 
 const ALLOWED_ORIGIN = process.env.ALLOWED_ORIGIN || 'https://vasojevich.com';
 const BREVO_API = 'https://api.brevo.com/v3';
@@ -133,19 +141,18 @@ export default async function handler(req, res) {
       }).catch(() => {});
     }
 
+    const sender = {
+      email: process.env.BREVO_SENDER_EMAIL || 'contact@vasojevich.com',
+      name: process.env.BREVO_SENDER_NAME || 'Mateja Vasojevikj',
+    };
+
     const send = await fetch(`${BREVO_API}/smtp/email`, {
       method: 'POST',
       headers,
       body: JSON.stringify({
-        sender: {
-          email: process.env.BREVO_SENDER_EMAIL || 'contact@vasojevich.com',
-          name: process.env.BREVO_SENDER_NAME || 'Mateja Vasojevikj',
-        },
+        sender,
         to: [{ email, name: name || undefined }],
-        replyTo: {
-          email: process.env.BREVO_SENDER_EMAIL || 'contact@vasojevich.com',
-          name: process.env.BREVO_SENDER_NAME || 'Mateja Vasojevikj',
-        },
+        replyTo: sender,
         subject,
         htmlContent: `<!doctype html><html><body style="font-family:system-ui,sans-serif;line-height:1.6;color:#222">${html}</body></html>`,
       }),
@@ -157,7 +164,37 @@ export default async function handler(req, res) {
       return res.status(502).json({ error: 'Could not send the confirmation' });
     }
 
-    return res.status(200).json({ ok: true });
+    // The tailored follow up, scheduled rather than sent. Brevo accepts an ISO
+    // timestamp up to 72 hours ahead and holds the message itself, so nothing
+    // here has to stay awake to deliver it.
+    const delayMin = Number(process.env.FOLLOW_UP_DELAY_MIN);
+    const minutes = Number.isFinite(delayMin) && delayMin > 0 ? delayMin : 60;
+    const at = new Date(Date.now() + minutes * 60_000).toISOString();
+    const follow = buildFollowUp(body.eventType, lang, name.split(/\s+/)[0] || '');
+
+    const scheduled = await fetch(`${BREVO_API}/smtp/email`, {
+      method: 'POST',
+      headers,
+      body: JSON.stringify({
+        sender,
+        to: [{ email, name: name || undefined }],
+        replyTo: sender,
+        subject: follow.subject,
+        htmlContent: follow.html,
+        scheduledAt: at,
+        tags: ['booking-follow-up', follow.kind.toLowerCase()],
+      }),
+    });
+
+    if (!scheduled.ok) {
+      // The thank you is already away, so this is logged and swallowed. A
+      // missing follow up is not worth reporting the booking as failed.
+      const detail = await scheduled.text();
+      console.error('thank-you: could not schedule the follow up', scheduled.status, detail.slice(0, 300));
+      return res.status(200).json({ ok: true, followUp: false });
+    }
+
+    return res.status(200).json({ ok: true, followUp: follow.kind, scheduledAt: at });
   } catch (err) {
     console.error('thank-you: request to Brevo failed', err);
     return res.status(502).json({ error: 'Could not send the confirmation' });

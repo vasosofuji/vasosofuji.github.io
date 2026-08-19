@@ -9,6 +9,7 @@ import { ParallaxScroll } from '@/components/ui/parallax-scroll'
 import SterlingGateKineticNavigation from '@/components/ui/sterling-gate-kinetic-navigation'
 import ParallaxLaptopBuilder from '@/components/ui/parallax-laptop-builder'
 import WebdevEstimator from '@/components/ui/webdev-estimator'
+import WebdevRedesignHub from '@/components/ui/webdev-redesign-hub'
 import { Analytics } from '@vercel/analytics/react'
 
 // --- React Navbar & Global Telemetry ---
@@ -82,7 +83,7 @@ const portraitsHeading = document.getElementById('react-heading-portraits')
 if (portraitsHeading) {
   createRoot(portraitsHeading).render(
     <StrictMode>
-      <HoverHeading text="Portraits" url="portraits.html" dataTranslate="portraits" />
+      <HoverHeading text="Portraits" url="/portraits" dataTranslate="portraits" />
     </StrictMode>
   )
 }
@@ -100,7 +101,7 @@ const concertsHeading = document.getElementById('react-heading-concerts')
 if (concertsHeading) {
   createRoot(concertsHeading).render(
     <StrictMode>
-      <HoverHeading text="Concerts" url="concerts.html" dataTranslate="concerts" />
+      <HoverHeading text="Concerts" url="/concerts" dataTranslate="concerts" />
     </StrictMode>
   )
 }
@@ -118,7 +119,7 @@ const landscapesHeading = document.getElementById('react-heading-landscapes')
 if (landscapesHeading) {
   createRoot(landscapesHeading).render(
     <StrictMode>
-      <HoverHeading text="Landscapes" url="landscapes.html" dataTranslate="landscapes" />
+      <HoverHeading text="Landscapes" url="/landscapes" dataTranslate="landscapes" />
     </StrictMode>
   )
 }
@@ -136,7 +137,7 @@ const videosHeading = document.getElementById('react-heading-videos')
 if (videosHeading) {
   createRoot(videosHeading).render(
     <StrictMode>
-      <HoverHeading text="Videos" url="videos.html" dataTranslate="videos" />
+      <HoverHeading text="Videos" url="/videos" dataTranslate="videos" />
     </StrictMode>
   )
 }
@@ -145,7 +146,7 @@ const videosHeadingOutline = document.getElementById('react-heading-videos-outli
 if (videosHeadingOutline) {
   createRoot(videosHeadingOutline).render(
     <StrictMode>
-      <HoverHeading text="Videos" url="videos.html" dataTranslate="videos" outline={true} />
+      <HoverHeading text="Videos" url="/videos" dataTranslate="videos" outline={true} />
     </StrictMode>
   )
 }
@@ -169,7 +170,17 @@ if (parallaxGalleryElement) {
   )
 }
 
-// --- Web Development Page Components ---
+// --- Web Development Page Root ---
+const webdevRootElement = document.getElementById('react-webdev-root')
+if (webdevRootElement) {
+  createRoot(webdevRootElement).render(
+    <StrictMode>
+      <WebdevRedesignHub />
+    </StrictMode>,
+  )
+}
+
+// Fallback mounts for individual component tests
 const laptopHeroElement = document.getElementById('react-laptop-hero')
 if (laptopHeroElement) {
   createRoot(laptopHeroElement).render(
