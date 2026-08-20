@@ -27,6 +27,11 @@ const PAGE_MAX_PX = 110;
 const FLICK_VELOCITY = 380;
 // Below this the gesture was a tap that wandered, not a swipe.
 const MIN_SWIPE_PX = 10;
+// Dark between one photograph and the next. Without it the strip was pitched by
+// exactly one frame width, and since a frame is rarely a whole number of pixels
+// the rounding left a hairline of the previous photograph showing down the edge
+// of the screen. It also gives the swipe an edge to read against.
+const GUTTER = 20;
 // How far a finger has to travel before the direction of the gesture is
 // decided, so a scroll that drifts sideways is not read as a page turn.
 const AXIS_LOCK_PX = 8;
@@ -47,6 +52,8 @@ export default function PhotoLightbox({ photos, index, onClose, onNavigate }: Ph
 
   const viewportRef = React.useRef<HTMLDivElement | null>(null);
   const [width, setWidth] = React.useState(0);
+  // One frame plus the dark beside it: what the strip travels per photograph.
+  const step = width + GUTTER;
 
   // The strip's offset. Held as a motion value so a finger can move it without
   // re-rendering anything - the caption, the counter and the arrows are outside
@@ -103,12 +110,15 @@ export default function PhotoLightbox({ photos, index, onClose, onNavigate }: Ph
     const stepped = lastPos.current !== pos && !jump.current;
     lastPos.current = pos;
     jump.current = false;
-    settle(-pos * width, !stepped);
-  }, [pos, settle, width]);
+    settle(-pos * step, !stepped);
+  }, [pos, settle, step]);
 
+  // getBoundingClientRect, not clientWidth: the latter is rounded to whole
+  // pixels, and a third of a pixel of error per frame is all it takes to leave
+  // the edge of the neighbouring photograph on screen.
   const measure = React.useCallback((node: HTMLDivElement | null) => {
     viewportRef.current = node;
-    if (node) setWidth(node.clientWidth);
+    if (node) setWidth(node.getBoundingClientRect().width);
   }, []);
 
   React.useEffect(() => {
@@ -116,7 +126,7 @@ export default function PhotoLightbox({ photos, index, onClose, onNavigate }: Ph
     const onResize = () => {
       if (viewportRef.current) {
         jump.current = true;
-        setWidth(viewportRef.current.clientWidth);
+        setWidth(viewportRef.current.getBoundingClientRect().width);
       }
     };
     window.addEventListener('resize', onResize);
@@ -219,7 +229,7 @@ export default function PhotoLightbox({ photos, index, onClose, onNavigate }: Ph
 
     // Free within one frame either side; past that it drags heavily, so the
     // gesture cannot be thrown three photographs along in one go.
-    const span = width || 1;
+    const span = step || 1;
     const min = -(pos + 1) * span;
     const max = -(pos - 1) * span;
     let next = d.from + dx;
@@ -235,7 +245,7 @@ export default function PhotoLightbox({ photos, index, onClose, onNavigate }: Ph
     if (d.axis !== 'x') return;
 
     draggedAt.current = Date.now();
-    const rest = -pos * (width || 1);
+    const rest = -pos * (step || 1);
     const offset = x.get() - rest;
     const travelled = Math.abs(offset);
     const threshold = Math.min(PAGE_MAX_PX, (width || 1) * PAGE_FRACTION);
@@ -250,7 +260,7 @@ export default function PhotoLightbox({ photos, index, onClose, onNavigate }: Ph
   const onPointerCancel = (e: React.PointerEvent) => {
     if (!drag.current || drag.current.id !== e.pointerId) return;
     drag.current = null;
-    settle(-pos * (width || 1), false);
+    settle(-pos * (step || 1), false);
   };
 
   // Only the photograph and the text are inert; the dark around them closes,
@@ -310,7 +320,7 @@ export default function PhotoLightbox({ photos, index, onClose, onNavigate }: Ph
                       <div
                         className="pl-slide"
                         key={slot}
-                        style={{ transform: `translateX(${slot * 100}%)` }}
+                        style={{ transform: `translateX(calc(${slot * 100}% + ${slot * GUTTER}px))` }}
                         aria-hidden={!isCurrent}
                       >
                         <img

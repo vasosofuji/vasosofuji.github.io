@@ -2114,23 +2114,22 @@ document.addEventListener('DOMContentLoaded', () => {
             requestFrame();
         };
 
-        // Pointer parallax is a fine-pointer affordance; skip wiring it up on
-        // touch-only devices and when the visitor asked for reduced motion.
-        //
-        // Touch is deliberately not wired up at all. A finger on a phone is not
-        // a hovering pointer - it is the scroll gesture, and every touchmove it
-        // produced was fed in here as a new parallax target measured against a
-        // container that was itself moving up the page. Flicking from the foot
-        // of the page back to the top left the target pinned somewhere extreme,
-        // and the collage then eased towards it as the hero came back into
-        // view, so the cards drifted upwards after the page had already stopped.
-        // There is no reliable way to tell a deliberate drag over the collage
-        // from a scroll, and the collage already has its own float animation, so
-        // on touch it simply stays where it is.
+        // Pointer parallax follows a pointer that hovers, which is a mouse and
+        // nothing else. A finger is not hovering - it is the scroll gesture, and
+        // every touchmove it produced was fed in here as a new parallax target
+        // measured against a container that was itself moving up the page.
+        // Flicking from the foot of the page back to the top left the target
+        // pinned somewhere extreme, and the collage eased towards it as the hero
+        // came back into view, so the cards drifted upwards after the page had
+        // already stopped. There is no way to tell a deliberate drag across the
+        // collage from a scroll that happens to start on it, so touch does not
+        // drive this at all. What moves the collage on a phone is its own slow
+        // drift, which is a CSS animation and owes nothing to the scroll.
         const wantsMotion = !window.matchMedia('(prefers-reduced-motion: reduce)').matches;
         const hasFinePointer = window.matchMedia('(pointer: fine)').matches;
+        const pointerParallax = wantsMotion && hasFinePointer;
 
-        if (wantsMotion && hasFinePointer) {
+        if (pointerParallax) {
             window.addEventListener(
                 'mousemove',
                 (e) => onPointerInput(e.clientX, e.clientY),
@@ -2138,9 +2137,15 @@ document.addEventListener('DOMContentLoaded', () => {
             );
         }
 
-        // OPTIMIZATION: stop the loop outright when the hero is off-screen
+        // OPTIMIZATION: stop the loop outright when the hero is off-screen, and
+        // hold the drift there too. The class marks the hero as gone rather than
+        // as present, so if this never runs the drift is still running.
         const observer = new IntersectionObserver((entries) => {
             isVisible = entries[0].isIntersecting;
+            parallaxContainer.classList.toggle('is-offscreen', !isVisible);
+
+            if (!pointerParallax) return;
+
             if (isVisible) {
                 requestFrame();
             } else if (animationFrameId !== null) {

@@ -737,6 +737,58 @@ header.hero-active .floating-el:nth-child(8) { animation-delay: 2.05s; }
     transform: scale(1.05);
 }
 
+/* --- HERO COLLAGE ON TOUCH ---
+   On a mouse the collage answers the pointer, which a finger cannot do: on a
+   phone the only gesture over the hero is the scroll, and driving the cards
+   from that dragged them along with the page. So on touch the collage carries
+   its own drift instead - slow, small, and owing nothing to where the page is
+   scrolled to. It rides on the <img> rather than the card, because the card is
+   what the pointer loop writes to, so the two can never fight over the same
+   transform.
+
+   Two curves and four durations between the sixteen cards, all with negative
+   delays so they begin part-way through rather than setting off together. */
+@keyframes heroDrift {
+    0%   { transform: translate3d(0, 0, 0) rotate(0deg); }
+    33%  { transform: translate3d(3px, -9px, 0) rotate(0.7deg); }
+    66%  { transform: translate3d(-3px, -15px, 0) rotate(-0.5deg); }
+    100% { transform: translate3d(0, 0, 0) rotate(0deg); }
+}
+
+@keyframes heroDriftAlt {
+    0%   { transform: translate3d(0, 0, 0) rotate(0deg); }
+    33%  { transform: translate3d(-4px, -12px, 0) rotate(-0.6deg); }
+    66%  { transform: translate3d(2px, -5px, 0) rotate(0.8deg); }
+    100% { transform: translate3d(0, 0, 0) rotate(0deg); }
+}
+
+@media (pointer: coarse) {
+    .floating-el img {
+        animation: heroDrift 12s ease-in-out infinite;
+    }
+
+    .floating-el:nth-child(even) img {
+        animation-name: heroDriftAlt;
+    }
+
+    /* The bigger, nearer cards move sooner; the small far ones take their time. */
+    .floating-el:nth-child(4n+1) img { animation-duration: 13s;   animation-delay: -1.5s; }
+    .floating-el:nth-child(4n+2) img { animation-duration: 16s;   animation-delay: -6s; }
+    .floating-el:nth-child(4n+3) img { animation-duration: 10.5s; animation-delay: -3.5s; }
+    .floating-el:nth-child(4n+4) img { animation-duration: 18s;   animation-delay: -8s; }
+
+    /* Nothing to look at once the hero has scrolled past. */
+    .parallax-floating-container.is-offscreen .floating-el img {
+        animation-play-state: paused;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .floating-el img {
+        animation: none;
+    }
+}
+
 /* --- PREMIUM HERO TYPOGRAPHY --- */
 .section-title {
     font-size: clamp(2rem, 8vw, 6rem); /* Reduced maximum size for Syne */
@@ -5658,5 +5710,41 @@ body.photo-page .photo-card {
     body.photo-page .sheet-meta {
         animation: none;
         opacity: 1;
+    }
+}
+
+/* --- THE AVAILABILITY CALENDAR ON A PHONE ---
+   The same treatment the popup calendar already had. The day cells were pinned
+   to a 40px height against a column that was whatever a seventh of the page came
+   to, so on a wide handset - a Fold in particular - they came out as letterboxes
+   with the numbers stranded apart, and the gap fell through to the 8px set by a
+   later `max-width: 1024px` block rather than the 6px meant for phones.
+
+   Two-class selectors because media queries carry no specificity of their own,
+   and `.calendar-center-wrapper` is the availability section's own frame, so
+   none of this reaches the popup. */
+@media (max-width: 768px) {
+    .calendar-center-wrapper .calendar-grid {
+        gap: 5px;
+    }
+
+    /* Square cells read as a calendar; a fixed height against a column of some
+       other width does not. */
+    .calendar-center-wrapper .day {
+        height: auto !important;
+        aspect-ratio: 1 / 1 !important;
+        font-size: 0.95rem;
+    }
+
+    .calendar-center-wrapper .weekdays {
+        font-size: 0.68rem;
+        letter-spacing: 0.06em;
+        margin-bottom: 10px;
+    }
+}
+
+@media (max-width: 380px) {
+    .calendar-center-wrapper .calendar-grid {
+        gap: 4px;
     }
 }
