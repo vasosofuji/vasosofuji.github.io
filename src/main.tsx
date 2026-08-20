@@ -9,7 +9,6 @@ import { ParallaxScroll } from '@/components/ui/parallax-scroll'
 import SterlingGateKineticNavigation from '@/components/ui/sterling-gate-kinetic-navigation'
 import ParallaxLaptopBuilder from '@/components/ui/parallax-laptop-builder'
 import WebdevEstimator from '@/components/ui/webdev-estimator'
-import WebdevRedesignHub from '@/components/ui/webdev-redesign-hub'
 import { Analytics } from '@vercel/analytics/react'
 
 // --- React Navbar & Global Telemetry ---
@@ -170,17 +169,7 @@ if (parallaxGalleryElement) {
   )
 }
 
-// --- Web Development Page Root ---
-const webdevRootElement = document.getElementById('react-webdev-root')
-if (webdevRootElement) {
-  createRoot(webdevRootElement).render(
-    <StrictMode>
-      <WebdevRedesignHub />
-    </StrictMode>,
-  )
-}
-
-// Fallback mounts for individual component tests
+// --- Web Development Page Components ---
 const laptopHeroElement = document.getElementById('react-laptop-hero')
 if (laptopHeroElement) {
   createRoot(laptopHeroElement).render(
