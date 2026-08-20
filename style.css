@@ -2621,6 +2621,14 @@ section {
 
 
 /* --- THANK YOU --- */
+/* The confirmation is added next to the form rather than in place of it, so the
+   close cross and its listener survive and the form is still there for a second
+   enquiry. Everything the form is made of is hidden while it shows; the cross
+   itself is not, since it is how the panel is dismissed. */
+.modal-content.is-thanks > :not(.close-modal):not(.thanks-panel) {
+    display: none;
+}
+
 .thanks-panel {
     text-align: center;
     display: flex;
@@ -3647,7 +3655,14 @@ section {
     background: rgba(6, 6, 6, 0.94);
     backdrop-filter: blur(14px);
     -webkit-backdrop-filter: blur(14px);
+    /* A column: the frame, then the counter under it. The arrows and the cross
+       are absolutely positioned against this box, which is deliberately the one
+       element in here that never carries a transform - anything pinned inside a
+       transformed ancestor is pinned to that ancestor instead, which is what
+       used to sit the desktop arrows against the photograph for a moment and
+       then throw them out to the edges of the screen. */
     display: flex;
+    flex-direction: column;
     align-items: center;
     justify-content: center;
     padding: clamp(1rem, 4vw, 3rem);
@@ -3656,25 +3671,77 @@ section {
     max-width: 100vw;
 }
 
+/* min-height: 0 the whole way down so the frame is what gives way when the
+   window is short. Without it a flex item refuses to shrink below its content
+   and the overlay grows a scrollbar of its own instead. */
+.pl-stage {
+    width: min(1200px, 100%);
+    max-height: 100%;
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
 .pl-figure {
     margin: 0;
     display: flex;
     flex-direction: column;
     align-items: center;
     gap: 1rem;
-    max-width: min(1200px, 100%);
+    width: 100%;
     max-height: 100%;
+    min-height: 0;
+}
+
+/* The window the strip of photographs moves behind. Given a height of its own
+   so the frame does not resize itself as pictures of different shapes pass
+   through it, and clipped so the next one is only ever seen arriving from the
+   edge. */
+.pl-viewport {
+    position: relative;
+    width: 100%;
+    height: min(74vh, 900px);
+    flex: 0 1 auto;
+    min-height: 0;
+    overflow: hidden;
+    /* Sideways belongs to the swipe; up and down still belongs to the page. */
+    touch-action: pan-y;
+}
+
+.pl-track {
+    position: absolute;
+    inset: 0;
+    cursor: grab;
+    touch-action: pan-y;
+}
+
+.pl-track:active {
+    cursor: grabbing;
+}
+
+.pl-slide {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 .pl-image {
     max-width: 100%;
-    /* Leaves room for the caption underneath at any viewport height. */
-    max-height: min(76vh, 900px);
+    max-height: 100%;
     width: auto;
     height: auto;
     object-fit: contain;
     border-radius: 6px;
     box-shadow: 0 30px 80px rgba(0, 0, 0, 0.7);
+    /* A photograph that can be picked up and dropped elsewhere is a photograph
+       that swallows every other swipe. */
+    user-select: none;
+    -webkit-user-select: none;
+    -webkit-user-drag: none;
+    -webkit-touch-callout: none;
 }
 
 .pl-caption {
@@ -3786,14 +3853,18 @@ section {
         overflow-x: hidden;
     }
 
+    .pl-stage {
+        width: 100%;
+    }
+
     .pl-figure {
         gap: 0.6rem;
         width: 100%;
         max-width: 100%;
     }
 
-    .pl-image {
-        max-height: 58vh;
+    .pl-viewport {
+        height: 58vh;
     }
 
     .pl-detail { font-size: 0.76rem; }
@@ -3827,13 +3898,16 @@ section {
         transform: none;
     }
 
-    /* Reorders the figure so the buttons sit under the caption. */
+    /* A row of its own under the frame. It is a sibling of the frame rather
+       than part of it, so the swipe moves the photograph and leaves these -
+       and the caption above them - exactly where they were. */
     .pl-controls {
         display: flex;
         align-items: center;
         justify-content: center;
         gap: 1.25rem;
         width: 100%;
+        margin-top: 0.6rem;
         padding-bottom: env(safe-area-inset-bottom, 0px);
     }
 
@@ -5533,20 +5607,26 @@ body.gallery-page footer {
 body.photo-page header.hero-active h1 {
     /* Two animations run on this element, the entrance and the slow shimmer
        sweep, so both slots have to be restated to change only the first. */
-    animation-duration: 0.75s, 15s;
-    animation-delay: 0.12s, 1.5s;
+    animation-duration: 0.42s, 15s;
+    animation-delay: 0s, 1.2s;
 }
 
 body.photo-page .sheet-meta {
-    animation-duration: 0.5s;
-    animation-delay: 0.16s;
+    animation-duration: 0.32s;
+    animation-delay: 0.08s;
 }
 
 /* On a phone these pages do not animate anything in. The cards are already
    plain there, and a title and caption sliding up on their own read as leftover
-   movement rather than as an entrance. */
+   movement rather than as an entrance.
+
+   Deliberately not keyed on .hero-active. That class is added by script.js, and
+   on an internal navigation not until the wipe has finished, so until then the
+   title was still sitting at the opacity: 0 the shared `h1` rule gives it - the
+   heading was blank on arrival and then appeared. Matching on the header itself
+   means the styling is settled while the page is still parsing. */
 @media (max-width: 768px) {
-    body.photo-page header.hero-active h1,
+    body.photo-page .sub-header h1,
     body.photo-page .sheet-meta {
         animation: none !important;
         opacity: 1 !important;
@@ -5574,7 +5654,7 @@ body.photo-page .photo-card {
 }
 
 @media (prefers-reduced-motion: reduce) {
-    body.photo-page header.hero-active h1,
+    body.photo-page .sub-header h1,
     body.photo-page .sheet-meta {
         animation: none;
         opacity: 1;

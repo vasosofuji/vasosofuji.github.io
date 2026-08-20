@@ -1230,8 +1230,15 @@ injectBookingModals();
 
     const bookingModal = document.getElementById('bookingModal');
     if (bookingModal) {
+        // The overlay fades out over 0.3s. Putting the form back the instant the
+        // class comes off would play that fade with the form already showing
+        // through where the confirmation had been, so the swap waits for the
+        // panel to be off screen.
+        let thanksResetTimer = null;
         new MutationObserver(() => {
             if (bookingModal.classList.contains('active')) {
+                clearTimeout(thanksResetTimer);
+                clearThanks();
                 submitted = false;
                 alreadyReported = false;
                 resolvedReported = false;
@@ -1240,6 +1247,10 @@ injectBookingModals();
                 show(1);
             } else {
                 clearTimeout(abandonTimer);
+                // Whether it was closed from the confirmation or from the form,
+                // the panel goes back to a fresh form for the next time.
+                clearTimeout(thanksResetTimer);
+                thanksResetTimer = setTimeout(clearThanks, 340);
             }
         }).observe(bookingModal, { attributes: true, attributeFilter: ['class'] });
     }
@@ -1283,26 +1294,67 @@ injectBookingModals();
     // Formspree is posted normally and answers with a redirect, so without this
     // the visitor is thrown onto a Formspree page. Sending it by fetch keeps
     // them here and lets the confirmation replace the form in place.
+    //
+    // The confirmation is added alongside the form and the form is hidden with
+    // a class, rather than the panel's markup being overwritten. Overwriting it
+    // took out the close cross - along with the listener bound to it - so the
+    // panel could not be dismissed by any means, and it took out the form with
+    // it, so a second enquiry in the same visit had nothing left to fill in.
     function showThanks() {
         const content = document.querySelector('#bookingModal .modal-content');
         if (!content) return;
         const t = (typeof translations !== 'undefined' && translations[currentLang]) || {};
         const email = (el('bookingEmail') && el('bookingEmail').value) || '';
-        content.innerHTML = `
-            <span class="close-modal" id="closeModal">&times;</span>
-            <div class="thanks-panel">
-                <div class="thanks-mark" aria-hidden="true">&#10003;</div>
-                <h3 class="thanks-title">${t.thanksTitle || 'Request sent'}</h3>
-                <p class="thanks-body">${t.thanksBody || 'Thank you for getting in touch. I will contact you as soon as possible.'}</p>
-                ${email ? '<p class="thanks-detail"></p>' : ''}
-                <button type="button" class="btn" id="thanksClose">${t.thanksClose || 'Close'}</button>
-            </div>`;
+
+        let panel = content.querySelector('.thanks-panel');
+        if (!panel) {
+            panel = document.createElement('div');
+            panel.className = 'thanks-panel';
+            content.appendChild(panel);
+        }
+        panel.innerHTML = `
+            <div class="thanks-mark" aria-hidden="true">&#10003;</div>
+            <h3 class="thanks-title">${t.thanksTitle || 'Request sent'}</h3>
+            <p class="thanks-body">${t.thanksBody || 'Thank you for getting in touch. I will contact you as soon as possible.'}</p>
+            ${email ? '<p class="thanks-detail"></p>' : ''}
+            <button type="button" class="btn" id="thanksClose">${t.thanksClose || 'Close'}</button>`;
         // Set as text, never as markup: whatever was typed into the field is
         // echoed back here, and it has no business being parsed as HTML.
-        const detail = content.querySelector('.thanks-detail');
+        const detail = panel.querySelector('.thanks-detail');
         if (detail) detail.textContent = email;
-        content.querySelector('#thanksClose').focus();
+
+        content.classList.add('is-thanks');
+        panel.querySelector('#thanksClose').focus();
     }
+
+    // Dismissing the confirmation puts the booking panel back the way it was, so
+    // the next visit to the form is a blank form and not the thank you again.
+    function clearThanks() {
+        const content = document.querySelector('#bookingModal .modal-content');
+        if (!content || !content.classList.contains('is-thanks')) return;
+        content.classList.remove('is-thanks');
+        const panel = content.querySelector('.thanks-panel');
+        if (panel) panel.remove();
+
+        const f = form();
+        if (f) f.reset();
+        const submit = el('bookingSubmit');
+        if (submit) submit.disabled = false;
+        const status = el('my-form-status');
+        if (status) status.textContent = '';
+        const other = el('otherEventInput');
+        if (other) other.style.display = 'none';
+    }
+
+    // Delegated so it survives the confirmation panel being added and taken
+    // away underneath it. Both the cross and the Close button do the same
+    // thing: shut the modal, and the observer watching it clears the panel.
+    document.addEventListener('click', (e) => {
+        if (!(e.target instanceof Element)) return;
+        if (!e.target.closest('#thanksClose, #bookingModal .close-modal')) return;
+        const modal = document.getElementById('bookingModal');
+        if (modal) modal.classList.remove('active');
+    });
 
     form().addEventListener('submit', async (e) => {
         e.preventDefault();
@@ -2064,23 +2116,26 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // Pointer parallax is a fine-pointer affordance; skip wiring it up on
         // touch-only devices and when the visitor asked for reduced motion.
+        //
+        // Touch is deliberately not wired up at all. A finger on a phone is not
+        // a hovering pointer - it is the scroll gesture, and every touchmove it
+        // produced was fed in here as a new parallax target measured against a
+        // container that was itself moving up the page. Flicking from the foot
+        // of the page back to the top left the target pinned somewhere extreme,
+        // and the collage then eased towards it as the hero came back into
+        // view, so the cards drifted upwards after the page had already stopped.
+        // There is no reliable way to tell a deliberate drag over the collage
+        // from a scroll, and the collage already has its own float animation, so
+        // on touch it simply stays where it is.
         const wantsMotion = !window.matchMedia('(prefers-reduced-motion: reduce)').matches;
         const hasFinePointer = window.matchMedia('(pointer: fine)').matches;
 
-        if (wantsMotion) {
-            if (hasFinePointer) {
-                window.addEventListener(
-                    'mousemove',
-                    (e) => onPointerInput(e.clientX, e.clientY),
-                    { passive: true }
-                );
-            }
-
-            window.addEventListener('touchmove', (e) => {
-                if (e.touches.length > 0) {
-                    onPointerInput(e.touches[0].clientX, e.touches[0].clientY);
-                }
-            }, { passive: true });
+        if (wantsMotion && hasFinePointer) {
+            window.addEventListener(
+                'mousemove',
+                (e) => onPointerInput(e.clientX, e.clientY),
+                { passive: true }
+            );
         }
 
         // OPTIMIZATION: stop the loop outright when the hero is off-screen
