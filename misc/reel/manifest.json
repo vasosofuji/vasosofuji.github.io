@@ -1,0 +1,14 @@
+{
+  "count": 96,
+  "aspect": 1.7778,
+  "sizes": [
+    {
+      "name": "wide",
+      "width": 1024
+    },
+    {
+      "name": "narrow",
+      "width": 576
+    }
+  ]
+}

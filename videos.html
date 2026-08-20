@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="no-js">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -41,6 +41,11 @@
     <link rel="apple-touch-icon" href="/apple-touch-icon.png">
     <link rel="manifest" href="/site.webmanifest">
     <script>
+        // The reel hero is a scroll sequence, which only exists if this file
+        // ran. Taken off here rather than from the module so the scrolling
+        // layout is in place for the first paint instead of replacing a
+        // stacked one a moment later.
+        document.documentElement.classList.remove('no-js');
         if (sessionStorage.getItem('isInternalNav')) {
             document.documentElement.classList.add('is-transitioning');
             // Seed the camera's phase from the same clock the previous page
@@ -51,25 +56,82 @@
         }
     </script>
 </head>
-<body>
+<body class="videos-page">
 
 <div id="react-global-bg" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -3;"></div>
 
 <div id="react-navbar"></div>
 
-<header class="sub-header">
-    <span class="sheet-glow" aria-hidden="true"></span>
-    <h1 data-translate="VideosTitle">Videos</h1>
-    <p class="sheet-meta" data-sheet-meta></p>
-</header>
+<!-- The hero is the showreel itself, held still on screen while the page
+     scrolls past it, with the frames running forwards and backwards under the
+     scroll. Everything below is real markup: with the script off it is a
+     poster frame, a heading and four paragraphs about the work. -->
+<section class="reel" data-reel>
+    <div class="reel-stage" data-reel-stage>
+        <canvas class="reel-canvas" data-reel-canvas aria-hidden="true"></canvas>
+        <img class="reel-poster" src="misc/reel/narrow/000.webp" alt="" aria-hidden="true"
+            width="576" height="324" fetchpriority="high" decoding="async">
+        <span class="reel-grade" aria-hidden="true"></span>
 
-<section>
-    <div class="video-grid">
+        <div class="reel-intro" data-reel-intro>
+            <h1 data-translate="VideosTitle">Videos</h1>
+            <p class="reel-cue" data-translate="reelCue">Scroll to run the film</p>
+        </div>
+
+        <div class="reel-beat" data-reel-beat data-reel-at="0.20" data-reel-span="0.10">
+            <p class="reel-eyebrow" data-translate="reelBeat1Eyebrow">01 / the reel</p>
+            <h2 data-translate="reelBeat1Title">This is a film, and you are running it</h2>
+            <p class="reel-body" data-translate="reelBeat1Body">Scroll on to move it forward. Scroll back and it runs backwards. Every frame was shot, cut and graded by me.</p>
+        </div>
+
+        <div class="reel-beat" data-reel-beat data-reel-at="0.43" data-reel-span="0.10">
+            <p class="reel-eyebrow" data-translate="reelBeat2Eyebrow">02 / how I work</p>
+            <h2 data-translate="reelBeat2Title">Scripts and scenes, then the camera</h2>
+            <p class="reel-body" data-translate="reelBeat2Body">As PR and social lead for Job Fair 2026 I wrote the scripts, staged the scenes, shot them and cut them together. Four ads, the opening film, and a campaign that reached television three times.</p>
+        </div>
+
+        <div class="reel-beat" data-reel-beat data-reel-at="0.64" data-reel-span="0.10">
+            <p class="reel-eyebrow" data-translate="reelBeat3Eyebrow">03 / the bands</p>
+            <h2 data-translate="reelBeat3Title">Music is where most of it starts</h2>
+            <p class="reel-body" data-translate="reelBeat3Body">Promos and teasers for the bands I grew up around in Skopje. Golemata Voda, Perseida, Marigold. The film you are scrolling is the Perseida spot.</p>
+        </div>
+
+        <div class="reel-beat" data-reel-beat data-reel-at="0.85" data-reel-span="0.10">
+            <p class="reel-eyebrow" data-translate="reelBeat4Eyebrow">04 / the kit</p>
+            <h2 data-translate="reelBeat4Title">One body, two primes, whatever light there is</h2>
+            <p class="reel-body" data-translate="reelBeat4Body">A Fujifilm X-T2 and the hour I am given. Golden hour, handheld, no lighting truck and no second take.</p>
+        </div>
+
+        <span class="reel-progress" aria-hidden="true"><i data-reel-progress></i></span>
+    </div>
+</section>
+
+<section class="rail-section" id="work">
+    <div class="rail-head">
+        <h2 class="rail-title" data-translate="reelRailTitle">Everything I have shot</h2>
+        <div class="rail-nav">
+            <p class="rail-hint" data-translate="reelRailHint">Drag, or use the arrows</p>
+            <button type="button" class="rail-btn" data-rail-prev aria-label="Previous videos">
+                <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor"
+                    stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                    <polyline points="15 18 9 12 15 6" />
+                </svg>
+            </button>
+            <button type="button" class="rail-btn" data-rail-next aria-label="More videos">
+                <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor"
+                    stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                    <polyline points="9 18 15 12 9 6" />
+                </svg>
+            </button>
+        </div>
+    </div>
+
+    <div class="video-rail" data-rail role="region" aria-label="Video work" tabindex="0">
 
         <!-- Video Card 1 -->
         <a href="https://www.instagram.com/p/DUvepL-iBTH/" target="_blank" rel="noopener noreferrer" class="video-card" data-index="01">
             <div class="video-thumbnail">
-                <img src="misc/Detektiv.jpg" alt="Detective Vaso">
+                <img src="misc/Detektiv.jpg" alt="Detective Vaso" loading="lazy" decoding="async">
                 <div class="play-overlay"></div>
             </div>
             <div class="video-info">
@@ -84,7 +146,7 @@
         <!-- Video Card 2 -->
         <a href="https://www.instagram.com/p/DUiqHoaiGVM/" target="_blank" rel="noopener noreferrer" class="video-card" data-index="02">
             <div class="video-thumbnail">
-                <img src="misc/expectationvsreality.jpg" alt="Expectation vs Reality">
+                <img src="misc/expectationvsreality.jpg" alt="Expectation vs Reality" loading="lazy" decoding="async">
                 <div class="play-overlay"></div>
             </div>
             <div class="video-info">
@@ -99,7 +161,7 @@
         <!-- Video Card 3 -->
         <a href="https://www.instagram.com/p/DUN9gOACDTt/" target="_blank" rel="noopener noreferrer" class="video-card" data-index="03">
             <div class="video-thumbnail">
-                <img src="misc/vodnocinematic.jpg" alt="Apply for a job without stress">
+                <img src="misc/vodnocinematic.jpg" alt="Apply for a job without stress" loading="lazy" decoding="async">
                 <div class="play-overlay"></div>
             </div>
             <div class="video-info">
@@ -113,7 +175,7 @@
 
         <a href="https://www.instagram.com/p/DVBbkd6iH7g/" target="_blank" rel="noopener noreferrer" class="video-card" data-index="04">
             <div class="video-thumbnail">
-                <img src="misc/qrcode.jpg" alt="Job Fair QR Code">
+                <img src="misc/qrcode.jpg" alt="Job Fair QR Code" loading="lazy" decoding="async">
                 <div class="play-overlay"></div>
             </div>
             <div class="video-info">
@@ -127,7 +189,7 @@
 
         <a href="https://www.instagram.com/reel/DWRRduViK8i/?igsh=MWk0MjVvazhvendrNg==" target="_blank" rel="noopener noreferrer" class="video-card" data-index="05">
             <div class="video-thumbnail">
-                <img src="misc/oo.jpg" alt="Job Fair QR Code">
+                <img src="misc/oo.jpg" alt="Job Fair QR Code" loading="lazy" decoding="async">
                 <div class="play-overlay"></div>
             </div>
             <div class="video-info">
@@ -141,7 +203,7 @@
 
         <a href="https://www.instagram.com/reel/DK9_y7fKoVE/?igsh=MWp5dGIzMXc0Mnc1Zw==" target="_blank" rel="noopener noreferrer" class="video-card" data-index="06">
             <div class="video-thumbnail">
-                <img src="misc/dunk.png" alt="Job Fair QR Code">
+                <img src="misc/dunk.png" alt="Job Fair QR Code" loading="lazy" decoding="async">
                 <div class="play-overlay"></div>
             </div>
             <div class="video-info">
@@ -155,7 +217,7 @@
 
         <a href="https://www.instagram.com/reel/DGtVwNZoE-F/?igsh=eGVqNjNwY2FmZjEw" target="_blank" rel="noopener noreferrer" class="video-card" data-index="07">
             <div class="video-thumbnail">
-                <img src="misc/marigold.png" alt="Job Fair QR Code">
+                <img src="misc/marigold.png" alt="Job Fair QR Code" loading="lazy" decoding="async">
                 <div class="play-overlay"></div>
             </div>
             <div class="video-info">
@@ -169,7 +231,7 @@
 
         <a href="https://www.instagram.com/p/DWyv_gol_L-/?img_index=2" target="_blank" rel="noopener noreferrer" class="video-card" data-index="08">
             <div class="video-thumbnail">
-                <img src="misc/gvvid.jpg" alt="Golemata Voda Promo">
+                <img src="misc/gvvid.jpg" alt="Golemata Voda Promo" loading="lazy" decoding="async">
                 <div class="play-overlay"></div>
             </div>
             <div class="video-info">
@@ -192,6 +254,7 @@
 </footer>
 
 <script type="module" src="script.js"></script>
+<script type="module" src="/src/mount-video-reel.ts"></script>
 <script type="module" src="/src/main.tsx"></script>
 </body>
 </html>

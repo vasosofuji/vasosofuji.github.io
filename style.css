@@ -5781,3 +5781,359 @@ body.photo-page .photo-card {
         gap: 4px;
     }
 }
+
+/* =========================================
+   VIDEOS PAGE
+   The photo pages open on a title over a light leak and then hand you a grid.
+   Video is not stills, and a page about it that behaves like the stills pages
+   is a page that says nothing about the difference. So the hero here is the
+   showreel itself: the frames are held on screen and run by the scroll, forward
+   on the way down and backward on the way up, with the writing arriving over
+   them a beat at a time. The finished work follows underneath on a rail.
+
+   The frames are built by scripts/build-video-frames.mjs and driven by
+   src/video-reel.ts.
+   ========================================= */
+
+.reel {
+    position: relative;
+    /* Full bleed. The shared `section` rule insets every section by 5%, which
+       here would leave the film in a box with the page showing down both sides
+       of it. */
+    padding: 0;
+    /* One screen for the title to hold, four for the film to run through. Less
+       than this and the sequence tears past faster than it can be read; more
+       and the scroll starts to feel like work. */
+    height: 500vh;
+}
+
+.reel-stage {
+    position: sticky;
+    top: 0;
+    height: 100vh;
+    /* svh so the mobile URL bar sliding away does not resize the film. */
+    height: 100svh;
+    overflow: hidden;
+    background: #050505;
+    isolation: isolate;
+}
+
+.reel-canvas,
+.reel-poster {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    display: block;
+    object-fit: cover;
+}
+
+/* The poster is the first frame as a plain image: it is what stands there
+   before any frame has been fetched, and what the page shows for good if the
+   script never runs. The canvas fades over it once the sequence is live. */
+.reel-poster {
+    z-index: 0;
+}
+
+.reel-canvas {
+    z-index: 1;
+    opacity: 0;
+    transition: opacity 0.4s ease;
+}
+
+.reel.is-running .reel-canvas {
+    opacity: 1;
+}
+
+/* Darkens the corners and both ends so white text holds against whatever the
+   film happens to be showing underneath it. */
+.reel-grade {
+    position: absolute;
+    inset: 0;
+    z-index: 2;
+    pointer-events: none;
+    background:
+        radial-gradient(125% 85% at 50% 45%, transparent 38%, rgba(0, 0, 0, 0.5) 100%),
+        linear-gradient(to bottom,
+            rgba(0, 0, 0, 0.6) 0%,
+            rgba(0, 0, 0, 0.12) 26%,
+            rgba(0, 0, 0, 0.12) 56%,
+            rgba(0, 0, 0, 0.78) 100%);
+}
+
+/* Centred by the box model, never by a transform. The scroll handler owns the
+   transform on both of these to lift them as they come and go, and a translate
+   set in CSS would be the first thing it wrote over. */
+.reel-intro,
+.reel-beat {
+    position: absolute;
+    z-index: 3;
+    text-align: center;
+    pointer-events: none;
+    will-change: opacity, transform;
+}
+
+.reel-intro {
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 0 5%;
+}
+
+/* The shared h1 rule parks every title at opacity 0 for its entrance animation
+   to pick up. This one is driven by the scroll instead. */
+.reel-intro h1 {
+    opacity: 1;
+    font-size: clamp(3rem, 13vw, 8rem);
+    margin: 0;
+}
+
+.reel-cue {
+    margin-top: 1.25rem;
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 900;
+    font-size: clamp(0.58rem, 2.2vw, 0.7rem);
+    letter-spacing: 0.24em;
+    text-transform: uppercase;
+    color: rgba(255, 255, 255, 0.6);
+}
+
+.reel-cue::after {
+    content: '';
+    display: block;
+    width: 1px;
+    height: 34px;
+    margin: 1rem auto 0;
+    background: linear-gradient(to bottom, var(--accent), transparent);
+}
+
+/* Low in the frame, so the beat sits under the picture rather than across the
+   middle of it. */
+.reel-beat {
+    left: 0;
+    right: 0;
+    bottom: clamp(3.5rem, 12vh, 7rem);
+    width: min(92%, 720px);
+    margin-inline: auto;
+    opacity: 0;
+    visibility: hidden;
+}
+
+.reel-eyebrow {
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 900;
+    font-size: 0.62rem;
+    letter-spacing: 0.26em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 0.9rem;
+}
+
+.reel-beat h2 {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(1.55rem, 4.6vw, 2.9rem);
+    line-height: 1.12;
+    color: #fff;
+    margin: 0 0 0.85rem;
+    text-shadow: 0 2px 24px rgba(0, 0, 0, 0.7);
+}
+
+.reel-body {
+    font-size: clamp(0.85rem, 2.4vw, 1rem);
+    line-height: 1.7;
+    color: rgba(255, 255, 255, 0.82);
+    max-width: 54ch;
+    margin: 0 auto;
+    text-shadow: 0 1px 12px rgba(0, 0, 0, 0.8);
+}
+
+/* How far through the film the scroll has got. */
+.reel-progress {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    height: 2px;
+    z-index: 4;
+    background: rgba(255, 255, 255, 0.1);
+}
+
+.reel-progress i {
+    display: block;
+    height: 100%;
+    background: var(--accent);
+    transform: scaleX(0);
+    transform-origin: 0 50%;
+}
+
+/* Without the script the sequence can never run, so the section collapses to
+   the poster frame with the writing laid out underneath it in reading order.
+   Keyed on a class the page's own head script takes off, which means it is
+   already gone by the first paint rather than being corrected after one. */
+.no-js .reel {
+    height: auto;
+}
+
+.no-js .reel-stage {
+    position: relative;
+    height: auto;
+    min-height: 100svh;
+    padding: calc(73px + 4rem) 5% 4rem;
+}
+
+.no-js .reel-intro,
+.no-js .reel-beat {
+    position: static;
+    transform: none;
+    width: 100%;
+    max-width: 720px;
+    margin: 0 auto;
+    opacity: 1;
+    visibility: visible;
+}
+
+.no-js .reel-beat {
+    margin-top: 3.5rem;
+}
+
+.no-js .reel-cue,
+.no-js .reel-progress {
+    display: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .reel-canvas {
+        transition: none;
+    }
+}
+
+/* --- THE RAIL OF FINISHED WORK --- */
+.rail-section {
+    position: relative;
+    padding: clamp(3rem, 8vw, 6rem) 0 clamp(3.5rem, 8vw, 6rem);
+}
+
+.rail-head {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 1.5rem;
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 0 2rem 1.75rem;
+}
+
+.rail-title {
+    font-family: 'Syne', sans-serif;
+    font-weight: 800;
+    font-size: clamp(1.4rem, 4.4vw, 2.4rem);
+    line-height: 1.1;
+    color: var(--text-main);
+    margin: 0;
+}
+
+.rail-nav {
+    display: flex;
+    align-items: center;
+    gap: 0.7rem;
+    flex-shrink: 0;
+}
+
+.rail-hint {
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 900;
+    font-size: 0.6rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    margin-right: 0.4rem;
+}
+
+.rail-btn {
+    width: 42px;
+    height: 42px;
+    padding: 0;
+    line-height: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 999px;
+    border: 1px solid rgba(255, 255, 255, 0.14);
+    background: rgba(255, 255, 255, 0.06);
+    color: #fff;
+    cursor: pointer;
+    transition: background-color 0.25s ease, border-color 0.25s ease, opacity 0.25s ease;
+    -webkit-tap-highlight-color: transparent;
+}
+
+.rail-btn:hover:not(:disabled),
+.rail-btn:focus-visible {
+    background: var(--accent);
+    border-color: var(--accent);
+    color: #000;
+}
+
+.rail-btn:disabled {
+    opacity: 0.28;
+    cursor: default;
+}
+
+/* The scrolling is the browser's own, snap points and momentum included. A
+   hand-written version of this is always a worse copy of what the platform
+   already does with a finger. */
+.video-rail {
+    display: grid;
+    grid-auto-flow: column;
+    grid-auto-columns: clamp(212px, 62vw, 292px);
+    gap: 1.5rem;
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 0.5rem 2rem 2rem;
+    overflow-x: auto;
+    overscroll-behavior-x: contain;
+    scroll-snap-type: x mandatory;
+    scroll-padding-left: 2rem;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+}
+
+.video-rail::-webkit-scrollbar {
+    display: none;
+}
+
+.video-rail > .video-card {
+    scroll-snap-align: start;
+}
+
+.video-rail:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 4px;
+    border-radius: 16px;
+}
+
+@media (max-width: 768px) {
+    .rail-head {
+        padding: 0 1.25rem 1.25rem;
+        align-items: center;
+    }
+
+    .rail-hint {
+        display: none;
+    }
+
+    .video-rail {
+        padding: 0.5rem 1.25rem 1.5rem;
+        gap: 1rem;
+        scroll-padding-left: 1.25rem;
+    }
+}
+
+/* The whole point of the rail is that a finger moves it, so the arrows are for
+   pointers only. */
+@media (hover: none) {
+    .rail-btn {
+        display: none;
+    }
+}
