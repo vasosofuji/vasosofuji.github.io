@@ -113,24 +113,47 @@ export default function PhotoLightbox({ photos, index, onClose, onNavigate }: Ph
     settle(-pos * step, !stepped);
   }, [pos, settle, step]);
 
-  // getBoundingClientRect, not clientWidth: the latter is rounded to whole
-  // pixels, and a third of a pixel of error per frame is all it takes to leave
-  // the edge of the neighbouring photograph on screen.
+  const widthRef = React.useRef(0);
+
   const measure = React.useCallback((node: HTMLDivElement | null) => {
     viewportRef.current = node;
-    if (node) setWidth(node.getBoundingClientRect().width);
+    // offsetWidth is whole pixels, so this is only a starting figure - the
+    // observer below refines it to the fraction on the very next frame. It is
+    // here so a strip that opens already part-way along has something sane to
+    // park against for that one frame. Recorded against the same ref the
+    // observer compares to, so a first reading that agrees with it is not
+    // mistaken for a change.
+    if (node) {
+      widthRef.current = node.offsetWidth;
+      setWidth(node.offsetWidth);
+    }
   }, []);
 
+  // Measured with a ResizeObserver, which reports the border box as laid out.
+  // getBoundingClientRect does not: it reports the box as drawn, with every
+  // transform on every ancestor folded in. The frame opens inside a stage that
+  // is animating up from scale(0.97), so the first measurement came back three
+  // per cent short of the real width. The slides are spaced by a percentage of
+  // that same width, which resolves against the layout and so was never short,
+  // and the strip was therefore pitched about ten pixels less than a frame
+  // every time it moved - a shortfall that added up until the previous
+  // photograph had walked far enough across to sit over the current one.
   React.useEffect(() => {
-    if (!open) return;
-    const onResize = () => {
-      if (viewportRef.current) {
-        jump.current = true;
-        setWidth(viewportRef.current.getBoundingClientRect().width);
-      }
-    };
-    window.addEventListener('resize', onResize);
-    return () => window.removeEventListener('resize', onResize);
+    const node = viewportRef.current;
+    if (!open || !node || typeof ResizeObserver === 'undefined') return;
+
+    const observer = new ResizeObserver(([entry]) => {
+      const measured = entry.borderBoxSize?.[0]?.inlineSize ?? entry.contentRect.width;
+      if (!measured || Math.abs(widthRef.current - measured) < 0.01) return;
+      widthRef.current = measured;
+      // A frame that changed size is not a page the visitor turned, so the
+      // strip re-parks on the spot rather than travelling there.
+      jump.current = true;
+      setWidth(measured);
+    });
+
+    observer.observe(node);
+    return () => observer.disconnect();
   }, [open]);
 
   // Keyboard: Escape closes, arrows page through the set.
@@ -289,9 +312,19 @@ export default function PhotoLightbox({ photos, index, onClose, onNavigate }: Ph
           transition={{ duration: reduceMotion ? 0 : 0.22 }}
           onClick={onOverlayClick}
         >
-          <button ref={closeRef} type="button" className="pl-close" onClick={onClose} aria-label="Close">
+          {/* Leaves ahead of everything else. It is the thing under the finger
+              when the frame is dismissed, so it lingering over the fade is the
+              one bit of the close anybody actually watches. */}
+          <motion.button
+            ref={closeRef}
+            type="button"
+            className="pl-close"
+            onClick={onClose}
+            aria-label="Close"
+            exit={reduceMotion ? undefined : { opacity: 0, transition: { duration: 0.1 } }}
+          >
             &times;
-          </button>
+          </motion.button>
 
           {/* The frame and its caption. Kept clear of the buttons outside it so
               nothing that is meant to hold still shares a transform with the

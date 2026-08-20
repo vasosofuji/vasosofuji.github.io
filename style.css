@@ -3869,6 +3869,34 @@ section {
     color: #000;
 }
 
+/* The accent is a pointer affordance, and a touchscreen has no pointer: what it
+   has is a :hover that sticks to whatever was tapped last. Tapping the cross
+   therefore lit it orange and left it that way through the whole close. Here it
+   lights while the finger is down and lets go when the finger does, and the
+   colour is given a shorter fade than the arrows so it is out of the way before
+   the frame behind it has finished going. */
+@media (hover: none) {
+    /* :not(:focus-visible) so a keyboard attached to a touch device still gets
+       its focus ring painted. */
+    .pl-close:hover:not(:focus-visible),
+    .pl-nav:hover:not(:focus-visible) {
+        background: rgba(255, 255, 255, 0.06);
+        border-color: rgba(255, 255, 255, 0.14);
+        color: #fff;
+    }
+
+    .pl-close:active,
+    .pl-nav:active {
+        background: var(--accent);
+        border-color: var(--accent);
+        color: #000;
+    }
+
+    .pl-close {
+        transition-duration: 0.12s;
+    }
+}
+
 .pl-close {
     top: clamp(0.75rem, 2vw, 1.5rem);
     right: clamp(0.75rem, 2vw, 1.5rem);
@@ -4200,7 +4228,12 @@ footer {
         margin: 0 auto 40px auto;
         display: block;
         text-align: center;
+        /* Both sides, not just the left. `.section-title` picks up 0.5rem of
+           padding on each side under 768px, and clearing only the left one left
+           8px standing on the right, which walked the centred word 4px off the
+           middle of the calendar underneath it. */
         padding-left: 0;
+        padding-right: 0;
     }
 
     /* Remove the vertical line on mobile/tablet for centered titles */
