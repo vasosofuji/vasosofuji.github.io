@@ -5801,10 +5801,21 @@ body.photo-page .photo-card {
        here would leave the film in a box with the page showing down both sides
        of it. */
     padding: 0;
-    /* One screen for the title to hold, four for the film to run through. Less
-       than this and the sequence tears past faster than it can be read; more
-       and the scroll starts to feel like work. */
-    height: 500vh;
+    /* One screen for the title to hold, the rest for the film to run through.
+       At 500vh a flick on a phone tore through twenty frames at once, which is
+       not a film running, it is a film being skipped. This is roughly fifty
+       pixels of scroll to a frame, and the sequence eases after the scroll
+       rather than snapping to it, so a fast gesture plays the frames it passes
+       instead of jumping over them. */
+    height: 700vh;
+}
+
+@media (max-width: 768px) {
+    /* A phone flick covers more of its own screen than a wheel notch covers of
+       a desktop one, so the same pace needs more room here. */
+    .reel {
+        height: 800vh;
+    }
 }
 
 .reel-stage {
@@ -5919,6 +5930,46 @@ body.photo-page .photo-card {
     margin-inline: auto;
     opacity: 0;
     visibility: hidden;
+}
+
+/* The notes along the top. Small, quick, and out of the way of the beats along
+   the bottom, so both can be on screen at once without either being in the
+   other's way. */
+.reel-mark {
+    position: absolute;
+    z-index: 3;
+    top: clamp(88px, 13vh, 150px);
+    left: 0;
+    right: 0;
+    margin-inline: auto;
+    width: min(92%, 720px);
+    text-align: center;
+    pointer-events: none;
+    opacity: 0;
+    visibility: hidden;
+    will-change: opacity, transform;
+
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 900;
+    font-size: clamp(0.56rem, 2.1vw, 0.66rem);
+    letter-spacing: 0.28em;
+    text-transform: uppercase;
+    color: rgba(255, 255, 255, 0.85);
+    text-shadow: 0 1px 14px rgba(0, 0, 0, 0.85);
+}
+
+.reel-mark::before {
+    content: '';
+    display: inline-block;
+    width: 16px;
+    height: 1px;
+    margin-right: 0.7em;
+    vertical-align: middle;
+    background: var(--accent);
+}
+
+.no-js .reel-mark {
+    display: none;
 }
 
 .reel-eyebrow {
